@@ -64,6 +64,27 @@ p{margin:0 0 12px}
 .foto .falta{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;padding:10px;color:var(--suave);font-size:.95rem}
 .foto .falta b{color:var(--marrom);font-size:1rem}
+.foto .falta .marca-falta{position:static;width:72px;height:72px;object-fit:contain;opacity:.85;margin-bottom:6px}
+.foto{background:repeating-linear-gradient(45deg,#fff8e6 0 14px,#fff1cc 14px 28px)}
+.botao.off{background:#eee;color:var(--suave);box-shadow:0 4px 0 #bbb;border-color:#bbb;cursor:default}
+.fichas{display:grid;gap:26px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));margin-top:20px}
+.ficha h2{font-size:2rem}
+.ficha dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:10px 0 0}
+.ficha dt{font-weight:700;color:var(--marrom)} .ficha dd{margin:0}
+.ficha.jane{background:#fff0f6} .ficha.joy{background:#eef8ff}
+.album{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));margin-top:18px}
+.figurinha{position:relative;background:#fff;border:3px solid var(--marrom);border-radius:16px;padding:10px 10px 14px;box-shadow:4px 4px 0 var(--marrom);text-align:center;transform:rotate(-1.5deg)}
+.figurinha:nth-child(even){transform:rotate(1.5deg)}
+.figurinha .num{position:absolute;top:-12px;left:-10px;background:var(--sol);border:2.5px solid var(--marrom);border-radius:999px;font-weight:700;padding:0 10px;z-index:2}
+.figurinha .foto{aspect-ratio:1/1;margin-bottom:8px}
+.figurinha h3{font-size:1.05rem;margin:0 0 4px}
+.figurinha p{font-size:.95rem;margin:0}
+.figurinha.trancada{background:#f4f4f4;border-style:dashed;box-shadow:none}
+.figurinha.trancada .foto{background:#e9e9e9;filter:grayscale(1);opacity:.6}
+.figurinha.trancada .falta{visibility:hidden}
+.figurinha .segredo{display:none} .figurinha.trancada .segredo{display:block;color:var(--suave)}
+.figurinha.trancada .conteudo{display:none}
+.figurinha .interrogacao{display:none} .figurinha.trancada .interrogacao{display:flex;position:absolute;top:13px;left:13px;right:13px;aspect-ratio:1/1;align-items:center;justify-content:center;font-size:3.5rem;font-weight:700;color:#bbb;z-index:2}
 .foto.polaroid{background:#fff;padding:10px 10px 38px;transform:rotate(-1.5deg)}
 .botao{display:inline-block;text-decoration:none;font-weight:700;font-size:1.15rem;color:var(--marrom);
   background:var(--sol);border:3px solid var(--marrom);border-radius:999px;padding:10px 22px;box-shadow:0 4px 0 var(--marrom)}
