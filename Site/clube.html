@@ -71,7 +71,7 @@
 </form>
 <p style="margin-top:12px">E-mail da conta: <b id="email"></b></p>
 </details>
-<p style="margin-top:18px"><button class="botao" type="button" onclick="sair()">Sair</button></p>
+<p style="margin-top:18px"><a id="botao-painel" class="botao rosa" href="admin.html" hidden>Painel da Joice</a> <button class="botao" type="button" onclick="sair()">Sair</button></p>
 </div>
 
 </main>
@@ -104,10 +104,10 @@ async function abrir() {
   $("#email").textContent = data.email || s.session.user.email;
 
   const hoje = new Date().toISOString().slice(0, 10);
-  const pago = (data.assinatura === "mensal" || data.assinatura === "anual") && data.assinatura_ate && data.assinatura_ate >= hoje;
+  const pago = ["mensal", "anual", "cortesia"].includes(data.assinatura) && data.assinatura_ate && data.assinatura_ate >= hoje;
   const emTeste = new Date(data.teste_ate) > new Date();
   if (pago) {
-    $("#status").textContent = "Assinatura " + data.assinatura + " ativa até " + pugsData(data.assinatura_ate + "T12:00:00") + ". Obrigado por fazer parte! 💛";
+    $("#status").textContent = (data.assinatura === "cortesia" ? (data.assinatura_ate >= "2099-01-01" ? "Acesso completo da equipe Pugs Aventuras. 💛" : "Acesso de presente até " + pugsData(data.assinatura_ate + "T12:00:00") + ". 💛") : "Assinatura " + data.assinatura + " ativa até " + pugsData(data.assinatura_ate + "T12:00:00") + ". Obrigado por fazer parte! 💛");
   } else if (emTeste) {
     const d = diasAte(data.teste_ate);
     $("#status").textContent = "Teste grátis: " + (d <= 1 ? "último dia" : "faltam " + d + " dias") + " (até " + pugsData(data.teste_ate) + "). Para continuar depois, é só escolher um plano.";
@@ -129,6 +129,8 @@ async function abrir() {
   }
   const f = $("#form-dados");
   ["nome_responsavel", "telefone", "nome_crianca", "aniversario_crianca"].forEach((k) => f[k].value = data[k] || "");
+  const { data: admin } = await pugs.rpc("sou_admin");
+  $("#botao-painel").hidden = !admin;
   $("#carregando").hidden = true; $("#area").hidden = false;
 }
 

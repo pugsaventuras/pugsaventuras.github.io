@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel da Joice | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<div id="carregando" class="cartao" style="text-align:center">Abrindo o painel... 🐾</div>
+<div id="negado" class="cartao" hidden><h2>Área só da equipe Pugs Aventuras</h2><p>Esta página é só para a Joice. <a href="clube.html">Voltar para o Clube</a></p></div>
+
+<div id="painel" hidden>
+<h1 class="titulo">Painel<span class="l2">da Joice</span></h1>
+<span class="selo">Liberar assinaturas do Clube</span>
+<div class="contadores">
+<div class="cartao"><b id="c-total">0</b><span>famílias</span></div>
+<div class="cartao"><b id="c-teste">0</b><span>em teste grátis</span></div>
+<div class="cartao"><b id="c-pagos">0</b><span>com acesso pago</span></div>
+<div class="cartao"><b id="c-fim">0</b><span>teste acabou</span></div>
+</div>
+<p><input id="busca" class="busca" type="search" placeholder="Procurar por nome, criança, e-mail ou telefone"></p>
+<div id="lista"></div>
+<p style="margin-top:18px"><a class="botao" href="clube.html">Ver o Clube</a> <button class="botao" type="button" onclick="carregar()">Atualizar lista</button></p>
+<details style="margin-top:16px"><summary>Como funciona</summary>
+<p><b>+1 mês</b> e <b>+1 ano</b> somam a partir de hoje (ou do fim da assinatura atual, se ainda estiver valendo). <b>Cortesia</b> é acesso de presente, sem pagar. <b>Cancelar</b> tranca o acesso na hora. Em <b>Outra data</b> você escolhe o dia exato em que o acesso acaba.</p>
+</details>
+</div>
+
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="clube.js"></script>
+<script>
+const $ = (s) => document.querySelector(s);
+let familias = [];
+const hoje = () => new Date().toISOString().slice(0, 10);
+const PAGOS = ["mensal", "anual", "cortesia"];
+function situacao(f) {
+  if (PAGOS.includes(f.assinatura) && f.assinatura_ate && f.assinatura_ate >= hoje()) return ["pago", (f.assinatura === "cortesia" ? "Cortesia" : "Plano " + f.assinatura) + " até " + pugsData(f.assinatura_ate + "T12:00:00")];
+  if (f.assinatura === "cancelada") return ["fim", "Cancelada"];
+  if (new Date(f.teste_ate) > new Date()) return ["teste", "Teste grátis até " + pugsData(f.teste_ate)];
+  return ["fim", PAGOS.includes(f.assinatura) ? "Venceu em " + pugsData(f.assinatura_ate + "T12:00:00") : "Teste acabou em " + pugsData(f.teste_ate)];
+}
+function somar(f, meses) {
+  const base = (PAGOS.includes(f.assinatura) && f.assinatura_ate && f.assinatura_ate >= hoje()) ? new Date(f.assinatura_ate + "T12:00:00") : new Date();
+  base.setMonth(base.getMonth() + meses);
+  return base.toISOString().slice(0, 10);
+}
+function esc(t) { return String(t || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+function desenhar() {
+  const q = $("#busca").value.trim().toLowerCase();
+  const lista = familias.filter((f) => !q || [f.nome_responsavel, f.nome_crianca, f.email, f.telefone].join(" ").toLowerCase().includes(q));
+  const cont = { teste: 0, pago: 0, fim: 0 };
+  familias.forEach((f) => cont[situacao(f)[0]]++);
+  $("#c-total").textContent = familias.length; $("#c-teste").textContent = cont.teste; $("#c-pagos").textContent = cont.pago; $("#c-fim").textContent = cont.fim;
+  $("#lista").innerHTML = lista.length ? lista.map((f) => {
+    const [tipo, txt] = situacao(f);
+    const tel = (f.telefone || "").replace(/\D/g, "");
+    return `<article class="cartao familia ${tipo}">
+      <div class="familia-topo"><div><h3>${esc(f.nome_responsavel) || "(sem nome)"}</h3>
+      <p>Criança: <b>${esc(f.nome_crianca)}</b>${f.aniversario_crianca ? " · niver " + f.aniversario_crianca.slice(8, 10) + "/" + f.aniversario_crianca.slice(5, 7) : ""}</p>
+      <p>${esc(f.email)}${tel ? ` · <a href="https://wa.me/${tel}" target="_blank" rel="noopener">WhatsApp ${esc(f.telefone)}</a>` : ""}</p>
+      <p><small>Cadastro em ${pugsData(f.criado_em)}</small></p></div>
+      <span class="etiqueta ${tipo}">${txt}</span></div>
+      <div class="acoes">
+        <button class="botao" onclick="liberar('${f.id}','mensal',somar(achar('${f.id}'),1))">+1 mês</button>
+        <button class="botao rosa" onclick="liberar('${f.id}','anual',somar(achar('${f.id}'),12))">+1 ano</button>
+        <button class="botao" onclick="liberar('${f.id}','cortesia',somar(achar('${f.id}'),12))">Cortesia 1 ano</button>
+        <span class="outra-data"><input type="date" id="d-${f.id}" aria-label="Outra data"><button class="botao" onclick="outraData('${f.id}')">Outra data</button></span>
+        <button class="botao off-ativo" onclick="if(confirmar(this))liberar('${f.id}','cancelada',null)">Cancelar</button>
+      </div></article>`;
+  }).join("") : '<p class="cartao">Nenhuma família encontrada.</p>';
+}
+function achar(id) { return familias.find((f) => f.id === id); }
+function confirmar(b) { if (b.dataset.ok) return true; b.dataset.ok = 1; b.textContent = "Clique de novo para cancelar"; setTimeout(() => { delete b.dataset.ok; b.textContent = "Cancelar"; }, 4000); return false; }
+function outraData(id) {
+  const d = document.getElementById("d-" + id).value;
+  if (!d) return alerta("Escolha a data no calendário ao lado.");
+  const f = achar(id);
+  liberar(id, PAGOS.includes(f.assinatura) ? f.assinatura : "mensal", d);
+}
+function alerta(t) { const a = document.createElement("div"); a.className = "aviso ok flutuante"; a.textContent = t; document.body.appendChild(a); setTimeout(() => a.remove(), 3500); }
+async function liberar(id, plano, ate) {
+  const { error } = await pugs.rpc("liberar_familia", { p_id: id, p_plano: plano, p_ate: ate });
+  if (error) return alerta(pugsErro(error));
+  alerta(plano === "cancelada" ? "Acesso cancelado." : "Liberado até " + pugsData(ate + "T12:00:00") + " ✅");
+  carregar();
+}
+async function carregar() {
+  const { data, error } = await pugs.from("familias").select("*").order("criado_em", { ascending: false });
+  if (error) return alerta(pugsErro(error));
+  familias = data || []; desenhar();
+}
+(async () => {
+  const { data: s } = await pugs.auth.getSession();
+  if (!s.session) { location.href = "entrar.html#entrar"; return; }
+  const { data: admin } = await pugs.rpc("sou_admin");
+  $("#carregando").hidden = true;
+  if (!admin) { $("#negado").hidden = false; return; }
+  $("#painel").hidden = false;
+  $("#busca").addEventListener("input", desenhar);
+  carregar();
+})();
+</script>
+
+</body></html>

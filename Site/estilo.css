@@ -135,3 +135,20 @@ nav a.entrar[aria-current="page"]{background:var(--rosa)}
 .aviso.erro{background:#ffe1ee}
 .gratis{background:#fff7d1;text-align:center;margin-top:24px}
 button.botao{font:inherit;font-weight:700;cursor:pointer}
+
+/* Painel da Joice */
+.contadores{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:20px 0}
+.contadores .cartao{text-align:center;padding:14px}
+.contadores b{display:block;font-size:2.2rem;color:var(--marrom);line-height:1.1}
+.busca{width:100%;max-width:560px;font:inherit;padding:10px 14px;border:2.5px solid var(--marrom);border-radius:14px;background:#fff}
+.familia{margin-bottom:18px}
+.familia.pago{background:#e6f7ea} .familia.teste{background:#fff7d1} .familia.fim{background:#f4f4f4}
+.familia-topo{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.familia p{margin:0 0 4px}
+.etiqueta{align-self:flex-start;font-weight:700;border:2.5px solid var(--marrom);border-radius:999px;padding:3px 12px;background:#fff;font-size:.95rem}
+.acoes{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;align-items:center}
+.acoes .botao{font-size:1rem;padding:6px 14px}
+.outra-data{display:inline-flex;gap:6px;align-items:center}
+.outra-data input{font:inherit;padding:6px 10px;border:2.5px solid var(--marrom);border-radius:12px}
+.botao.off-ativo{background:#fff;color:#b00020}
+.aviso.flutuante{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:10;box-shadow:4px 4px 0 var(--marrom)}
