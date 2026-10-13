@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Entrar no Clube | Pugs Aventuras</title>
+<meta name="description" content="Crie a conta da família e experimente o Clube Pugs Aventuras por 7 dias grátis.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar" aria-current="page">Entrar</a></li></ul></nav>
+</header>
+<main>
+<h1 class="titulo">Clube<span class="l2">Pugs Aventuras</span></h1>
+<span class="selo">7 dias grátis para experimentar</span>
+<p class="intro">Crie a conta da família e experimente o Clube por 7 dias, sem pagar nada e sem cartão.</p>
+
+<div class="abas" role="tablist">
+<button type="button" role="tab" id="aba-cadastro" aria-selected="true" onclick="mostrar('cadastro')">Criar conta</button>
+<button type="button" role="tab" id="aba-entrar" aria-selected="false" onclick="mostrar('entrar')">Já tenho conta</button>
+</div>
+
+<div id="aviso" class="aviso" role="status" hidden></div>
+
+<form id="form-cadastro" class="cartao formulario" autocomplete="on">
+<h2>Criar conta da família</h2>
+<label>Seu nome (pai, mãe ou responsável)<input name="nome_responsavel" required autocomplete="name"></label>
+<label>Seu e-mail<input name="email" type="email" required autocomplete="email"></label>
+<label>Seu WhatsApp (com DDD)<input name="telefone" type="tel" required autocomplete="tel" placeholder="(11) 99999-9999"></label>
+<label>Nome da criança<input name="nome_crianca" required placeholder="Só o primeiro nome"></label>
+<label>Aniversário da criança <small>(opcional, para a Joy e a Jane lembrarem do dia)</small><input name="aniversario_crianca" type="date"></label>
+<label>Crie uma senha<input name="senha" type="password" minlength="6" required autocomplete="new-password" placeholder="Pelo menos 6 letras ou números"></label>
+<label class="aceite"><input name="aceite" type="checkbox" required> Sou o pai, a mãe ou o responsável pela criança e aceito que esses dados sejam usados só pelo Clube Pugs Aventuras (nunca são vendidos nem aparecem no site).</label>
+<button class="botao rosa" type="submit">Começar 7 dias grátis 🐾</button>
+</form>
+
+<form id="form-entrar" class="cartao formulario" hidden>
+<h2>Entrar no Clube</h2>
+<label>Seu e-mail<input name="email" type="email" required autocomplete="email"></label>
+<label>Sua senha<input name="senha" type="password" required autocomplete="current-password"></label>
+<button class="botao rosa" type="submit">Entrar</button>
+<p style="margin-top:14px"><a href="#" onclick="esqueci(event)">Esqueci minha senha</a></p>
+</form>
+
+<form id="form-nova-senha" class="cartao formulario" hidden>
+<h2>Criar nova senha</h2>
+<label>Nova senha<input name="senha" type="password" minlength="6" required autocomplete="new-password"></label>
+<button class="botao rosa" type="submit">Salvar nova senha</button>
+</form>
+
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="clube.js"></script>
+<script>
+const $ = (s) => document.querySelector(s);
+function aviso(txt, tipo) { const a = $("#aviso"); a.textContent = txt; a.className = "aviso " + (tipo || ""); a.hidden = !txt; a.scrollIntoView({behavior:"smooth", block:"center"}); }
+function mostrar(qual) {
+  $("#form-cadastro").hidden = qual !== "cadastro";
+  $("#form-entrar").hidden = qual !== "entrar";
+  $("#form-nova-senha").hidden = qual !== "nova-senha";
+  $("#aba-cadastro").setAttribute("aria-selected", qual === "cadastro");
+  $("#aba-entrar").setAttribute("aria-selected", qual === "entrar");
+  $("#aviso").hidden = true;
+}
+if (location.hash === "#entrar") mostrar("entrar");
+
+pugs.auth.getSession().then(({ data }) => { if (data.session && !location.hash.includes("type=recovery")) location.href = "clube.html"; });
+pugs.auth.onAuthStateChange((ev) => { if (ev === "PASSWORD_RECOVERY") mostrar("nova-senha"); });
+
+$("#form-cadastro").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target), b = e.target.querySelector("button"); b.disabled = true;
+  const email = f.get("email").trim();
+  const { data, error } = await pugs.auth.signUp({
+    email, password: f.get("senha"),
+    options: {
+      emailRedirectTo: location.origin + "/clube.html",
+      data: {
+        nome_responsavel: f.get("nome_responsavel").trim(),
+        telefone: f.get("telefone").trim(),
+        nome_crianca: f.get("nome_crianca").trim(),
+        aniversario_crianca: f.get("aniversario_crianca") || "",
+        aceite: f.get("aceite") ? "sim" : "nao"
+      }
+    }
+  });
+  b.disabled = false;
+  if (error) return aviso(pugsErro(error), "erro");
+  if (data.user && data.user.identities && data.user.identities.length === 0) return aviso("Esse e-mail já tem cadastro. Use a aba \"Já tenho conta\".", "erro");
+  if (data.session) { location.href = "clube.html"; return; }
+  e.target.hidden = true;
+  aviso("Quase lá! 💌 Mandamos um e-mail para " + email + ". Abra e clique em \"Confirm your mail\" para liberar os 7 dias grátis. Se não aparecer em alguns minutos, olhe no spam ou nas promoções.", "ok");
+});
+
+$("#form-entrar").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target), b = e.target.querySelector("button"); b.disabled = true;
+  const { error } = await pugs.auth.signInWithPassword({ email: f.get("email").trim(), password: f.get("senha") });
+  b.disabled = false;
+  if (error) return aviso(pugsErro(error), "erro");
+  location.href = "clube.html";
+});
+
+async function esqueci(ev) {
+  ev.preventDefault();
+  const email = $("#form-entrar [name=email]").value.trim();
+  if (!email) return aviso("Escreva seu e-mail no campo acima e clique de novo em \"Esqueci minha senha\".", "erro");
+  const { error } = await pugs.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/entrar.html" });
+  if (error) return aviso(pugsErro(error), "erro");
+  aviso("Pronto! Mandamos um e-mail para " + email + " com o link para criar uma senha nova.", "ok");
+}
+
+$("#form-nova-senha").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const { error } = await pugs.auth.updateUser({ password: new FormData(e.target).get("senha") });
+  if (error) return aviso(pugsErro(error), "erro");
+  location.href = "clube.html";
+});
+</script>
+
+</body></html>

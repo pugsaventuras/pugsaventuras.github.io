@@ -115,3 +115,23 @@ footer a{color:var(--sol)}
 footer small{opacity:.8}
 @media (max-width:600px){.marca-nome{font-size:1.4rem}nav a{font-size:.92rem;padding:5px 11px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Clube: cadastro e area da familia */
+nav a.entrar{background:var(--azul-logo);color:#fff}
+nav a.entrar[aria-current="page"]{background:var(--rosa)}
+.abas{display:flex;gap:10px;margin:0 0 18px;flex-wrap:wrap}
+.abas button{font:inherit;font-weight:700;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:8px 18px;box-shadow:0 3px 0 var(--marrom);cursor:pointer}
+.abas button[aria-selected="true"]{background:var(--sol)}
+.formulario{max-width:560px}
+.formulario label{display:block;font-weight:600;color:var(--marrom);margin-bottom:14px}
+.formulario input:not([type=checkbox]){display:block;width:100%;margin-top:6px;font:inherit;font-weight:400;padding:10px 14px;border:2.5px solid var(--marrom);border-radius:14px;background:#fff;color:var(--texto)}
+.formulario input:focus{outline:3px solid var(--rosa);outline-offset:2px}
+.formulario label.aceite{font-weight:400;font-size:1rem;display:flex;gap:10px;align-items:flex-start}
+.formulario label.aceite input{width:22px;height:22px;flex:none;margin-top:3px}
+.formulario button{font:inherit;cursor:pointer}
+.formulario button:disabled{opacity:.6;cursor:wait}
+.aviso{max-width:560px;border:3px solid var(--marrom);border-radius:18px;padding:14px 18px;margin:0 0 18px;font-weight:500;background:#fff}
+.aviso.ok{background:#e6f7ea}
+.aviso.erro{background:#ffe1ee}
+.gratis{background:#fff7d1;text-align:center;margin-top:24px}
+button.botao{font:inherit;font-weight:700;cursor:pointer}

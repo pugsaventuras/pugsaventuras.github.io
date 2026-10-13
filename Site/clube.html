@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Área do Clube | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<div id="carregando" class="cartao" style="text-align:center">Abrindo o Clube... 🐾</div>
+
+<div id="area" hidden>
+<h1 class="titulo">Oi, <span id="nome-crianca"></span>!<span class="l2">Bem-vindo ao Clube</span></h1>
+<p class="intro">A Joy e a Jane prepararam coisas para ler, pintar e brincar em casa. <span id="ola-adulto"></span></p>
+<div id="status" class="aviso ok"></div>
+
+<div id="liberado">
+<div class="grade" style="margin-top:20px">
+<article class="cartao">
+<h2>🖍️ Para colorir</h2>
+<p>Joy e Jane no Dia das Crianças, em folha A4 para imprimir.</p>
+<a class="botao rosa" href="arquivos/colorir-dia-das-criancas-A4.pdf" download>Baixar o desenho</a>
+<p class="quando" style="margin-top:12px">Episódio 1 e Episódio 2: em breve</p>
+</article>
+<article class="cartao">
+<h2>📖 Livrinhos</h2>
+<p>A história de cada episódio para ler junto, com as cenas do desenho.</p>
+<p class="quando">Procura-se uma pug e A Joy e os chinelos do papai: em breve</p>
+</article>
+<article class="cartao">
+<h2>🎨 Pintar no tablet</h2>
+<p>Pintar com o dedo, direto no iPad ou no celular, os desenhos da Joy e da Jane.</p>
+<p class="quando">Em breve</p>
+</article>
+<article class="cartao">
+<h2>📒 Álbum de figurinhas</h2>
+<p>Uma figurinha nova a cada episódio, com a versão para imprimir e colar.</p>
+<a class="botao" href="sobre-a-joy.html#album">Ver o álbum</a>
+</article>
+<article class="cartao">
+<h2>🎂 Aniversário</h2>
+<p id="niver-texto">No aniversário, a Joy e a Jane mandam um recadinho especial.</p>
+</article>
+</div>
+</div>
+
+<div id="trancado" hidden>
+<article class="cartao" style="margin-top:20px">
+<h2>Os 7 dias grátis acabaram 💛</h2>
+<p>Gostou? Escolha um plano para continuar no Clube. A gente libera o acesso em até 24 horas.</p>
+<p><a class="botao" id="zap-mensal" href="#">Mensal R$ 14,90</a> <a class="botao rosa" id="zap-anual" href="#">Anual R$ 119,90</a> <a class="botao zap" id="zap-pix" href="#">Anual no Pix R$ 99,90</a></p>
+<p><a href="assinatura.html">Ver tudo o que tem nos planos</a></p>
+</article>
+</div>
+
+<div class="patinhas" aria-hidden="true">🐾 🐾 🐾</div>
+<details><summary>Meus dados</summary>
+<form id="form-dados" class="formulario" style="margin-top:12px">
+<label>Seu nome<input name="nome_responsavel" required></label>
+<label>Seu WhatsApp<input name="telefone" type="tel" required></label>
+<label>Nome da criança<input name="nome_crianca" required></label>
+<label>Aniversário da criança<input name="aniversario_crianca" type="date"></label>
+<button class="botao" type="submit">Salvar</button> <span id="salvo" role="status"></span>
+</form>
+<p style="margin-top:12px">E-mail da conta: <b id="email"></b></p>
+</details>
+<p style="margin-top:18px"><button class="botao" type="button" onclick="sair()">Sair</button></p>
+</div>
+
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="clube.js"></script>
+<script>
+const $ = (s) => document.querySelector(s);
+let familia = null;
+function zap(txt) { return "https://wa.me/" + PUGS_ZAP + "?text=" + encodeURIComponent(txt); }
+function diasAte(d) { return Math.ceil((new Date(d) - new Date()) / 86400000); }
+
+async function abrir() {
+  const { data: s } = await pugs.auth.getSession();
+  if (!s.session) { location.href = "entrar.html#entrar"; return; }
+  const { data, error } = await pugs.from("familias").select("*").eq("id", s.session.user.id).single();
+  if (error || !data) { $("#carregando").textContent = "Não conseguimos abrir seu cadastro agora. Tente de novo em alguns minutos ou fale com a gente no WhatsApp."; return; }
+  familia = data;
+  $("#nome-crianca").textContent = data.nome_crianca || "amiguinho";
+  $("#ola-adulto").textContent = data.nome_responsavel ? "(Olá, " + data.nome_responsavel.split(" ")[0] + "!)" : "";
+  $("#email").textContent = data.email || s.session.user.email;
+
+  const hoje = new Date().toISOString().slice(0, 10);
+  const pago = (data.assinatura === "mensal" || data.assinatura === "anual") && data.assinatura_ate && data.assinatura_ate >= hoje;
+  const emTeste = new Date(data.teste_ate) > new Date();
+  if (pago) {
+    $("#status").textContent = "Assinatura " + data.assinatura + " ativa até " + pugsData(data.assinatura_ate + "T12:00:00") + ". Obrigado por fazer parte! 💛";
+  } else if (emTeste) {
+    const d = diasAte(data.teste_ate);
+    $("#status").textContent = "Teste grátis: " + (d <= 1 ? "último dia" : "faltam " + d + " dias") + " (até " + pugsData(data.teste_ate) + "). Para continuar depois, é só escolher um plano.";
+  } else {
+    $("#status").hidden = true;
+  }
+  $("#liberado").hidden = !(pago || emTeste);
+  $("#trancado").hidden = pago || emTeste;
+  const quem = (data.nome_responsavel || "") + " (" + (data.email || "") + ")";
+  $("#zap-mensal").href = zap("Oi! Quero assinar o Clube Pugs Aventuras MENSAL 🐾 Cadastro: " + quem);
+  $("#zap-anual").href = zap("Oi! Quero assinar o Clube Pugs Aventuras ANUAL 🐾 Cadastro: " + quem);
+  $("#zap-pix").href = zap("Oi! Quero o Clube Pugs Aventuras ANUAL NO PIX. Pode me mandar a chave? 🐾 Cadastro: " + quem);
+
+  if (data.aniversario_crianca) {
+    const [a, m, dd] = data.aniversario_crianca.split("-");
+    $("#niver-texto").textContent = "O aniversário de " + (data.nome_crianca || "seu filho") + " é dia " + dd + "/" + m + ". A Joy e a Jane já anotaram! 🎉";
+  } else {
+    $("#niver-texto").textContent = "Coloque a data do aniversário em \"Meus dados\" (aqui embaixo) e a Joy e a Jane mandam um recadinho especial no dia! 🎉";
+  }
+  const f = $("#form-dados");
+  ["nome_responsavel", "telefone", "nome_crianca", "aniversario_crianca"].forEach((k) => f[k].value = data[k] || "");
+  $("#carregando").hidden = true; $("#area").hidden = false;
+}
+
+$("#form-dados").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const novo = { nome_responsavel: f.get("nome_responsavel").trim(), telefone: f.get("telefone").trim(), nome_crianca: f.get("nome_crianca").trim(), aniversario_crianca: f.get("aniversario_crianca") || null };
+  const { error } = await pugs.from("familias").update(novo).eq("id", familia.id);
+  $("#salvo").textContent = error ? pugsErro(error) : "Salvo! ✅";
+  if (!error) abrir();
+});
+
+async function sair() { await pugs.auth.signOut(); location.href = "index.html"; }
+abrir();
+</script>
+
+</body></html>
