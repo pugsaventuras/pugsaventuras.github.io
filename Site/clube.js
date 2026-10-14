@@ -38,3 +38,16 @@ async function pugsSoNoClube() {
   if (!a.ok) { location.href = "clube.html"; return null; }
   return a.familia;
 }
+
+// Idade a partir da data de nascimento (AAAA-MM-DD)
+function pugsIdade(nasc) {
+  if (!nasc) return null;
+  const [a, m, d] = nasc.split("-").map(Number), h = new Date();
+  let i = h.getFullYear() - a; if (h.getMonth() + 1 < m || (h.getMonth() + 1 === m && h.getDate() < d)) i--;
+  return i;
+}
+// "Theo", "Theo e Lia", "Theo, Lia e Bia"
+function pugsNomes(lista) {
+  const n = lista.map((c) => c.nome).filter(Boolean);
+  return n.length <= 1 ? (n[0] || "") : n.slice(0, -1).join(", ") + " e " + n[n.length - 1];
+}

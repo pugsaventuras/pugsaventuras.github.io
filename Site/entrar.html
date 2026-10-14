@@ -37,8 +37,11 @@
 <label>Seu e-mail<input name="email" type="email" required autocomplete="email"></label>
 <div class="telefone-campo"><label>País do WhatsApp<select name="pais" id="pais"><option value="55">🇧🇷 Brasil +55</option><option value="1">🇺🇸 Estados Unidos +1</option><option value="351">🇵🇹 Portugal +351</option><option value="1-ca">🇨🇦 Canadá +1</option><option value="44">🇬🇧 Reino Unido +44</option><option value="353">🇮🇪 Irlanda +353</option><option value="34">🇪🇸 Espanha +34</option><option value="39">🇮🇹 Itália +39</option><option value="33">🇫🇷 França +33</option><option value="49">🇩🇪 Alemanha +49</option><option value="41">🇨🇭 Suíça +41</option><option value="81">🇯🇵 Japão +81</option><option value="61">🇦🇺 Austrália +61</option><option value="52">🇲🇽 México +52</option><option value="54">🇦🇷 Argentina +54</option><option value="56">🇨🇱 Chile +56</option><option value="595">🇵🇾 Paraguai +595</option><option value="598">🇺🇾 Uruguai +598</option><option value="outro">🌎 Outro país</option></select></label>
 <label>Seu WhatsApp (com DDD)<input name="telefone" type="tel" required autocomplete="tel-national" placeholder="(11) 99999-9999" id="telefone"></label></div>
-<label>Nome da criança<input name="nome_crianca" required placeholder="Só o primeiro nome"></label>
-<label>Aniversário da criança <small>(opcional, para a Joy e a Jane lembrarem do dia)</small><input name="aniversario_crianca" type="date"></label>
+<fieldset class="filhos"><legend>Seus filhos 👧👦</legend>
+<p class="dica-filhos">A data de nascimento ajuda a Joy a saber a idade e o dia do aniversário.</p>
+<div id="lista-filhos"></div>
+<button type="button" class="botao pequeno" id="mais-filho">➕ Mais um filho</button>
+</fieldset>
 <label>Crie uma senha<input name="senha" type="password" minlength="6" required autocomplete="new-password" placeholder="Pelo menos 6 letras ou números"></label>
 <label class="aceite"><input name="aceite" type="checkbox" required> Sou o pai, a mãe ou o responsável pela criança e aceito que esses dados sejam usados só pelo Clube Pugs Aventuras (nunca são vendidos nem aparecem no site).</label>
 <button class="botao rosa" type="submit">Começar 7 dias grátis 🐾</button>
@@ -83,6 +86,21 @@ function mostrar(qual) {
   $("#aviso").hidden = true;
 }
 if (location.hash === "#entrar") mostrar("entrar");
+// ---- filhos (um ou mais)
+function linhaFilho(primeiro) {
+  const d = document.createElement("div"); d.className = "filho";
+  d.innerHTML = `<label>Nome da criança<input class="f-nome" required placeholder="Só o primeiro nome" maxlength="40"></label>
+  <label>Data de nascimento<input class="f-nasc" type="date" max="${new Date().toISOString().slice(0, 10)}"></label>
+  ${primeiro ? "" : '<button type="button" class="tirar" aria-label="Tirar esta criança">✖</button>'}`;
+  const t = d.querySelector(".tirar"); if (t) t.onclick = () => d.remove();
+  document.getElementById("lista-filhos").appendChild(d);
+}
+function filhos() {
+  return [...document.querySelectorAll("#lista-filhos .filho")].map((d) => ({ nome: d.querySelector(".f-nome").value.trim(), nascimento: d.querySelector(".f-nasc").value || "" })).filter((c) => c.nome);
+}
+linhaFilho(true);
+document.getElementById("mais-filho").onclick = () => linhaFilho(false);
+
 const EXEMPLOS = {"55":"(11) 99999-9999","1":"(954) 555-1234","1-ca":"(416) 555-1234","351":"912 345 678","outro":"+código do país e número"};
 document.getElementById("pais").addEventListener("change", (ev) => { document.getElementById("telefone").placeholder = EXEMPLOS[ev.target.value] || "número com DDD"; });
 function telefoneCompleto(f) {
@@ -106,8 +124,9 @@ $("#form-cadastro").addEventListener("submit", async (e) => {
       data: {
         nome_responsavel: f.get("nome_responsavel").trim(),
         telefone: telefoneCompleto(f),
-        nome_crianca: f.get("nome_crianca").trim(),
-        aniversario_crianca: f.get("aniversario_crianca") || "",
+        criancas: filhos(),
+        nome_crianca: (filhos()[0] || {}).nome || "",
+        aniversario_crianca: (filhos()[0] || {}).nascimento || "",
         aceite: f.get("aceite") ? "sim" : "nao"
       }
     }

@@ -238,3 +238,23 @@ button.botao{font:inherit;font-weight:700;cursor:pointer}
 .modelo img{width:100%;border-radius:8px}
 .modelo figcaption{font-size:1.4rem;line-height:1.2}
 @media (max-width:700px){.area-jogo{flex-direction:column-reverse;align-items:center}.modelo{width:130px;position:static}.area-jogo .tabuleiro{width:100%}}
+
+/* Figurinhas especiais douradas */
+.figurinha.especial{background:linear-gradient(135deg,#fff6c9,#ffd76a 45%,#fff3b0 55%,#f5b829);border-color:#8a5a00;box-shadow:4px 4px 0 #8a5a00,0 0 0 3px #ffe58a inset}
+.figurinha.especial .num{background:linear-gradient(135deg,#ffe58a,#f5b829);color:#5a3a22;font-size:1.2rem}
+.figurinha.especial .foto{border-color:#8a5a00}
+.figurinha.especial .foto::after{content:"";position:absolute;z-index:3;top:-60%;left:-60%;width:40%;height:220%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);transform:rotate(25deg);animation:brilho 3.5s ease-in-out infinite;pointer-events:none}
+.figurinha.especial.trancada{background:#f4ecd0;border-style:dashed}
+.figurinha.especial.trancada .foto::after{display:none}
+.figurinha.especial h3{color:#6b4300}
+@keyframes brilho{0%,60%{left:-60%}100%{left:130%}}
+@media (prefers-reduced-motion:reduce){.figurinha.especial .foto::after{animation:none;display:none}}
+
+/* Filhos no cadastro */
+.filhos{border:2.5px dashed var(--marrom);border-radius:16px;padding:10px 14px 14px;margin:0 0 14px}
+.filhos legend{font-weight:700;color:var(--marrom);padding:0 6px}
+.dica-filhos{font-size:.95rem;color:var(--suave);margin:0 0 8px}
+.filho{display:grid;grid-template-columns:1fr 1fr auto auto;gap:10px;align-items:end;margin-bottom:8px}
+.filho label{margin-bottom:0}
+.filho .tirar{font:inherit;border:2.5px solid var(--marrom);background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer;color:#b00020;font-weight:700}
+@media (max-width:520px){.filho{grid-template-columns:1fr;gap:6px;padding-bottom:10px;border-bottom:1.5px dashed rgba(90,58,34,.3)}.filho .tirar,.filho .salvar-filho{justify-self:start}}

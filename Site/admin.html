@@ -72,7 +72,7 @@ function somar(f, meses) {
 function esc(t) { return String(t || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 function desenhar() {
   const q = $("#busca").value.trim().toLowerCase();
-  const lista = familias.filter((f) => !q || [f.nome_responsavel, f.nome_crianca, f.email, f.telefone].join(" ").toLowerCase().includes(q));
+  const lista = familias.filter((f) => !q || [f.nome_responsavel, (f.criancas || []).map((c) => c.nome).join(" "), f.email, f.telefone].join(" ").toLowerCase().includes(q));
   const cont = { teste: 0, pago: 0, fim: 0 };
   familias.forEach((f) => cont[situacao(f)[0]]++);
   $("#c-total").textContent = familias.length; $("#c-teste").textContent = cont.teste; $("#c-pagos").textContent = cont.pago; $("#c-fim").textContent = cont.fim;
@@ -81,7 +81,7 @@ function desenhar() {
     const tel = (f.telefone || "").replace(/\D/g, "");
     return `<article class="cartao familia ${tipo}">
       <div class="familia-topo"><div><h3>${esc(f.nome_responsavel) || "(sem nome)"}</h3>
-      <p>Criança: <b>${esc(f.nome_crianca)}</b>${f.aniversario_crianca ? " · niver " + f.aniversario_crianca.slice(8, 10) + "/" + f.aniversario_crianca.slice(5, 7) : ""}</p>
+      <p>${(f.criancas || []).length > 1 ? "Crianças" : "Criança"}: ${(f.criancas || []).map((c) => "<b>" + esc(c.nome) + "</b>" + (c.nascimento ? " (" + pugsIdade(c.nascimento) + " anos, niver " + c.nascimento.slice(8, 10) + "/" + c.nascimento.slice(5, 7) + ")" : "")).join(", ") || "<i>sem nome</i>"}</p>
       <p>${esc(f.email)}${tel ? ` · <a href="https://wa.me/${tel}" target="_blank" rel="noopener">WhatsApp ${esc(f.telefone)}</a>` : ""}</p>
       <p><small>Cadastro em ${pugsData(f.criado_em)}</small></p></div>
       <span class="etiqueta ${tipo}">${txt}</span></div>
@@ -110,7 +110,7 @@ async function liberar(id, plano, ate) {
   carregar();
 }
 async function carregar() {
-  const { data, error } = await pugs.from("familias").select("*").order("criado_em", { ascending: false });
+  const { data, error } = await pugs.from("familias").select("*, criancas(nome, nascimento)").order("criado_em", { ascending: false });
   if (error) return alerta(pugsErro(error));
   familias = data || []; desenhar();
 }

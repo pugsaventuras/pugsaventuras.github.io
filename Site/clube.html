@@ -73,10 +73,11 @@
 <form id="form-dados" class="formulario" style="margin-top:12px">
 <label>Seu nome<input name="nome_responsavel" required></label>
 <label>Seu WhatsApp (com o código do país)<input name="telefone" type="tel" required placeholder="+55 11 99999-9999 ou +1 954 555-1234"></label>
-<label>Nome da criança<input name="nome_crianca" required></label>
-<label>Aniversário da criança<input name="aniversario_crianca" type="date"></label>
 <button class="botao" type="submit">Salvar</button> <span id="salvo" role="status"></span>
 </form>
+<h3 style="margin-top:18px">Filhos 👧👦</h3>
+<div id="meus-filhos" class="formulario"></div>
+<p><button type="button" class="botao pequeno" id="novo-filho">➕ Mais um filho</button> <span id="salvo-filhos" role="status"></span></p>
 <p style="margin-top:12px">E-mail da conta: <b id="email"></b></p>
 </details>
 <p style="margin-top:18px"><a id="botao-painel" class="botao rosa" href="admin.html" hidden>Painel da Joice</a> <button class="botao" type="button" onclick="sair()">Sair</button></p>
@@ -104,10 +105,12 @@ function diasAte(d) { return Math.ceil((new Date(d) - new Date()) / 86400000); }
 async function abrir() {
   const { data: s } = await pugs.auth.getSession();
   if (!s.session) { location.href = "entrar.html#entrar"; return; }
-  const { data, error } = await pugs.from("familias").select("*").eq("id", s.session.user.id).single();
+  const { data, error } = await pugs.from("familias").select("*, criancas(id, nome, nascimento, criado_em)").eq("id", s.session.user.id).single();
   if (error || !data) { $("#carregando").textContent = "Não conseguimos abrir seu cadastro agora. Tente de novo em alguns minutos ou fale com a gente no WhatsApp."; return; }
   familia = data;
-  $("#nome-crianca").textContent = data.nome_crianca || "amiguinho";
+  const filhos = (data.criancas || []).sort((a, b) => a.criado_em.localeCompare(b.criado_em));
+  $("#nome-crianca").textContent = pugsNomes(filhos) || "amiguinho";
+  if (filhos.length > 1) document.querySelector("h1.titulo .l2").textContent = "Bem-vindos ao Clube";
   $("#ola-adulto").textContent = data.nome_responsavel ? "(Olá, " + data.nome_responsavel.split(" ")[0] + "!)" : "";
   $("#email").textContent = data.email || s.session.user.email;
 
@@ -129,14 +132,13 @@ async function abrir() {
   $("#zap-anual").href = zap("Oi! Quero assinar o Clube Pugs Aventuras ANUAL 🐾 Cadastro: " + quem);
   $("#zap-pix").href = zap("Oi! Quero o Clube Pugs Aventuras ANUAL NO PIX. Pode me mandar a chave? 🐾 Cadastro: " + quem);
 
-  if (data.aniversario_crianca) {
-    const [a, m, dd] = data.aniversario_crianca.split("-");
-    $("#niver-texto").textContent = "O aniversário de " + (data.nome_crianca || "seu filho") + " é dia " + dd + "/" + m + ". A Joy e a Jane já anotaram! 🎉";
-  } else {
-    $("#niver-texto").textContent = "Coloque a data do aniversário em \"Meus dados\" (aqui embaixo) e a Joy e a Jane mandam um recadinho especial no dia! 🎉";
-  }
+  const comData = filhos.filter((x) => x.nascimento);
+  $("#niver-texto").textContent = comData.length
+    ? comData.map((x) => { const [, m, dd] = x.nascimento.split("-"); const i = pugsIdade(x.nascimento); return x.nome + " (" + i + (i === 1 ? " aninho" : " anos") + "): dia " + dd + "/" + m; }).join(" · ") + ". A Joy e a Jane já anotaram! 🎉"
+    : "Coloque a data de nascimento em \"Meus dados\" (aqui embaixo) e a Joy e a Jane mandam um recadinho especial no aniversário! 🎉";
+  desenharFilhos(filhos);
   const f = $("#form-dados");
-  ["nome_responsavel", "telefone", "nome_crianca", "aniversario_crianca"].forEach((k) => f[k].value = data[k] || "");
+  ["nome_responsavel", "telefone"].forEach((k) => f[k].value = data[k] || "");
   const { data: admin } = await pugs.rpc("sou_admin");
   $("#botao-painel").hidden = !admin;
   $("#carregando").hidden = true; $("#area").hidden = false;
@@ -145,11 +147,45 @@ async function abrir() {
 $("#form-dados").addEventListener("submit", async (e) => {
   e.preventDefault();
   const f = new FormData(e.target);
-  const novo = { nome_responsavel: f.get("nome_responsavel").trim(), telefone: f.get("telefone").trim(), nome_crianca: f.get("nome_crianca").trim(), aniversario_crianca: f.get("aniversario_crianca") || null };
+  const novo = { nome_responsavel: f.get("nome_responsavel").trim(), telefone: f.get("telefone").trim() };
   const { error } = await pugs.from("familias").update(novo).eq("id", familia.id);
   $("#salvo").textContent = error ? pugsErro(error) : "Salvo! ✅";
   if (!error) abrir();
 });
+
+
+function desenharFilhos(lista) {
+  const box = $("#meus-filhos"); box.innerHTML = "";
+  lista.forEach((x) => box.appendChild(linhaFilho(x)));
+  if (!lista.length) box.appendChild(linhaFilho({}));
+}
+function linhaFilho(x) {
+  const d = document.createElement("div"); d.className = "filho"; if (x.id) d.dataset.id = x.id;
+  d.innerHTML = `<label>Nome<input class="f-nome" maxlength="40" value="${(x.nome || "").replace(/"/g, "&quot;")}"></label>
+  <label>Data de nascimento<input class="f-nasc" type="date" value="${x.nascimento || ""}" max="${new Date().toISOString().slice(0, 10)}"></label>
+  <button type="button" class="botao pequeno salvar-filho">Salvar</button>
+  <button type="button" class="tirar" aria-label="Tirar esta criança">✖</button>`;
+  d.querySelector(".salvar-filho").onclick = () => salvarFilho(d);
+  d.querySelector(".tirar").onclick = () => tirarFilho(d);
+  return d;
+}
+async function salvarFilho(d) {
+  const nome = d.querySelector(".f-nome").value.trim(), nascimento = d.querySelector(".f-nasc").value || null;
+  if (!nome) { $("#salvo-filhos").textContent = "Escreva o nome da criança."; return; }
+  const r = d.dataset.id ? await pugs.from("criancas").update({ nome, nascimento }).eq("id", d.dataset.id)
+                         : await pugs.from("criancas").insert({ familia_id: familia.id, nome, nascimento });
+  $("#salvo-filhos").textContent = r.error ? pugsErro(r.error) : "Salvo! ✅";
+  if (!r.error) abrir();
+}
+async function tirarFilho(d) {
+  if (!d.dataset.id) { d.remove(); return; }
+  const b = d.querySelector(".tirar");
+  if (!b.dataset.ok) { b.dataset.ok = 1; b.textContent = "Tirar?"; setTimeout(() => { delete b.dataset.ok; b.textContent = "✖"; }, 3000); return; }
+  const r = await pugs.from("criancas").delete().eq("id", d.dataset.id);
+  $("#salvo-filhos").textContent = r.error ? pugsErro(r.error) : "Pronto.";
+  if (!r.error) abrir();
+}
+$("#novo-filho").onclick = () => $("#meus-filhos").appendChild(linhaFilho({}));
 
 async function sair() { await pugs.auth.signOut(); location.href = "index.html"; }
 abrir();
