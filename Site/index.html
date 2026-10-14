@@ -24,8 +24,8 @@
 <h1 class="titulo">Oi! Eu sou a Joy<span class="l2">e essa é a Jane!</span></h1>
 <span class="selo">Episódio novo toda quarta-feira</span>
 <p class="intro">A Joy e a Jane são pugs de verdade! A Joy, levada e alegre, conta as aventuras de quando era filhotinha. A Jane, filha dela, continua aqui com a gente. Cada episódio termina com uma liçãozinha e com as fotos da Joy de verdade.</p>
-<div class="grade">
-<article class="cartao">
+<div class="grade" id="episodios">
+<article class="cartao" data-ep="1">
 <div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/xPRLTGgTwU4" title="Pugs Aventuras - Episódio 1: Procura-se uma pug" loading="lazy"
 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 <h2>Episódio 1 · Procura-se uma pug</h2>
@@ -33,23 +33,22 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p>A mamãe sonhava com uma pug. O papai avisou: "Cachorro? Só se for pequenininho!" Até que chegou a Joy, com um lambeijo bem na portaria.</p>
 <p class="licao"><b>Lição:</b> quem chega na família é recebido com carinho, uma caminha quentinha e um nome bem bonito.</p>
 </article>
-<article class="cartao">
-<div class="foto "><!-- foto: imagens/capa-ep2.jpg --><div class="falta"><img class="marca-falta" src="imagens/marca-pugs-aventuras.png" alt=""><span>Em breve 🐾</span></div>
-<img src="imagens/capa-ep2.jpg" alt="Capa do Episódio 2 (CAPA-ep2-com-titulo.jpg)" loading="lazy" onerror="this.remove()"></div>
+<article class="cartao" data-ep="2">
+<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/LefTp1EOWZ0" title="Pugs Aventuras - Episódio 2: A Joy e os chinelos do papai" loading="lazy"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 <h2>Episódio 2 · A Joy e os chinelos do papai</h2>
-<p class="quando">Estreia quarta, 14/10, às 19h (Brasília)</p>
+<p class="quando">No ar desde 14/10</p>
 <p>A família saiu para o jogo e a Joy ficou cuidando da casa. Entediada, ela descobriu um segredo: o pininho do chinelo sobe! Ploc!</p>
 <p class="licao"><b>Lição:</b> a Joy não fazia por mal. Ela só queria ficar pertinho de quem ela ama.</p>
-<p><a class="botao" href="https://www.youtube.com/@PugsAventuras">Ativar o lembrete no YouTube</a></p>
 </article>
-<article class="cartao">
+<article class="cartao" data-ep="3">
 <div class="foto "><!-- foto: imagens/capa-ep3.jpg --><div class="falta"><img class="marca-falta" src="imagens/marca-pugs-aventuras.png" alt=""><span>Em breve 🐾</span></div>
 <img src="imagens/capa-ep3.jpg" alt="Capa do Episódio 3 (quando estiver pronta)" loading="lazy" onerror="this.remove()"></div>
 <h2>Episódio 3 · A roupinha de meia</h2>
 <p class="quando">Quarta, 21/10</p>
 <p>Fazia muito frio e a Joy tremia. Foi aí que a mamãe teve uma ideia com uma meia do papai…</p>
 </article>
-<article class="cartao">
+<article class="cartao" data-ep="4">
 <div class="foto "><!-- foto: imagens/capa-ep4.jpg --><div class="falta"><img class="marca-falta" src="imagens/marca-pugs-aventuras.png" alt=""><span>Em breve 🐾</span></div>
 <img src="imagens/capa-ep4.jpg" alt="Capa do Episódio 4 (quando estiver pronta)" loading="lazy" onerror="this.remove()"></div>
 <h2>Episódio 4 · O papai que não queria cachorro</h2>
@@ -75,4 +74,31 @@ Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></d
 <div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
 Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
 </div></footer>
+<script>
+// Episódio novo aparece sozinho: o site lê episodios.json, que o GitHub atualiza a cada 30 minutos a partir do canal.
+(async () => {
+  try {
+    const r = await fetch("episodios.json?" + Date.now()); if (!r.ok) return;
+    const { videos } = await r.json();
+    const grade = document.getElementById("episodios");
+    const hoje = new Date().toISOString().slice(0, 10);
+    for (const v of videos.filter((x) => x.ep).sort((a, b) => a.ep - b.ep)) {
+      let card = grade.querySelector(`[data-ep="${v.ep}"]`);
+      if (!card) {
+        card = document.createElement("article"); card.className = "cartao"; card.dataset.ep = v.ep;
+        const nome = v.titulo.split("|")[0].replace(/🐾/g, "").trim();
+        card.innerHTML = `<div class="foto"></div><h2>Episódio ${v.ep} · ${nome}</h2><p class="quando"></p>`;
+        const depois = [...grade.querySelectorAll("[data-ep]")].find((c) => +c.dataset.ep > v.ep);
+        grade.insertBefore(card, depois || null);
+      }
+      const foto = card.querySelector(".foto");
+      if (!foto.querySelector("iframe")) {
+        foto.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}" title="Pugs Aventuras - Episódio ${v.ep}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        const q = card.querySelector(".quando"); if (q) q.textContent = v.visto_em === hoje ? "Novinho! Acabou de sair 🎉" : "Já está no ar! 🎉";
+        card.querySelectorAll('a[href*="youtube.com/@"]').forEach((a) => a.closest("p")?.remove());
+      }
+    }
+  } catch (e) { /* sem internet ou arquivo ausente: a página continua como está */ }
+})();
+</script>
 </body></html>
