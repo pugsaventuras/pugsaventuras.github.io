@@ -20,3 +20,21 @@ function pugsData(d) {
   const x = new Date(d);
   return x.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
 }
+
+// Confere se a família pode usar o Clube (teste grátis ou assinatura valendo)
+async function pugsAcesso() {
+  const { data: s } = await pugs.auth.getSession();
+  if (!s.session) return { login: false, ok: false };
+  const { data } = await pugs.from("familias").select("*").eq("id", s.session.user.id).single();
+  if (!data) return { login: true, ok: false };
+  const hoje = new Date().toISOString().slice(0, 10);
+  const pago = ["mensal", "anual", "cortesia"].includes(data.assinatura) && data.assinatura_ate && data.assinatura_ate >= hoje;
+  const teste = new Date(data.teste_ate) > new Date();
+  return { login: true, ok: pago || teste, familia: data };
+}
+async function pugsSoNoClube() {
+  const a = await pugsAcesso();
+  if (!a.login) { location.href = "entrar.html#entrar"; return null; }
+  if (!a.ok) { location.href = "clube.html"; return null; }
+  return a.familia;
+}

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quebra-cabeça | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Quebra-cabeça 🧩</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha">
+    <p class="jogo-dica">1. Escolha a figura</p>
+    <div class="desenhos grandes" id="figuras"></div>
+    <p class="jogo-dica">2. Quantas peças?</p>
+    <div class="niveis" id="niveis"></div>
+  </div>
+  <div id="partida" hidden>
+    <p class="jogo-dica">Arraste cada peça para o lugar certo (ou toque na peça e depois no lugar). <button type="button" class="botao pequeno" id="trocar">Trocar figura</button></p>
+    <div class="tabuleiro" id="tabuleiro"></div>
+    <div class="bandeja" id="bandeja"></div>
+  </div>
+  <div id="festa" class="festa" hidden>
+    <div class="festa-cartao cartao">
+      <p class="festa-titulo">Parabéns! 🎉</p>
+      <img id="festa-img" alt="">
+      <p>Você montou tudinho!</p>
+      <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
+      <button type="button" class="botao" id="outra">Outra figura</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="clube.js"></script>
+<script>
+// Para pôr uma figura nova: coloque a imagem em imagens/ e acrescente uma linha aqui.
+const FIGURAS = [
+  { img: "imagens/fig-ep1.jpg", nome: "O lambeijo" },
+  { img: "imagens/capa-ep2.jpg", nome: "A Joy e os chinelos" },
+  { img: "imagens/capa-dia-das-criancas.jpg", nome: "Dia das Crianças" },
+  { img: "imagens/banner-pugs-aventuras.jpg", nome: "Joy e Jane na estrada" },
+];
+const NIVEIS = [{ c: 2, l: 2, nome: "4 peças", emoji: "🐣" }, { c: 3, l: 2, nome: "6 peças", emoji: "🐶" }, { c: 3, l: 3, nome: "9 peças", emoji: "⭐" }, { c: 4, l: 3, nome: "12 peças", emoji: "🏆" }];
+let figura = 0, nivel = null, selecionada = null, colocadas = 0;
+const $ = (s) => document.getElementById(s);
+
+function telaEscolha() {
+  $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
+  $("figuras").innerHTML = FIGURAS.map((f, i) => `<button type="button" class="miniatura${i === figura ? " ativo" : ""}" data-i="${i}"><img src="${f.img}" alt=""><span>${f.nome}</span></button>`).join("");
+  $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}"><span>${n.emoji}</span>${n.nome}</button>`).join("");
+}
+$("figuras") && document.addEventListener("click", (e) => {
+  const f = e.target.closest("#figuras .miniatura"); if (f) { figura = +f.dataset.i; telaEscolha(); }
+  const n = e.target.closest("#niveis .nivel"); if (n) { nivel = NIVEIS[+n.dataset.i]; comecar(); }
+});
+function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function comecar() {
+  const src = FIGURAS[figura].img;
+  const im = new Image();
+  im.onload = () => {
+    const prop = im.naturalWidth / im.naturalHeight, { c, l } = nivel;
+    $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
+    colocadas = 0; selecionada = null;
+    const tab = $("tabuleiro"), band = $("bandeja");
+    tab.style.aspectRatio = prop; tab.style.gridTemplateColumns = `repeat(${c},1fr)`; tab.style.gridTemplateRows = `repeat(${l},1fr)`;
+    tab.style.setProperty("--fundo", `url("${src}")`);
+    tab.innerHTML = ""; band.innerHTML = "";
+    for (let k = 0; k < c * l; k++) { const v = document.createElement("div"); v.className = "vaga"; v.dataset.k = k; tab.appendChild(v); }
+    const pecas = [];
+    for (let k = 0; k < c * l; k++) {
+      const p = document.createElement("div"); p.className = "peca"; p.dataset.k = k;
+      const x = k % c, y = (k / c) | 0;
+      p.style.backgroundImage = `url("${src}")`;
+      p.style.backgroundSize = `${c * 100}% ${l * 100}%`;
+      p.style.backgroundPosition = `${c > 1 ? (x / (c - 1)) * 100 : 0}% ${l > 1 ? (y / (l - 1)) * 100 : 0}%`;
+      p.style.aspectRatio = (prop * l / c);
+      ligarArraste(p); pecas.push(p);
+    }
+    embaralhar(pecas).forEach((p) => band.appendChild(p));
+    ajustarPecas();
+  };
+  im.src = src;
+}
+function ajustarPecas() {
+  const vaga = document.querySelector(".vaga"); if (!vaga) return;
+  const w = vaga.getBoundingClientRect().width;
+  document.querySelectorAll(".bandeja .peca").forEach((p) => p.style.width = Math.max(56, w * 0.92) + "px");
+}
+addEventListener("resize", ajustarPecas);
+
+function colocar(p, vaga) {
+  if (!vaga || vaga.dataset.k !== p.dataset.k || vaga.firstChild) {
+    p.classList.remove("balanca"); void p.offsetWidth; p.classList.add("balanca");
+    return false;
+  }
+  p.style.width = ""; p.classList.add("certa"); p.classList.remove("escolhida"); vaga.appendChild(p);
+  colocadas++;
+  if (colocadas === nivel.c * nivel.l) setTimeout(festa, 400);
+  return true;
+}
+function ligarArraste(p) {
+  let inicio = null, fantasma = null;
+  p.addEventListener("pointerdown", (e) => {
+    if (p.classList.contains("certa")) return;
+    e.preventDefault(); p.setPointerCapture(e.pointerId);
+    inicio = { x: e.clientX, y: e.clientY, moveu: false };
+  });
+  p.addEventListener("pointermove", (e) => {
+    if (!inicio) return;
+    const dx = e.clientX - inicio.x, dy = e.clientY - inicio.y;
+    if (!inicio.moveu && Math.hypot(dx, dy) < 8) return;
+    if (!inicio.moveu) {
+      inicio.moveu = true; const r = p.getBoundingClientRect();
+      inicio.ox = inicio.x - r.left; inicio.oy = inicio.y - r.top;
+      p.style.width = r.width + "px"; p.classList.add("arrastando");
+    }
+    p.style.left = (e.clientX - inicio.ox) + "px"; p.style.top = (e.clientY - inicio.oy) + "px";
+  });
+  const soltar = (e) => {
+    if (!inicio) return;
+    const moveu = inicio.moveu; inicio = null;
+    if (!moveu) { // toque: escolhe a peça
+      document.querySelectorAll(".peca.escolhida").forEach((x) => x.classList.remove("escolhida"));
+      selecionada = p; p.classList.add("escolhida"); return;
+    }
+    p.classList.remove("arrastando"); p.style.left = p.style.top = "";
+    p.style.visibility = "hidden";
+    const embaixo = document.elementFromPoint(e.clientX, e.clientY);
+    p.style.visibility = "";
+    if (!colocar(p, embaixo && embaixo.closest(".vaga"))) ajustarPecas();
+  };
+  p.addEventListener("pointerup", soltar);
+  p.addEventListener("pointercancel", soltar);
+}
+document.addEventListener("click", (e) => {
+  const v = e.target.closest(".vaga");
+  if (v && selecionada && !selecionada.classList.contains("certa")) { if (colocar(selecionada, v)) selecionada = null; }
+});
+function festa() {
+  $("festa-img").src = FIGURAS[figura].img; $("festa").hidden = false;
+  for (let i = 0; i < 24; i++) {
+    const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "💗"][i % 5];
+    s.style.left = Math.random() * 100 + "vw"; s.style.animationDelay = Math.random() * 0.8 + "s";
+    document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
+  }
+}
+$("denovo").onclick = comecar; $("outra").onclick = telaEscolha; $("trocar").onclick = telaEscolha;
+pugsSoNoClube().then((f) => { if (!f) return; $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); });
+</script>
+
+</body></html>
