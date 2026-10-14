@@ -24,7 +24,7 @@
     <div class="niveis" id="niveis"></div>
   </div>
   <div id="partida" hidden>
-    <p class="jogo-dica">Arraste cada peça para o lugar certo (ou toque na peça e depois no lugar). <button type="button" class="botao pequeno" id="trocar">Trocar figura</button></p>
+    <p class="jogo-dica">Arraste cada peça para o lugar certo (ou toque na peça e depois no lugar). <button type="button" class="botao pequeno" id="espiar">👀 Espiar</button> <button type="button" class="botao pequeno" id="trocar">Trocar figura</button></p>
     <div class="tabuleiro" id="tabuleiro"></div>
     <div class="bandeja" id="bandeja"></div>
   </div>
@@ -85,6 +85,7 @@ function comecar() {
     const tab = $("tabuleiro"), band = $("bandeja");
     tab.style.aspectRatio = prop; tab.style.gridTemplateColumns = `repeat(${c},1fr)`; tab.style.gridTemplateRows = `repeat(${l},1fr)`;
     tab.style.setProperty("--fundo", `url("${src}")`);
+    tab.classList.toggle("sem-ajuda", c * l > 6);
     tab.innerHTML = ""; band.innerHTML = "";
     for (let k = 0; k < c * l; k++) { const v = document.createElement("div"); v.className = "vaga"; v.dataset.k = k; tab.appendChild(v); }
     const pecas = [];
@@ -165,6 +166,7 @@ function festa() {
     document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
   }
 }
+$("espiar").onclick = () => { const t = $("tabuleiro"); t.classList.add("espiando"); setTimeout(() => t.classList.remove("espiando"), 2000); };
 $("denovo").onclick = comecar; $("outra").onclick = telaEscolha; $("trocar").onclick = telaEscolha;
 pugsSoNoClube().then((f) => { if (!f) return; $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); });
 </script>

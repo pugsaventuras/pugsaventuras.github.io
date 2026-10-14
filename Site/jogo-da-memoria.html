@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jogo da memória | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Jogo da memória 🃏</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha">
+    <p class="jogo-dica">Quantas cartas?</p>
+    <div class="niveis" id="niveis"></div>
+  </div>
+  <div id="partida" hidden>
+    <p class="jogo-dica">Vire duas cartas e ache os pares iguais! <span class="placar">Jogadas: <b id="jogadas">0</b></span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+    <div class="mesa" id="mesa"></div>
+  </div>
+  <div id="festa" class="festa" hidden>
+    <div class="festa-cartao cartao">
+      <p class="festa-titulo">Parabéns! 🎉</p>
+      <p id="festa-texto">Você achou todos os pares!</p>
+      <div class="festa-pares" id="festa-pares"></div>
+      <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
+      <button type="button" class="botao" id="outra">Mudar</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="clube.js"></script>
+<script>
+// Para pôr uma carta nova: imagem quadrada em imagens/memoria/ e mais uma linha aqui.
+const CARTAS = ["m01","m02","m03","m04","m05","m06","m07","m08","m09","m10","m11","m12"].map((n) => "imagens/memoria/" + n + ".jpg");
+const NIVEIS = [{ pares: 3, nome: "6 cartas", emoji: "🐣" }, { pares: 6, nome: "12 cartas", emoji: "🐶" }, { pares: 8, nome: "16 cartas", emoji: "🏆" }];
+let nivel = null, abertas = [], travado = false, achados = 0, jogadas = 0;
+const $ = (s) => document.getElementById(s);
+function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function telaEscolha() {
+  $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
+  $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}"><span>${n.emoji}</span>${n.nome}</button>`).join("");
+}
+$("niveis").addEventListener("click", (e) => { const n = e.target.closest(".nivel"); if (n) { nivel = NIVEIS[+n.dataset.i]; comecar(); } });
+function comecar() {
+  $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
+  abertas = []; travado = false; achados = 0; jogadas = 0; $("jogadas").textContent = 0;
+  const figs = embaralhar(CARTAS.slice()).slice(0, nivel.pares);
+  const baralho = embaralhar(figs.concat(figs));
+  const mesa = $("mesa");
+  mesa.style.setProperty("--colunas", nivel.pares <= 3 ? 3 : 4);
+  mesa.innerHTML = baralho.map((f) => `<button type="button" class="carta" data-f="${f}" aria-label="carta virada"><span class="lado verso"></span><span class="lado frente" style="background-image:url('${f}')"></span></button>`).join("");
+}
+$("mesa").addEventListener("click", (e) => {
+  const c = e.target.closest(".carta");
+  if (!c || travado || c.classList.contains("virada") || c.classList.contains("achada")) return;
+  c.classList.add("virada"); c.setAttribute("aria-label", "carta aberta"); abertas.push(c);
+  if (abertas.length < 2) return;
+  jogadas++; $("jogadas").textContent = jogadas;
+  const [a, b] = abertas; abertas = [];
+  if (a.dataset.f === b.dataset.f) {
+    setTimeout(() => { a.classList.add("achada"); b.classList.add("achada"); }, 300);
+    achados++;
+    if (achados === nivel.pares) setTimeout(festa, 900);
+  } else {
+    travado = true;
+    setTimeout(() => { a.classList.remove("virada"); b.classList.remove("virada"); a.setAttribute("aria-label", "carta virada"); b.setAttribute("aria-label", "carta virada"); travado = false; }, 1100);
+  }
+});
+function festa() {
+  $("festa-texto").textContent = "Você achou todos os pares em " + jogadas + " jogadas!";
+  $("festa-pares").innerHTML = [...new Set([...document.querySelectorAll(".carta")].map((c) => c.dataset.f))].map((f) => `<img src="${f}" alt="">`).join("");
+  $("festa").hidden = false;
+  for (let i = 0; i < 24; i++) {
+    const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "💗"][i % 5];
+    s.style.left = Math.random() * 100 + "vw"; s.style.animationDelay = Math.random() * 0.8 + "s";
+    document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
+  }
+}
+$("denovo").onclick = comecar; $("outra").onclick = telaEscolha; $("trocar").onclick = telaEscolha;
+pugsSoNoClube().then((f) => { if (!f) return; $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); });
+</script>
+
+</body></html>
