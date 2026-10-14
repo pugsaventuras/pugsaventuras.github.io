@@ -1,0 +1,16 @@
+{
+  "name": "Pugs Aventuras",
+  "short_name": "Pugs Aventuras",
+  "description": "As aventuras da Joy e da Jane: episódios, jogos e o Clube.",
+  "start_url": "clube.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#d7f0fc",
+  "theme_color": "#d7f0fc",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
