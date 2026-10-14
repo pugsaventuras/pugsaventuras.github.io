@@ -29,7 +29,8 @@
 <h2>Criar conta da família</h2>
 <label>Seu nome (pai, mãe ou responsável)<input name="nome_responsavel" required autocomplete="name"></label>
 <label>Seu e-mail<input name="email" type="email" required autocomplete="email"></label>
-<label>Seu WhatsApp (com DDD)<input name="telefone" type="tel" required autocomplete="tel" placeholder="(11) 99999-9999"></label>
+<div class="telefone-campo"><label>País do WhatsApp<select name="pais" id="pais"><option value="55">🇧🇷 Brasil +55</option><option value="1">🇺🇸 Estados Unidos +1</option><option value="351">🇵🇹 Portugal +351</option><option value="1-ca">🇨🇦 Canadá +1</option><option value="44">🇬🇧 Reino Unido +44</option><option value="353">🇮🇪 Irlanda +353</option><option value="34">🇪🇸 Espanha +34</option><option value="39">🇮🇹 Itália +39</option><option value="33">🇫🇷 França +33</option><option value="49">🇩🇪 Alemanha +49</option><option value="41">🇨🇭 Suíça +41</option><option value="81">🇯🇵 Japão +81</option><option value="61">🇦🇺 Austrália +61</option><option value="52">🇲🇽 México +52</option><option value="54">🇦🇷 Argentina +54</option><option value="56">🇨🇱 Chile +56</option><option value="595">🇵🇾 Paraguai +595</option><option value="598">🇺🇾 Uruguai +598</option><option value="outro">🌎 Outro país</option></select></label>
+<label>Seu WhatsApp (com DDD)<input name="telefone" type="tel" required autocomplete="tel-national" placeholder="(11) 99999-9999" id="telefone"></label></div>
 <label>Nome da criança<input name="nome_crianca" required placeholder="Só o primeiro nome"></label>
 <label>Aniversário da criança <small>(opcional, para a Joy e a Jane lembrarem do dia)</small><input name="aniversario_crianca" type="date"></label>
 <label>Crie uma senha<input name="senha" type="password" minlength="6" required autocomplete="new-password" placeholder="Pelo menos 6 letras ou números"></label>
@@ -76,6 +77,14 @@ function mostrar(qual) {
   $("#aviso").hidden = true;
 }
 if (location.hash === "#entrar") mostrar("entrar");
+const EXEMPLOS = {"55":"(11) 99999-9999","1":"(954) 555-1234","1-ca":"(416) 555-1234","351":"912 345 678","outro":"+código do país e número"};
+document.getElementById("pais").addEventListener("change", (ev) => { document.getElementById("telefone").placeholder = EXEMPLOS[ev.target.value] || "número com DDD"; });
+function telefoneCompleto(f) {
+  const num = f.get("telefone").trim(), p = f.get("pais");
+  if (p === "outro" || num.startsWith("+")) return num;
+  return "+" + p.replace("-ca", "") + " " + num;
+}
+
 
 pugs.auth.getSession().then(({ data }) => { if (data.session && !location.hash.includes("type=recovery")) location.href = "clube.html"; });
 pugs.auth.onAuthStateChange((ev) => { if (ev === "PASSWORD_RECOVERY") mostrar("nova-senha"); });
@@ -90,7 +99,7 @@ $("#form-cadastro").addEventListener("submit", async (e) => {
       emailRedirectTo: location.origin + "/clube.html",
       data: {
         nome_responsavel: f.get("nome_responsavel").trim(),
-        telefone: f.get("telefone").trim(),
+        telefone: telefoneCompleto(f),
         nome_crianca: f.get("nome_crianca").trim(),
         aniversario_crianca: f.get("aniversario_crianca") || "",
         aceite: f.get("aceite") ? "sim" : "nao"
