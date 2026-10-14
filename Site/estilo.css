@@ -258,3 +258,5 @@ button.botao{font:inherit;font-weight:700;cursor:pointer}
 .filho label{margin-bottom:0}
 .filho .tirar{font:inherit;border:2.5px solid var(--marrom);background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer;color:#b00020;font-weight:700}
 @media (max-width:520px){.filho{grid-template-columns:1fr;gap:6px;padding-bottom:10px;border-bottom:1.5px dashed rgba(90,58,34,.3)}.filho .tirar,.filho .salvar-filho{justify-self:start}}
+
+.botao.som{font-size:1.6rem;padding:4px 14px;margin-left:auto;cursor:pointer}

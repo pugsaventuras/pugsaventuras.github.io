@@ -58,6 +58,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script src="clube.js"></script>
+<script src="sons.js"></script>
 <script>
 // Para pôr uma figura nova: coloque a imagem em imagens/ e acrescente uma linha aqui.
 const FIGURAS = [
@@ -119,11 +120,11 @@ addEventListener("resize", ajustarPecas);
 
 function colocar(p, vaga) {
   if (!vaga || vaga.dataset.k !== p.dataset.k || vaga.firstChild) {
-    p.classList.remove("balanca"); void p.offsetWidth; p.classList.add("balanca");
+    p.classList.remove("balanca"); void p.offsetWidth; p.classList.add("balanca"); PugsSom.erro();
     return false;
   }
   p.style.width = ""; p.classList.add("certa"); p.classList.remove("escolhida"); vaga.appendChild(p);
-  colocadas++;
+  colocadas++; PugsSom.pop();
   if (colocadas === nivel.c * nivel.l) setTimeout(festa, 400);
   return true;
 }
@@ -166,6 +167,7 @@ document.addEventListener("click", (e) => {
   if (v && selecionada && !selecionada.classList.contains("certa")) { if (colocar(selecionada, v)) selecionada = null; }
 });
 function festa() {
+  PugsSom.festa();
   $("festa-img").src = FIGURAS[figura].img; $("festa").hidden = false;
   for (let i = 0; i < 24; i++) {
     const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "💗"][i % 5];

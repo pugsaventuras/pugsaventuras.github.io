@@ -50,6 +50,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script src="clube.js"></script>
+<script src="sons.js"></script>
 <script>
 // Para pôr um desenho novo: coloque a imagem (traço preto, fundo branco) em imagens/ e acrescente uma linha aqui.
 const DESENHOS = [
@@ -124,7 +125,7 @@ function pintarEm(x, y) {
       if (q >= 0 && q < W * H && !visto[q] && linhas[q] >= 60) { visto[q] = 1; px[q * 4] = r; px[q * 4 + 1] = g; px[q * 4 + 2] = b; px[q * 4 + 3] = 255; }
     }
   }
-  pctx.putImageData(dados, 0, 0); desenhar();
+  pctx.putImageData(dados, 0, 0); desenhar(); PugsSom.pintar();
 }
 tela.addEventListener("pointerdown", (e) => {
   e.preventDefault();
@@ -136,12 +137,12 @@ let limparOk = false;
 document.getElementById("limpar").onclick = (e) => {
   if (!limparOk) { limparOk = true; e.target.textContent = "Toque de novo"; setTimeout(() => { limparOk = false; e.target.textContent = "🧽 Apagar tudo"; }, 3000); return; }
   limparOk = false; e.target.textContent = "🧽 Apagar tudo";
-  desfazer.push(pctx.getImageData(0, 0, W, H)); pctx.fillStyle = "#fff"; pctx.fillRect(0, 0, W, H); desenhar();
+  desfazer.push(pctx.getImageData(0, 0, W, H)); pctx.fillStyle = "#fff"; pctx.fillRect(0, 0, W, H); desenhar(); PugsSom.apagar();
 };
 document.getElementById("salvar").onclick = () => {
   tela.toBlob((blob) => {
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "minha-pintura-pugs-aventuras.png";
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    document.body.appendChild(a); a.click(); a.remove(); PugsSom.festa(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   });
 };
 montarPaleta();

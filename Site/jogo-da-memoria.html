@@ -55,6 +55,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 </div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
 <script src="clube.js"></script>
+<script src="sons.js"></script>
 <script>
 // Para pôr uma carta nova: imagem quadrada em imagens/memoria/ e mais uma linha aqui.
 const CARTAS = ["m01","m02","m03","m04","m05","m06","m07","m08","m09","m10","m11","m12"].map((n) => "imagens/memoria/" + n + ".jpg");
@@ -79,20 +80,21 @@ function comecar() {
 $("mesa").addEventListener("click", (e) => {
   const c = e.target.closest(".carta");
   if (!c || travado || c.classList.contains("virada") || c.classList.contains("achada")) return;
-  c.classList.add("virada"); c.setAttribute("aria-label", "carta aberta"); abertas.push(c);
+  c.classList.add("virada"); c.setAttribute("aria-label", "carta aberta"); abertas.push(c); PugsSom.virar();
   if (abertas.length < 2) return;
   jogadas++; $("jogadas").textContent = jogadas;
   const [a, b] = abertas; abertas = [];
   if (a.dataset.f === b.dataset.f) {
-    setTimeout(() => { a.classList.add("achada"); b.classList.add("achada"); }, 300);
+    setTimeout(() => { a.classList.add("achada"); b.classList.add("achada"); PugsSom.acerto(); }, 300);
     achados++;
     if (achados === nivel.pares) setTimeout(festa, 900);
   } else {
     travado = true;
-    setTimeout(() => { a.classList.remove("virada"); b.classList.remove("virada"); a.setAttribute("aria-label", "carta virada"); b.setAttribute("aria-label", "carta virada"); travado = false; }, 1100);
+    setTimeout(() => { PugsSom.virar(); a.classList.remove("virada"); b.classList.remove("virada"); a.setAttribute("aria-label", "carta virada"); b.setAttribute("aria-label", "carta virada"); travado = false; }, 1100);
   }
 });
 function festa() {
+  PugsSom.festa();
   $("festa-texto").textContent = "Você achou todos os pares em " + jogadas + " jogadas!";
   $("festa-pares").innerHTML = [...new Set([...document.querySelectorAll(".carta")].map((c) => c.dataset.f))].map((f) => `<img src="${f}" alt="">`).join("");
   $("festa").hidden = false;
