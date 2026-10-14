@@ -64,7 +64,7 @@ const $ = (s) => document.getElementById(s);
 function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function telaEscolha() {
   $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
-  $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}"><span>${n.emoji}</span>${n.nome}</button>`).join("");
+  $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}" aria-label="${n.nome}"><span>${n.emoji}</span><b>${n.pares * 2}</b><small>${"🃏".repeat(i + 1)}</small></button>`).join("");
 }
 $("niveis").addEventListener("click", (e) => { const n = e.target.closest(".nivel"); if (n) { nivel = NIVEIS[+n.dataset.i]; comecar(); } });
 function comecar() {

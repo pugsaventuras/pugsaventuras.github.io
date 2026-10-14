@@ -24,14 +24,14 @@
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
   <div id="escolha">
-    <p class="jogo-dica">1. Escolha a figura</p>
+    <p class="jogo-dica">🖼️ 1. Escolha a figura</p>
     <div class="desenhos grandes" id="figuras"></div>
-    <p class="jogo-dica">2. Quantas peças?</p>
+    <p class="jogo-dica">🧩 2. Quantas peças?</p>
     <div class="niveis" id="niveis"></div>
   </div>
   <div id="partida" hidden>
     <p class="jogo-dica">Arraste cada peça para o lugar certo (ou toque na peça e depois no lugar). <button type="button" class="botao pequeno" id="espiar">👀 Espiar</button> <button type="button" class="botao pequeno" id="trocar">Trocar figura</button></p>
-    <div class="tabuleiro" id="tabuleiro"></div>
+    <div class="area-jogo"><div class="tabuleiro" id="tabuleiro"></div><figure class="modelo"><img id="modelo" alt="Figura para copiar"><figcaption>👀</figcaption></figure></div>
     <div class="bandeja" id="bandeja"></div>
   </div>
   <div id="festa" class="festa" hidden>
@@ -66,14 +66,14 @@ const FIGURAS = [
   { img: "imagens/capa-dia-das-criancas.jpg", nome: "Dia das Crianças" },
   { img: "imagens/banner-pugs-aventuras.jpg", nome: "Joy e Jane na estrada" },
 ];
-const NIVEIS = [{ c: 2, l: 2, nome: "4 peças", emoji: "🐣" }, { c: 3, l: 2, nome: "6 peças", emoji: "🐶" }, { c: 3, l: 3, nome: "9 peças", emoji: "⭐" }, { c: 4, l: 3, nome: "12 peças", emoji: "🏆" }];
+const NIVEIS = [{ c: 2, l: 2, nome: "4", emoji: "🐣" }, { c: 3, l: 2, nome: "6", emoji: "🐥" }, { c: 3, l: 3, nome: "9", emoji: "🐶" }, { c: 4, l: 3, nome: "12", emoji: "⭐" }, { c: 4, l: 4, nome: "16", emoji: "🌟" }, { c: 6, l: 4, nome: "24", emoji: "🚀" }, { c: 7, l: 5, nome: "35", emoji: "🏆" }];
 let figura = 0, nivel = null, selecionada = null, colocadas = 0;
 const $ = (s) => document.getElementById(s);
 
 function telaEscolha() {
   $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
   $("figuras").innerHTML = FIGURAS.map((f, i) => `<button type="button" class="miniatura${i === figura ? " ativo" : ""}" data-i="${i}"><img src="${f.img}" alt=""><span>${f.nome}</span></button>`).join("");
-  $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}"><span>${n.emoji}</span>${n.nome}</button>`).join("");
+  $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}" aria-label="${n.nome} peças"><span>${n.emoji}</span><b>${n.nome}</b><small>${"🧩".repeat(Math.min(5, i + 1))}</small></button>`).join("");
 }
 $("figuras") && document.addEventListener("click", (e) => {
   const f = e.target.closest("#figuras .miniatura"); if (f) { figura = +f.dataset.i; telaEscolha(); }
@@ -91,6 +91,7 @@ function comecar() {
     const tab = $("tabuleiro"), band = $("bandeja");
     tab.style.aspectRatio = prop; tab.style.gridTemplateColumns = `repeat(${c},1fr)`; tab.style.gridTemplateRows = `repeat(${l},1fr)`;
     tab.style.setProperty("--fundo", `url("${src}")`);
+    $("modelo").src = src;
     tab.classList.toggle("sem-ajuda", c * l > 6);
     tab.innerHTML = ""; band.innerHTML = "";
     for (let k = 0; k < c * l; k++) { const v = document.createElement("div"); v.className = "vaga"; v.dataset.k = k; tab.appendChild(v); }
