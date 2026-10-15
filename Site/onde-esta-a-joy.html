@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Onde está a Joy? | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Onde está a Joy? 🔎</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha">
+    <p class="jogo-dica">Quantos esconderijos?</p>
+    <div class="niveis" id="niveis"></div>
+  </div>
+  <div id="partida" hidden>
+    <p class="jogo-dica">A Joy se escondeu! Toque para procurar. <span class="placar">Achou: <b id="achou">0</b> de 3</span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+    <div class="sala" id="sala"></div>
+  </div>
+  <div id="festa" class="festa" hidden>
+    <div class="festa-cartao cartao">
+      <p class="festa-titulo">Achou a Joy! 🎉</p>
+      <img src="imagens/jogos/joy-face.jpg" alt="A Joy feliz" style="width:180px;border-radius:50%">
+      <p>Você achou a Joy 3 vezes. Lambeijo! 💛</p>
+      <button type="button" class="botao rosa" id="denovo">Brincar de novo</button>
+      <button type="button" class="botao" id="outra">Mudar</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Onde está a Joy? Esconde-esconde: a Joy se esconde atrás de uma coisa da casa.
+const $ = (s) => document.getElementById(s);
+const LUGARES = [
+  { e: "🛋️", n: "sofá" }, { e: "📦", n: "caixa" }, { e: "🧺", n: "cesto" },
+  { e: "🪴", n: "planta" }, { e: "🎁", n: "presente" }, { e: "🛏️", n: "cama" },
+];
+const SURPRESAS = [
+  { img: "imagens/jogos/ranran.jpg", fala: "Aqui não! É o RanRan!" },
+  { img: "imagens/jogos/chinelo.jpg", fala: "Aqui não! É o chinelo do papai!" },
+  { img: "imagens/jogos/caminha.jpg", fala: "Aqui não! É a caminha da Joy!" },
+  { e: "🦴", fala: "Aqui não! Um ossinho!" }, { e: "⚽", fala: "Aqui não! Uma bolinha!" }, { e: "🧦", fala: "Aqui não! Uma meia!" },
+];
+const NIVEIS = [{ n: 3, emoji: "🐣" }, { n: 4, emoji: "🐶" }, { n: 6, emoji: "🏆" }];
+let nivel = null, achou = 0, onde = -1, travado = false, dica = null;
+function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function telaEscolha() {
+  clearTimeout(dica);
+  $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
+  $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}" aria-label="${n.n} esconderijos"><span>${n.emoji}</span><b>${n.n}</b><small>${"🔎".repeat(i + 1)}</small></button>`).join("");
+}
+$("niveis").addEventListener("click", (e) => { const b = e.target.closest(".nivel"); if (b) { nivel = NIVEIS[+b.dataset.i]; achou = 0; $("achou").textContent = 0; rodada(); } });
+function rodada() {
+  $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true; travado = false;
+  const lugares = embaralhar(LUGARES.slice()).slice(0, nivel.n), surpresas = embaralhar(SURPRESAS.slice());
+  onde = Math.floor(Math.random() * nivel.n);
+  $("sala").style.setProperty("--colunas", nivel.n === 4 ? 2 : 3);
+  $("sala").innerHTML = lugares.map((l, i) => {
+    const s = surpresas[i % surpresas.length];
+    const atras = i === onde ? `<img src="imagens/jogos/joy-face.jpg" alt="A Joy">` : (s.img ? `<img src="${s.img}" alt="">` : `<span class="emoji">${s.e}</span>`);
+    return `<button type="button" class="esconderijo" data-i="${i}" data-fala="${i === onde ? "" : s.fala}" aria-label="Procurar atrás do ${l.n}"><span class="atras">${atras}</span><span class="coisa">${l.e}</span></button>`;
+  }).join("");
+  PugsSom.falar("Onde está a Joy?");
+  clearTimeout(dica); dica = setTimeout(() => { const b = $("sala").children[onde]; if (b) { b.classList.add("mexe"); PugsSom.falar("Escutei um barulhinho..."); } }, 9000);
+}
+$("sala").addEventListener("click", (e) => {
+  const b = e.target.closest(".esconderijo"); if (!b || travado || b.classList.contains("aberto")) return;
+  b.classList.add("aberto"); b.classList.remove("mexe");
+  if (+b.dataset.i === onde) {
+    travado = true; clearTimeout(dica); PugsSom.acerto(); PugsSom.falar("Achou a Joy!");
+    achou++; $("achou").textContent = achou;
+    setTimeout(() => (achou >= 3 ? festa() : rodada()), 1800);
+  } else {
+    PugsSom.pop(); PugsSom.falar(b.dataset.fala);
+    setTimeout(() => b.classList.remove("aberto"), 1500);
+  }
+});
+function festa() {
+  PugsSom.festa(); $("festa").hidden = false;
+  for (let i = 0; i < 24; i++) {
+    const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "🔎"][i % 5];
+    s.style.left = Math.random() * 100 + "vw"; s.style.animationDelay = Math.random() * 0.8 + "s";
+    document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
+  }
+}
+$("denovo").onclick = () => { achou = 0; $("achou").textContent = 0; rodada(); };
+$("outra").onclick = $("trocar").onclick = telaEscolha;
+pugsSoNoClube().then((f) => { if (!f) return; $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); });
+</script>
+
+</body></html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Escrever o nome | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Escrever o nome ✏️</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha">
+    <p class="jogo-dica">Qual nome vamos escrever?</p>
+    <div class="niveis" id="nomes"></div>
+  </div>
+  <div id="partida" hidden>
+    <div class="nome-montado" id="montado" aria-live="polite"></div>
+    <p class="jogo-dica centro">Passe o dedinho em cima da letra! ☝️</p>
+    <div class="quadro-letra" id="quadro"><canvas id="tela" aria-label="Quadro para escrever a letra"></canvas></div>
+    <p class="centro"><button type="button" class="botao" id="ouvir">🔊 Ouvir</button> <button type="button" class="botao" id="apagar">🧽 Apagar</button> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+  </div>
+  <div id="festa" class="festa" hidden>
+    <div class="festa-cartao cartao">
+      <p class="festa-titulo">Muito bem! 🎉</p>
+      <p class="nome-festa" id="festa-nome"></p>
+      <img src="imagens/jogos/joy-face.jpg" alt="A Joy feliz" style="width:140px;border-radius:50%">
+      <br><button type="button" class="botao rosa" id="denovo">Escrever de novo</button>
+      <button type="button" class="botao" id="outra">Outro nome</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Escrever o nome: a criança passa o dedo por cima de cada letra do nome dela.
+const $ = (s) => document.getElementById(s);
+const CORES = ["#ff8a3d", "#2f8fe0", "#e0569a", "#38b26a", "#9b5de5", "#f2b400", "#e04848", "#1fb5b5"];
+let nome = "", letras = [], atual = 0, W = 0, H = 0, alvo = [], perto = null, tinta = null, tctx = null, desenhando = false, ultimo = null;
+const tela = $("tela"), ctx = tela.getContext("2d");
+const fonte = (t) => `700 ${t}px Fredoka, "Arial Rounded MT Bold", Arial, sans-serif`;
+
+function escolha(nomes) {
+  $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
+  $("nomes").innerHTML = nomes.map((n, i) => `<button type="button" class="botao nivel" data-n="${n}"><span>${["🐶", "⭐", "🌈", "🐾", "💛", "🎈"][i % 6]}</span><b>${n}</b></button>`).join("");
+}
+$("nomes").addEventListener("click", (e) => { const b = e.target.closest(".nivel"); if (b) comecar(b.dataset.n); });
+
+function comecar(n) {
+  nome = n; letras = [...n.toLocaleUpperCase("pt-BR")].filter((c) => c.trim()); atual = 0;
+  $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
+  montar(); preparar(); PugsSom.falar("Vamos escrever " + nome + "!");
+  setTimeout(() => PugsSom.falar(letras[0]), 1600);
+}
+function montar() {
+  $("montado").innerHTML = letras.map((l, i) => `<span class="${i < atual ? "feita" : i === atual ? "agora" : ""}" style="${i < atual ? "color:" + CORES[i % CORES.length] : ""}">${i <= atual ? l : "_"}</span>`).join("");
+}
+function preparar() {
+  const lado = Math.min($("quadro").clientWidth, 460), dpr = window.devicePixelRatio || 1;
+  W = H = lado; tela.style.width = tela.style.height = lado + "px"; tela.width = tela.height = Math.round(lado * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const L = letras[atual], t = H * 0.78;
+  ctx.clearRect(0, 0, W, H);
+  ctx.font = fonte(t); ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillStyle = "#fff3c4"; ctx.fillText(L, W / 2, H * 0.54);
+  ctx.setLineDash([10, 9]); ctx.lineWidth = 4; ctx.strokeStyle = "#b9946f"; ctx.strokeText(L, W / 2, H * 0.54); ctx.setLineDash([]);
+  // onde a criança precisa passar (a letra) e o que é "perto" (a letra com uma margem)
+  const m = document.createElement("canvas"); m.width = W; m.height = H; const mc = m.getContext("2d");
+  mc.font = fonte(t); mc.textAlign = "center"; mc.textBaseline = "middle"; mc.fillText(L, W / 2, H * 0.54);
+  const d = mc.getImageData(0, 0, W, H).data; alvo = [];
+  for (let y = 4; y < H; y += 7) for (let x = 4; x < W; x += 7) if (d[(y * W + x) * 4 + 3] > 100) alvo.push([x, y]);
+  mc.lineWidth = H * 0.12; mc.lineJoin = "round"; mc.strokeText(L, W / 2, H * 0.54);
+  perto = mc.getImageData(0, 0, W, H).data;
+  tinta = document.createElement("canvas"); tinta.width = W; tinta.height = H; tctx = tinta.getContext("2d");
+}
+function ponto(e) { const r = tela.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+function risco(a, b) {
+  const cor = CORES[atual % CORES.length];
+  for (const c of [ctx, tctx]) { c.strokeStyle = cor; c.lineWidth = H * 0.085; c.lineCap = c.lineJoin = "round"; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); }
+}
+tela.addEventListener("pointerdown", (e) => { e.preventDefault(); desenhando = true; ultimo = ponto(e); risco(ultimo, ultimo); tela.setPointerCapture(e.pointerId); });
+tela.addEventListener("pointermove", (e) => { if (!desenhando) return; const p = ponto(e); risco(ultimo, p); ultimo = p; });
+tela.addEventListener("pointerup", () => { desenhando = false; conferir(); });
+tela.addEventListener("pointercancel", () => { desenhando = false; });
+function conferir() {
+  const d = tctx.getImageData(0, 0, W, H).data;
+  const cobertos = alvo.filter(([x, y]) => d[(y * W + x) * 4 + 3] > 0).length / alvo.length;
+  let tot = 0, fora = 0;
+  for (let y = 3; y < H; y += 9) for (let x = 3; x < W; x += 9) { const i = (y * W + x) * 4 + 3; if (d[i] > 0) { tot++; if (perto[i] < 50) fora++; } }
+  if (tot && fora / tot > 0.45) { PugsSom.erro(); PugsSom.falar("Quase! Passe o dedinho em cima da letra."); setTimeout(preparar, 500); return; }
+  if (cobertos >= 0.55) proxima();
+}
+function proxima() {
+  PugsSom.acerto(); atual++; montar();
+  if (atual >= letras.length) { setTimeout(festa, 600); return; }
+  setTimeout(() => { preparar(); PugsSom.falar(letras[atual]); }, 650);
+}
+function festa() {
+  PugsSom.festa(); setTimeout(() => PugsSom.falar(nome + "! Muito bem!"), 1400);
+  $("festa-nome").innerHTML = letras.map((l, i) => `<span style="color:${CORES[i % CORES.length]}">${l}</span>`).join("");
+  $("festa").hidden = false;
+  for (let i = 0; i < 24; i++) {
+    const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "✏️"][i % 5];
+    s.style.left = Math.random() * 100 + "vw"; s.style.animationDelay = Math.random() * 0.8 + "s";
+    document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
+  }
+}
+$("ouvir").onclick = () => PugsSom.falar(letras[atual] || nome);
+$("apagar").onclick = () => { PugsSom.apagar(); preparar(); };
+$("trocar").onclick = $("outra").onclick = () => escolha(window.NOMES);
+$("denovo").onclick = () => comecar(nome);
+addEventListener("resize", () => { if (!$("partida").hidden) preparar(); });
+
+pugsSoNoClube().then(async (f) => {
+  if (!f) return;
+  let nomes = [];
+  try { const { data } = await pugs.from("criancas").select("nome, criado_em").order("criado_em"); nomes = (data || []).map((c) => pugsMaiuscula(c.nome).split(" ")[0]).filter(Boolean); } catch (e) {}
+  try { if (nomes.length) localStorage.setItem("pugs-nomes", JSON.stringify(nomes)); else nomes = JSON.parse(localStorage.getItem("pugs-nomes") || "[]"); } catch (e) {}
+  window.NOMES = [...new Set([...nomes, "Joy", "Jane"])].slice(0, 8);
+  try { await document.fonts.load(fonte(100)); } catch (e) {}
+  $("esperando").hidden = true; $("jogo").hidden = false; escolha(window.NOMES);
+});
+</script>
+
+</body></html>

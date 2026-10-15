@@ -53,8 +53,12 @@ function pugsIdade(nasc) {
   return i;
 }
 // "Theo", "Theo e Lia", "Theo, Lia e Bia"
+// "joy da silva" -> "Joy da Silva" (nome sempre com a primeira letra maiúscula)
+function pugsMaiuscula(nome) {
+  return (nome || "").trim().split(/\s+/).map((p, i) => (i > 0 && /^(da|de|do|das|dos|e)$/i.test(p)) ? p.toLowerCase() : p.charAt(0).toLocaleUpperCase("pt-BR") + p.slice(1)).join(" ");
+}
 function pugsNomes(lista) {
-  const n = lista.map((c) => c.nome).filter(Boolean);
+  const n = lista.map((c) => pugsMaiuscula(c.nome)).filter(Boolean);
   return n.length <= 1 ? (n[0] || "") : n.slice(0, -1).join(", ") + " e " + n[n.length - 1];
 }
 
