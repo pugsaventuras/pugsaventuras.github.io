@@ -1,7 +1,7 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v4";
+const CACHE = "pugs-clube-v5";
 const ARQUIVOS = [
-  "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "onde-esta-a-joy.html",
+  "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html",
   "imagens/jogos/joy-face.jpg", "imagens/jogos/ranran-so.jpg", "imagens/memoria/m02.jpg",
   "estilo.css", "clube.js", "sons.js", "sons/eba-joy.mp3", "sons/voz/lista.json", ...["site", "pintar", "quebra", "memoria", "nome", "joy"].map((m) => "sons/musica-" + m + ".mp3"), "manifest.json", "apple-touch-icon.png", "favicon.png",
   "imagens/marca-pugs-aventuras.png", "imagens/pintar-dia-das-criancas.png", "imagens/capa-ep2.jpg", "imagens/fig-ep1.jpg",
@@ -9,6 +9,9 @@ const ARQUIVOS = [
   "imagens/fig-especial-dia-das-criancas.jpg",
   ...Array.from({ length: 12 }, (_, i) => "imagens/memoria/m" + String(i + 1).padStart(2, "0") + ".jpg"),
   "supabase.js",
+  ...Array.from({ length: 19 }, (_, i) => "imagens/livrinho/ep1-pag" + String(i + 1).padStart(2, "0") + ".jpg"),
+  ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17].map((i) => "imagens/livrinho/ep2-pag" + String(i).padStart(2, "0") + ".jpg"),
+  ...Array.from({ length: 19 }, (_, i) => "sons/livrinho/ep1-pag" + String(i + 1).padStart(2, "0") + ".mp3"),
 ];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => Promise.allSettled(ARQUIVOS.map((u) => c.add(u)))).then(() => self.skipWaiting()));

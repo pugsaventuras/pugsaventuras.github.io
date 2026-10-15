@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Livrinhos | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Livrinhos 📖</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha">
+    <p class="jogo-dica">Qual história vamos ler?</p>
+    <div class="estante" id="estante"></div>
+    <div class="cartao" style="margin-top:22px">
+      <h2>🖨️ Para imprimir ou ler no computador</h2>
+      <p>Os livrinhos completos, com perguntas, atividades e a Joy de verdade.</p>
+      <p><b>Procura-se uma pug:</b> <a class="botao pequeno" href="arquivos/livrinho-ep1-tela.pdf" target="_blank">Ler (PDF)</a> <a class="botao pequeno rosa" href="arquivos/livrinho-ep1-imprimir-A5.pdf" download>Imprimir A5</a></p>
+      <p><b>A Joy e os chinelos do papai:</b> <a class="botao pequeno" href="arquivos/livrinho-ep2-tela.pdf" target="_blank">Ler (PDF)</a> <a class="botao pequeno rosa" href="arquivos/livrinho-ep2-imprimir-A5.pdf" download>Imprimir A5</a></p>
+    </div>
+  </div>
+  <div id="leitura" hidden>
+    <div class="livro" id="livro">
+      <img id="pag-img" alt="">
+      <p class="livro-texto" id="pag-txt"></p>
+    </div>
+    <div class="livro-controles">
+      <button type="button" class="botao seta" id="volta" aria-label="Página anterior">◀</button>
+      <button type="button" class="botao rosa" id="ouvir" aria-label="Ouvir esta página">🔊 Ouvir</button>
+      <span class="livro-num" id="pag-num"></span>
+      <button type="button" class="botao seta" id="vai" aria-label="Próxima página">▶</button>
+    </div>
+    <p class="centro"><button type="button" class="botao pequeno" id="trocar">Outra história</button></p>
+  </div>
+  <div id="festa" class="festa" hidden>
+    <div class="festa-cartao cartao">
+      <p class="festa-titulo">Fim! 🎉</p>
+      <img src="imagens/jogos/joy-face.jpg" alt="A Joy feliz" style="width:150px;border-radius:50%">
+      <p>Gostou da história? Lambeijos! 💛</p>
+      <button type="button" class="botao rosa" id="denovo">Ler de novo</button>
+      <button type="button" class="botao" id="outra">Outra história</button>
+    </div>
+  </div>
+</div>
+
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Livrinhos do Clube: as páginas viram com o dedo (ou nas setas) e, quando tem, a página toca o áudio do episódio.
+const $ = (s) => document.getElementById(s);
+const LIVROS = [
+  { titulo: "Procura-se uma pug!", ep: 1, audio: true, paginas: [
+    "Oi, oi! Eu sou a Joy! Quer saber como eu encontrei a minha família? Vem comigo!",
+    "Essa é a minha mamãe Joice e o meu papai Ge. Eles se amavam muito...",
+    "...mas no coração deles tinha um cantinho vazio.",
+    "Um dia, em uma feirinha, a mamãe estava passeando... quando, de repente, ela viu um pug que não parava de pular!",
+    "“Ai, eu nunca vi um cachorrinho assim!”",
+    "A mamãe mandou uma foto pro papai: “Tão feio, tão feio, que chega a ser lindo! Parece você!” “Eu sou feio?!”",
+    "O papai não gostou da ideia. Cruzou os braços e disse: “Cachorro? Só se for pequenininho!”",
+    "“E se for uma menina? Um dia ela pode ter filhotinhos!” E o papai sorriu!",
+    "A mamãe começou até a sonhar com pug!",
+    "Daí eles decidiram que precisavam de um pug. “Eba! Vamos ter uma menina!”",
+    "A moça do canil mandou uma foto de duas irmãzinhas abraçadas. Sabe quem era essa? EU! “Ah! É ela!”",
+    "Olha eu aí de lacinho rosa! Só precisava crescer mais um pouquinho.",
+    "Enquanto me esperava, a mamãe preparou tudo: caminha vermelha, um amiguinho de pelúcia... e não parava de contar os dias!",
+    "E no dia 10 de junho, eu cheguei! “Ela chegou!” E dei meu primeiro lambeijo na mamãe!",
+    "A mamãe escolheu o meu nome, que é... “Joy! Sabe o que quer dizer?”",
+    "Alegria!",
+    "Hum...",
+    "Essa sou eu de verdade. Viu como eu era fofinha?",
+    "Gostou da minha história? Então já segue aí pra não perder os próximos episódios! Vamos aprontar muito juntos! Tchau, tchau, lambeijos!",
+  ].map((t, i) => ({ t, n: String(i + 1).padStart(2, "0") })) },
+  { titulo: "A Joy e os chinelos do papai", ep: 2, audio: false, paginas: [
+    ["01", "A história dos chinelos do papai! Eu andava pela casa seguindo os passos da mamãe e do papai. Eu adorava ficar pertinho dos pés deles."],
+    ["02", "E sabe qual era a minha caminha preferida? O chinelo! Quentinho e com cheirinho de família."],
+    ["03", "A Julia, filha do papai, veio passar o fim de semana com a gente."],
+    ["04", "Julia: “Ah, vamos logo! Tchau, tchau, Joy!” Mamãe: “A gente já volta! Cuida da casa!”"],
+    ["05", "Fiquei sozinha... E agora? O que eu vou fazer?"],
+    ["06", "Esse é o RanRan, o meu melhor amiguinho! A gente brincava e se divertia muito juntos."],
+    ["07", "E esse ossinho vermelho era tão gostoso!"],
+    ["08", "E agora? Não tenho mais o que fazer... Quando eles vão voltar?"],
+    ["09", "Ah, olha o que eu achei! O que é isso? Uma bolinha que sobe e desce!"],
+    ["10", "Agora eu vou arrumar o chinelo da mamãe..."],
+    ["11", "Ops, saiu!"],
+    ["12", "Mamãe: “Joy, o que aconteceu aqui?” Joy: “O que eu fiz?” Julia: “Olha o meu, ela não pegou!”"],
+    ["13", "A mamãe e o papai foram na feira. “Olha a tirinha nova! Tem de todas as cores!”"],
+    ["14", "O papai consertou o chinelo. E quando eu fui pegar de novo... Papai: “Não, não, Joy! Chinelo não é brinquedo. O seu é o RanRan. Isso, boa menina!”"],
+    ["15", "E assim eu aprendi: chinelo é da mamãe e do papai. Brinquedo é meu!"],
+    ["17", "Julia: “Tchau, amiguinhos! Adorei participar com a Joy do Pugs Aventuras!” Joy: “Obrigada, Julia! Você é a minha irmã. Te amo! Tchau, tchau, amiguinhos!”"],
+  ].map(([n, t]) => ({ n, t })) },
+];
+let livro = null, pag = 0, lerSozinho = true, toque = null;
+const img = (l, p) => `imagens/livrinho/ep${l.ep}-pag${p.n}.jpg`;
+function estante() {
+  $("escolha").hidden = false; $("leitura").hidden = true; $("festa").hidden = true; parar();
+  $("estante").innerHTML = LIVROS.map((l, i) => `<button type="button" class="capa-livro" data-i="${i}"><img src="${img(l, l.paginas[0])}" alt=""><span class="nome">${l.titulo}</span><small>Episódio ${l.ep}${l.audio ? " · com a voz da Joy 🔊" : ""}</small></button>`).join("");
+}
+$("estante").addEventListener("click", (e) => { const b = e.target.closest(".capa-livro"); if (b) abrir(LIVROS[+b.dataset.i]); });
+function abrir(l) { livro = l; pag = 0; $("escolha").hidden = true; $("leitura").hidden = false; $("festa").hidden = true; $("ouvir").hidden = !l.audio; mostrar(); }
+let audio = null;
+function parar() { if (audio) { audio.pause(); audio = null; } }
+function ouvir() {
+  parar(); if (!livro.audio || !PugsSom.ligado) return;
+  audio = new Audio(`sons/livrinho/ep${livro.ep}-pag${livro.paginas[pag].n}.mp3`);
+  audio.onended = () => { audio = null; };
+  const p = audio.play(); if (p && p.catch) p.catch(() => {});
+}
+function mostrar() {
+  const p = livro.paginas[pag];
+  $("pag-img").src = img(livro, p); $("pag-txt").textContent = p.t;
+  $("pag-num").textContent = (pag + 1) + " / " + livro.paginas.length;
+  $("volta").disabled = pag === 0;
+  $("livro").classList.remove("vira"); void $("livro").offsetWidth; $("livro").classList.add("vira");
+  // pré-carrega a próxima
+  const q = livro.paginas[pag + 1]; if (q) { const i = new Image(); i.src = img(livro, q); }
+  if (lerSozinho) ouvir();
+}
+function vai() { PugsSom.virar(); if (pag < livro.paginas.length - 1) { pag++; mostrar(); } else fim(); }
+function volta() { if (pag > 0) { PugsSom.virar(); pag--; mostrar(); } }
+function fim() {
+  parar(); PugsSom.festa(); $("festa").hidden = false;
+  for (let i = 0; i < 20; i++) {
+    const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "📖", "💗"][i % 5];
+    s.style.left = Math.random() * 100 + "vw"; s.style.animationDelay = Math.random() * 0.8 + "s";
+    document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
+  }
+}
+$("vai").onclick = vai; $("volta").onclick = volta; $("ouvir").onclick = ouvir;
+$("trocar").onclick = $("outra").onclick = () => { parar(); estante(); };
+$("denovo").onclick = () => abrir(livro);
+// virar a página com o dedo
+$("livro").addEventListener("touchstart", (e) => { toque = e.touches[0].clientX; }, { passive: true });
+$("livro").addEventListener("touchend", (e) => { if (toque == null) return; const dx = e.changedTouches[0].clientX - toque; toque = null; if (dx < -50) vai(); else if (dx > 50) volta(); });
+addEventListener("keydown", (e) => { if ($("leitura").hidden) return; if (e.key === "ArrowRight") vai(); if (e.key === "ArrowLeft") volta(); });
+addEventListener("pagehide", parar);
+pugsSoNoClube().then((f) => { if (!f) return; $("esperando").hidden = true; $("jogo").hidden = false; estante(); });
+</script>
+
+</body></html>

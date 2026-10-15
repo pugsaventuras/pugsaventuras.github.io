@@ -106,7 +106,7 @@ async function comecar(m, n) {
   itens = m === "abc" ? ALFABETO.slice() : m === "num" ? NUMEROS.slice() : [...n.toLocaleUpperCase("pt-BR")].filter((c) => c.trim());
   $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
   $("montado").classList.toggle("longo", itens.length > 10);
-  const familia = m === "nome" && !["Joy", "Jane"].includes(n);
+  const familia = false; // gravação do nome desligada por enquanto (deu erro no iPad)
   $("gravar-caixa").hidden = !familia;
   if (familia) { const tem = await vozGuardada(nome); $("ouvir-gravado").hidden = !tem; $("gravar").textContent = tem ? "🎤 Gravar de novo" : "🎤 Gravar o nome"; $("gravar-status").textContent = ""; }
   montar(); preparar(); setTimeout(falarItem, 300);
@@ -156,7 +156,7 @@ function proxima() {
 function festa() {
   PugsSom.festa();
   setTimeout(() => {
-    if (modo === "nome") falarNome();
+    if (modo === "nome") itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850));
     else if (modo === "abc") PugsSom.falar("", "fim-alfabeto");
     else PugsSom.falar("", "fim-numeros");
   }, 1500);
