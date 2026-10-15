@@ -25,11 +25,17 @@ function pugsData(d) {
 async function pugsAcesso() {
   const { data: s } = await pugs.auth.getSession();
   if (!s.session) return { login: false, ok: false };
-  const { data } = await pugs.from("familias").select("*").eq("id", s.session.user.id).single();
+  const { data, error } = await pugs.from("familias").select("*").eq("id", s.session.user.id).single();
+  if (!data && (!navigator.onLine || (error && /fetch|network/i.test(error.message || "")))) {
+    // sem internet: vale o acesso guardado da última vez
+    let ate = ""; try { ate = localStorage.getItem("pugs-acesso-ate") || ""; } catch (e) {}
+    return { login: true, ok: !!ate && new Date(ate) > new Date(), familia: { offline: true } };
+  }
   if (!data) return { login: true, ok: false };
   const hoje = new Date().toISOString().slice(0, 10);
   const pago = ["mensal", "anual", "cortesia"].includes(data.assinatura) && data.assinatura_ate && data.assinatura_ate >= hoje;
   const teste = new Date(data.teste_ate) > new Date();
+  try { localStorage.setItem("pugs-acesso-ate", pago ? data.assinatura_ate + "T23:59:59" : (teste ? data.teste_ate : "")); } catch (e) {}
   return { login: true, ok: pago || teste, familia: data };
 }
 async function pugsSoNoClube() {
@@ -51,3 +57,6 @@ function pugsNomes(lista) {
   const n = lista.map((c) => c.nome).filter(Boolean);
   return n.length <= 1 ? (n[0] || "") : n.slice(0, -1).join(", ") + " e " + n[n.length - 1];
 }
+
+// Jogos funcionam sem internet: o navegador guarda as páginas e imagens do Clube
+if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));

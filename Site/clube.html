@@ -95,7 +95,7 @@ Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></d
 <div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
 Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
 </div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+<script src="supabase.js"></script>
 <script src="clube.js"></script>
 <script>
 const $ = (s) => document.querySelector(s);
@@ -107,6 +107,13 @@ async function abrir() {
   const { data: s } = await pugs.auth.getSession();
   if (!s.session) { location.href = "entrar.html#entrar"; return; }
   const { data, error } = await pugs.from("familias").select("*, criancas(id, nome, nascimento, criado_em)").eq("id", s.session.user.id).single();
+  if ((error || !data) && !navigator.onLine) {
+    let ate = ""; try { ate = localStorage.getItem("pugs-acesso-ate") || ""; } catch (e) {}
+    if (ate && new Date(ate) > new Date()) {
+      $("#nome-crianca").textContent = "amiguinho"; $("#status").textContent = "Sem internet agora: os jogos funcionam! O resto volta quando a internet voltar. 🐾";
+      $("#trancado").hidden = true; $("#liberado").hidden = false; $("#carregando").hidden = true; $("#area").hidden = false; return;
+    }
+  }
   if (error || !data) { $("#carregando").textContent = "Não conseguimos abrir seu cadastro agora. Tente de novo em alguns minutos ou fale com a gente no WhatsApp."; return; }
   familia = data;
   const filhos = (data.criancas || []).sort((a, b) => a.criado_em.localeCompare(b.criado_em));
@@ -126,6 +133,7 @@ async function abrir() {
   } else {
     $("#status").hidden = true;
   }
+  try { localStorage.setItem("pugs-acesso-ate", pago ? data.assinatura_ate + "T23:59:59" : (emTeste ? data.teste_ate : "")); } catch (e) {}
   $("#liberado").hidden = !(pago || emTeste);
   $("#trancado").hidden = pago || emTeste;
   const quem = (data.nome_responsavel || "") + " (" + (data.email || "") + ")";
