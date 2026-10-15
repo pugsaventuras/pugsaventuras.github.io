@@ -125,7 +125,7 @@ function pintarEm(x, y) {
       if (q >= 0 && q < W * H && !visto[q] && linhas[q] >= 60) { visto[q] = 1; px[q * 4] = r; px[q * 4 + 1] = g; px[q * 4 + 2] = b; px[q * 4 + 3] = 255; }
     }
   }
-  pctx.putImageData(dados, 0, 0); desenhar(); PugsSom.pintar();
+  pctx.putImageData(dados, 0, 0); desenhar(); PugsSom.pintar(cor, CORES.indexOf(cor));
 }
 tela.addEventListener("pointerdown", (e) => {
   e.preventDefault();

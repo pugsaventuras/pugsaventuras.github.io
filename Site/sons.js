@@ -37,7 +37,13 @@ const PugsSom = (() => {
     get ligado() { return ligado; },
     alternar() { ligado = !ligado; try { localStorage.setItem("pugs-som", ligado ? "on" : "off"); } catch (e) {} if (ligado) { ac(); api.acerto(); } return ligado; },
     virar() { chiado(0.12, { de: 2500, para: 6000, vol: 0.18 }); },
-    pintar() { chiado(0.28, { de: 400, para: 1800, vol: 0.3, q: 0.8 }); tom(220, 0.18, { tipo: "sine", vol: 0.12, ate: 520 }); },
+    // cada cor tem a sua notinha (como um xilofone)
+    pintar(cor, idx) {
+      const notas = [523, 587, 659, 698, 784, 880, 988, 1047, 1175, 1319, 1397, 1568, 1760, 1976, 2093, 2349, 2637, 2794];
+      let i = idx >= 0 ? idx % notas.length : 0;
+      const f = notas[i];
+      tom(f, 0.35, { tipo: "sine", vol: 0.22 }); tom(f * 2, 0.18, { tipo: "sine", vol: 0.06 }); tom(f * 3, 0.1, { tipo: "triangle", vol: 0.03 });
+    },
     pop() { tom(520, 0.09, { tipo: "triangle", vol: 0.3, ate: 980 }); tom(1300, 0.08, { vol: 0.12, quando: 0.05 }); },
     acerto() { tom(880, 0.14, { vol: 0.22 }); tom(1320, 0.22, { vol: 0.22, quando: 0.1 }); },
     erro() { tom(330, 0.22, { tipo: "triangle", vol: 0.2, ate: 160 }); },
