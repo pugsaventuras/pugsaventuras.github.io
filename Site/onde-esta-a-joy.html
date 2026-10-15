@@ -64,11 +64,13 @@ const LUGARES = [
   { e: "🪴", n: "planta" }, { e: "🎁", n: "presente" }, { e: "🛏️", n: "cama" },
 ];
 const SURPRESAS = [
-  { img: "imagens/jogos/ranran.jpg", fala: "Aqui não! É o RanRan!" },
-  { img: "imagens/jogos/chinelo.jpg", fala: "Aqui não! É o chinelo do papai!" },
-  { img: "imagens/jogos/caminha.jpg", fala: "Aqui não! É a caminha da Joy!" },
-  { e: "🦴", fala: "Aqui não! Um ossinho!" }, { e: "⚽", fala: "Aqui não! Uma bolinha!" }, { e: "🧦", fala: "Aqui não! Uma meia!" },
-];
+  { img: "imagens/jogos/ranran-so.jpg", fala: "Aqui não! É o RanRan!", voz: "aqui-nao-ranran" },
+  { e: "🩴", fala: "Aqui não! É o chinelo do papai!", voz: "aqui-nao-chinelo" },
+  { e: "🦴", fala: "Aqui não! Um ossinho!", voz: "aqui-nao-ossinho" },
+  { e: "⚽", fala: "Aqui não! Uma bolinha!", voz: "aqui-nao-bolinha" },
+  { e: "🧦", fala: "Aqui não! Uma meia!", voz: "aqui-nao-meia" },
+  { e: "🧸", fala: "Aqui não! Um ursinho!", voz: "aqui-nao-ursinho" },
+]
 const NIVEIS = [{ n: 3, emoji: "🐣" }, { n: 4, emoji: "🐶" }, { n: 6, emoji: "🏆" }];
 let nivel = null, achou = 0, onde = -1, travado = false, dica = null;
 function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -86,20 +88,20 @@ function rodada() {
   $("sala").innerHTML = lugares.map((l, i) => {
     const s = surpresas[i % surpresas.length];
     const atras = i === onde ? `<img src="imagens/jogos/joy-face.jpg" alt="A Joy">` : (s.img ? `<img src="${s.img}" alt="">` : `<span class="emoji">${s.e}</span>`);
-    return `<button type="button" class="esconderijo" data-i="${i}" data-fala="${i === onde ? "" : s.fala}" aria-label="Procurar atrás do ${l.n}"><span class="atras">${atras}</span><span class="coisa">${l.e}</span></button>`;
+    return `<button type="button" class="esconderijo" data-i="${i}" data-fala="${i === onde ? "" : s.fala}" data-voz="${i === onde ? "" : s.voz}" aria-label="Procurar atrás do ${l.n}"><span class="atras">${atras}</span><span class="coisa">${l.e}</span></button>`;
   }).join("");
-  PugsSom.falar("Onde está a Joy?");
-  clearTimeout(dica); dica = setTimeout(() => { const b = $("sala").children[onde]; if (b) { b.classList.add("mexe"); PugsSom.falar("Escutei um barulhinho..."); } }, 9000);
+  PugsSom.falar("Cadê a Joy? Me acha!", "onde-esta-a-joy");
+  clearTimeout(dica); dica = setTimeout(() => { const b = $("sala").children[onde]; if (b) { b.classList.add("mexe"); PugsSom.falar("Hihi, tô pertinho...", "barulhinho"); } }, 9000);
 }
 $("sala").addEventListener("click", (e) => {
   const b = e.target.closest(".esconderijo"); if (!b || travado || b.classList.contains("aberto")) return;
   b.classList.add("aberto"); b.classList.remove("mexe");
   if (+b.dataset.i === onde) {
-    travado = true; clearTimeout(dica); PugsSom.acerto(); PugsSom.falar("Achou a Joy!");
+    travado = true; clearTimeout(dica); PugsSom.acerto(); PugsSom.falar("Achou! Lambeijo!", "achou-a-joy");
     achou++; $("achou").textContent = achou;
     setTimeout(() => (achou >= 3 ? festa() : rodada()), 1800);
   } else {
-    PugsSom.pop(); PugsSom.falar(b.dataset.fala);
+    PugsSom.pop(); PugsSom.falar(b.dataset.fala, b.dataset.voz);
     setTimeout(() => b.classList.remove("aberto"), 1500);
   }
 });

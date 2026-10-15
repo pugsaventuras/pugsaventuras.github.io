@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Escrever o nome | Pugs Aventuras</title>
+<title>Vamos escrever | Pugs Aventuras</title>
 <meta name="description" content="Área da família no Clube Pugs Aventuras.">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="favicon.png">
@@ -20,18 +20,23 @@
 <nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
 </header>
 <main>
-<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Escrever o nome ✏️</h1></div>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Vamos escrever ✏️</h1></div>
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
   <div id="escolha">
-    <p class="jogo-dica">Qual nome vamos escrever?</p>
+    <p class="jogo-dica">O que vamos escrever?</p>
     <div class="niveis" id="nomes"></div>
   </div>
   <div id="partida" hidden>
     <div class="nome-montado" id="montado" aria-live="polite"></div>
-    <p class="jogo-dica centro">Passe o dedinho em cima da letra! ☝️</p>
-    <div class="quadro-letra" id="quadro"><canvas id="tela" aria-label="Quadro para escrever a letra"></canvas></div>
+    <p class="jogo-dica centro">Passe o dedinho em cima! ☝️</p>
+    <div class="quadro-letra" id="quadro"><canvas id="tela" aria-label="Quadro para escrever"></canvas></div>
     <p class="centro"><button type="button" class="botao" id="ouvir">🔊 Ouvir</button> <button type="button" class="botao" id="apagar">🧽 Apagar</button> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+    <div class="gravar-nome cartao" id="gravar-caixa" hidden>
+      <p><b>Para os pais:</b> grave a sua voz falando o nome da criança. No final do jogo, ela ouve o nome dela falado por você. 💛</p>
+      <button type="button" class="botao rosa" id="gravar">🎤 Gravar o nome</button> <button type="button" class="botao" id="ouvir-gravado" hidden>▶️ Ouvir gravação</button>
+      <span id="gravar-status" class="gravar-status"></span>
+    </div>
   </div>
   <div id="festa" class="festa" hidden>
     <div class="festa-cartao cartao">
@@ -39,7 +44,7 @@
       <p class="nome-festa" id="festa-nome"></p>
       <img src="imagens/jogos/joy-face.jpg" alt="A Joy feliz" style="width:140px;border-radius:50%">
       <br><button type="button" class="botao rosa" id="denovo">Escrever de novo</button>
-      <button type="button" class="botao" id="outra">Outro nome</button>
+      <button type="button" class="botao" id="outra">Escolher outro</button>
     </div>
   </div>
 </div>
@@ -59,38 +64,65 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 <script src="clube.js"></script>
 <script src="sons.js"></script>
 <script>
-// Escrever o nome: a criança passa o dedo por cima de cada letra do nome dela.
+// Vamos escrever: o nome da criança, o alfabeto ou os números. A criança passa o dedo por cima de cada um.
 const $ = (s) => document.getElementById(s);
 const CORES = ["#ff8a3d", "#2f8fe0", "#e0569a", "#38b26a", "#9b5de5", "#f2b400", "#e04848", "#1fb5b5"];
-let nome = "", letras = [], atual = 0, W = 0, H = 0, alvo = [], perto = null, tinta = null, tctx = null, desenhando = false, ultimo = null;
+const ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""), NUMEROS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+let modo = "nome", nome = "", itens = [], atual = 0, W = 0, H = 0, alvo = [], perto = null, tinta = null, tctx = null, desenhando = false, ultimo = null;
 const tela = $("tela"), ctx = tela.getContext("2d");
 const fonte = (t) => `700 ${t}px Fredoka, "Arial Rounded MT Bold", Arial, sans-serif`;
 
+// ---- gravação do nome (fica guardada só neste aparelho)
+function banco() { return new Promise((ok, erro) => { const r = indexedDB.open("pugs-vozes", 1); r.onupgradeneeded = () => r.result.createObjectStore("nomes"); r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error); }); }
+async function vozGuardada(n) { try { const db = await banco(); return await new Promise((ok) => { const q = db.transaction("nomes").objectStore("nomes").get(n.toLowerCase()); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); } catch (e) { return null; } }
+async function guardarVoz(n, blob) { const db = await banco(); return new Promise((ok, erro) => { const t = db.transaction("nomes", "readwrite"); t.objectStore("nomes").put(blob, n.toLowerCase()); t.oncomplete = ok; t.onerror = () => erro(t.error); }); }
+async function falarNome() { const b = await vozGuardada(nome); if (b) PugsSom.tocarUrl(URL.createObjectURL(b)); else PugsSom.falar(nome); }
+$("gravar").onclick = async () => {
+  if (!navigator.mediaDevices || !window.MediaRecorder) { $("gravar-status").textContent = "Este aparelho não deixa gravar pelo site."; return; }
+  try {
+    const st = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const rec = new MediaRecorder(st), partes = [];
+    rec.ondataavailable = (e) => partes.push(e.data);
+    rec.onstop = async () => { st.getTracks().forEach((t) => t.stop()); const blob = new Blob(partes, { type: rec.mimeType || "audio/mp4" }); await guardarVoz(nome, blob); $("gravar-status").textContent = "Gravado! ✅"; $("ouvir-gravado").hidden = false; $("gravar").textContent = "🎤 Gravar de novo"; PugsSom.tocarUrl(URL.createObjectURL(blob)); };
+    $("gravar-status").textContent = "Gravando... fale o nome agora! 🔴"; rec.start(); setTimeout(() => rec.stop(), 2500);
+  } catch (e) { $("gravar-status").textContent = "Precisa permitir o microfone para gravar."; }
+};
+$("ouvir-gravado").onclick = falarNome;
+
 function escolha(nomes) {
   $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
-  $("nomes").innerHTML = nomes.map((n, i) => `<button type="button" class="botao nivel" data-n="${n}"><span>${["🐶", "⭐", "🌈", "🐾", "💛", "🎈"][i % 6]}</span><b>${n}</b></button>`).join("");
+  $("nomes").innerHTML = nomes.map((n, i) => `<button type="button" class="botao nivel" data-modo="nome" data-n="${n}"><span>${["🐶", "⭐", "🌈", "🐾", "💛", "🎈"][i % 6]}</span><b>${n}</b></button>`).join("")
+    + `<button type="button" class="botao nivel" data-modo="abc" aria-label="Alfabeto"><span>🔤</span><b>ABC</b></button>`
+    + `<button type="button" class="botao nivel" data-modo="num" aria-label="Números"><span>🔢</span><b>123</b></button>`;
 }
-$("nomes").addEventListener("click", (e) => { const b = e.target.closest(".nivel"); if (b) comecar(b.dataset.n); });
+$("nomes").addEventListener("click", (e) => { const b = e.target.closest(".nivel"); if (b) comecar(b.dataset.modo, b.dataset.n || ""); });
 
-function comecar(n) {
-  nome = n; letras = [...n.toLocaleUpperCase("pt-BR")].filter((c) => c.trim()); atual = 0;
+function falarItem() {
+  const it = itens[atual]; if (!it) return;
+  if (modo === "num") PugsSom.numero(+it); else PugsSom.letra(it);
+}
+async function comecar(m, n) {
+  modo = m; nome = n; atual = 0;
+  itens = m === "abc" ? ALFABETO.slice() : m === "num" ? NUMEROS.slice() : [...n.toLocaleUpperCase("pt-BR")].filter((c) => c.trim());
   $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
-  montar(); preparar(); PugsSom.falar("Vamos escrever " + nome + "!");
-  setTimeout(() => PugsSom.falar(letras[0]), 1600);
+  $("montado").classList.toggle("longo", itens.length > 10);
+  const familia = m === "nome" && !["Joy", "Jane"].includes(n);
+  $("gravar-caixa").hidden = !familia;
+  if (familia) { const tem = await vozGuardada(nome); $("ouvir-gravado").hidden = !tem; $("gravar").textContent = tem ? "🎤 Gravar de novo" : "🎤 Gravar o nome"; $("gravar-status").textContent = ""; }
+  montar(); preparar(); setTimeout(falarItem, 300);
 }
 function montar() {
-  $("montado").innerHTML = letras.map((l, i) => `<span class="${i < atual ? "feita" : i === atual ? "agora" : ""}" style="${i < atual ? "color:" + CORES[i % CORES.length] : ""}">${i <= atual ? l : "_"}</span>`).join("");
+  $("montado").innerHTML = itens.map((l, i) => `<span class="${i < atual ? "feita" : i === atual ? "agora" : ""}" style="${i < atual ? "color:" + CORES[i % CORES.length] : ""}">${modo !== "nome" || i <= atual ? l : "_"}</span>`).join("");
 }
 function preparar() {
   const lado = Math.min($("quadro").clientWidth, 460), dpr = window.devicePixelRatio || 1;
   W = H = lado; tela.style.width = tela.style.height = lado + "px"; tela.width = tela.height = Math.round(lado * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const L = letras[atual], t = H * 0.78;
+  const L = itens[atual]; if (!L) return; const t = H * (L.length > 1 ? 0.62 : 0.78);
   ctx.clearRect(0, 0, W, H);
   ctx.font = fonte(t); ctx.textAlign = "center"; ctx.textBaseline = "middle";
   ctx.fillStyle = "#fff3c4"; ctx.fillText(L, W / 2, H * 0.54);
   ctx.setLineDash([10, 9]); ctx.lineWidth = 4; ctx.strokeStyle = "#b9946f"; ctx.strokeText(L, W / 2, H * 0.54); ctx.setLineDash([]);
-  // onde a criança precisa passar (a letra) e o que é "perto" (a letra com uma margem)
   const m = document.createElement("canvas"); m.width = W; m.height = H; const mc = m.getContext("2d");
   mc.font = fonte(t); mc.textAlign = "center"; mc.textBaseline = "middle"; mc.fillText(L, W / 2, H * 0.54);
   const d = mc.getImageData(0, 0, W, H).data; alvo = [];
@@ -113,17 +145,23 @@ function conferir() {
   const cobertos = alvo.filter(([x, y]) => d[(y * W + x) * 4 + 3] > 0).length / alvo.length;
   let tot = 0, fora = 0;
   for (let y = 3; y < H; y += 9) for (let x = 3; x < W; x += 9) { const i = (y * W + x) * 4 + 3; if (d[i] > 0) { tot++; if (perto[i] < 50) fora++; } }
-  if (tot && fora / tot > 0.45) { PugsSom.erro(); PugsSom.falar("Quase! Passe o dedinho em cima da letra."); setTimeout(preparar, 500); return; }
+  if (tot && fora / tot > 0.45) { PugsSom.erro(); PugsSom.falar("", "quase"); setTimeout(preparar, 500); return; }
   if (cobertos >= 0.55) proxima();
 }
 function proxima() {
   PugsSom.acerto(); atual++; montar();
-  if (atual >= letras.length) { setTimeout(festa, 600); return; }
-  setTimeout(() => { preparar(); PugsSom.falar(letras[atual]); }, 650);
+  if (atual >= itens.length) { setTimeout(festa, 600); return; }
+  setTimeout(() => { preparar(); falarItem(); }, 650);
 }
 function festa() {
-  PugsSom.festa(); setTimeout(() => PugsSom.falar(nome + "! Muito bem!"), 1400);
-  $("festa-nome").innerHTML = letras.map((l, i) => `<span style="color:${CORES[i % CORES.length]}">${l}</span>`).join("");
+  PugsSom.festa();
+  setTimeout(() => {
+    if (modo === "nome") falarNome();
+    else if (modo === "abc") PugsSom.falar("", "fim-alfabeto");
+    else PugsSom.falar("", "fim-numeros");
+  }, 1500);
+  $("festa-nome").classList.toggle("longo", itens.length > 10);
+  $("festa-nome").innerHTML = itens.map((l, i) => `<span style="color:${CORES[i % CORES.length]}">${l}</span>`).join(modo === "num" ? " " : "");
   $("festa").hidden = false;
   for (let i = 0; i < 24; i++) {
     const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "✏️"][i % 5];
@@ -131,17 +169,21 @@ function festa() {
     document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
   }
 }
-$("ouvir").onclick = () => PugsSom.falar(letras[atual] || nome);
+$("ouvir").onclick = falarItem;
 $("apagar").onclick = () => { PugsSom.apagar(); preparar(); };
 $("trocar").onclick = $("outra").onclick = () => escolha(window.NOMES);
-$("denovo").onclick = () => comecar(nome);
+$("denovo").onclick = () => comecar(modo, nome);
 addEventListener("resize", () => { if (!$("partida").hidden) preparar(); });
 
 pugsSoNoClube().then(async (f) => {
   if (!f) return;
-  let nomes = [];
-  try { const { data } = await pugs.from("criancas").select("nome, criado_em").order("criado_em"); nomes = (data || []).map((c) => pugsMaiuscula(c.nome).split(" ")[0]).filter(Boolean); } catch (e) {}
-  try { if (nomes.length) localStorage.setItem("pugs-nomes", JSON.stringify(nomes)); else nomes = JSON.parse(localStorage.getItem("pugs-nomes") || "[]"); } catch (e) {}
+  // só os nomes das crianças DESTA família
+  let nomes = [], chave = "pugs-nomes";
+  try {
+    const { data: s } = await pugs.auth.getSession(); const uid = s && s.session && s.session.user.id;
+    if (uid) { chave += "-" + uid; const { data } = await pugs.from("criancas").select("nome, criado_em").eq("familia_id", uid).order("criado_em"); nomes = (data || []).map((c) => pugsMaiuscula(c.nome).split(" ")[0]).filter(Boolean); }
+  } catch (e) {}
+  try { if (nomes.length) localStorage.setItem(chave, JSON.stringify(nomes)); else nomes = JSON.parse(localStorage.getItem(chave) || "[]"); } catch (e) {}
   window.NOMES = [...new Set([...nomes, "Joy", "Jane"])].slice(0, 8);
   try { await document.fonts.load(fonte(100)); } catch (e) {}
   $("esperando").hidden = true; $("jogo").hidden = false; escolha(window.NOMES);
