@@ -157,7 +157,7 @@ function proxima() {
 function festa() {
   PugsSom.festa();
   setTimeout(() => {
-    if (modo === "nome") itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850));
+    if (modo === "nome") { itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850)); setTimeout(() => PugsSom.falar("", "fim-nome"), itens.length * 850 + 300); }
     else if (modo === "abc") PugsSom.falar("", "fim-alfabeto");
     else PugsSom.falar("", "fim-numeros");
   }, 1500);

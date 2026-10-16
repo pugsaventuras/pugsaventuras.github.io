@@ -75,7 +75,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 // Livrinhos do Clube: as páginas viram com o dedo (ou nas setas) e, quando tem, a página toca o áudio do episódio.
 const $ = (s) => document.getElementById(s);
 const LIVROS = [
-  { titulo: "Procura-se uma pug!", ep: 1, audio: true, paginas: [
+  { titulo: "Procura-se uma pug!", ep: 1, audio: true, capa: "imagens/capa-ep1.jpg", paginas: [
     "Oi, oi! Eu sou a Joy! Quer saber como eu encontrei a minha família? Vem comigo!",
     "Essa é a minha mamãe Joice e o meu papai Ge. Eles se amavam muito...",
     "...mas no coração deles tinha um cantinho vazio.",
@@ -96,30 +96,31 @@ const LIVROS = [
     "Essa sou eu de verdade. Viu como eu era fofinha?",
     "Gostou da minha história? Então já segue aí pra não perder os próximos episódios! Vamos aprontar muito juntos! Tchau, tchau, lambeijos!",
   ].map((t, i) => ({ t, n: String(i + 1).padStart(2, "0") })) },
-  { titulo: "A Joy e os chinelos do papai", ep: 2, audio: true, paginas: [
-    ["01", "A história dos chinelos do papai! Eu andava pela casa seguindo os passos da mamãe e do papai. Eu adorava ficar pertinho dos pés deles."],
-    ["02", "E sabe qual era a minha caminha preferida? O chinelo! Quentinho e com cheirinho de família."],
-    ["03", "A Julia, filha do papai, veio passar o fim de semana com a gente."],
-    ["04", "Julia: “Ah, vamos logo! Tchau, tchau, Joy!” Mamãe: “A gente já volta! Cuida da casa!”"],
-    ["05", "Fiquei sozinha... E agora? O que eu vou fazer?"],
-    ["06", "Esse é o RanRan, o meu melhor amiguinho! A gente brincava e se divertia muito juntos."],
-    ["07", "E esse ossinho vermelho era tão gostoso!"],
-    ["08", "E agora? Não tenho mais o que fazer... Quando eles vão voltar?"],
-    ["09", "Ah, olha o que eu achei! O que é isso? Uma bolinha que sobe e desce!"],
-    ["10", "Agora eu vou arrumar o chinelo da mamãe..."],
-    ["11", "Ops, saiu!"],
-    ["12", "Mamãe: “Joy, o que aconteceu aqui?” Joy: “O que eu fiz?” Julia: “Olha o meu, ela não pegou!”"],
-    ["13", "A mamãe e o papai foram na feira. “Olha a tirinha nova! Tem de todas as cores!”"],
-    ["14", "O papai consertou o chinelo. E quando eu fui pegar de novo... Papai: “Não, não, Joy! Chinelo não é brinquedo. O seu é o RanRan. Isso, boa menina!”"],
-    ["15", "E assim eu aprendi: chinelo é da mamãe e do papai. Brinquedo é meu!"],
-    ["17", "Julia: “Tchau, amiguinhos! Adorei participar com a Joy do Pugs Aventuras!” Joy: “Obrigada, Julia! Você é a minha irmã. Te amo! Tchau, tchau, amiguinhos!”"],
+  { titulo: "A Joy e os chinelos do papai", ep: 2, audio: true, capa: "imagens/capa-ep2.jpg", paginas: [
+    ["01", "Oi, amiguinhos! Eu sou a Joy! Hoje eu vou contar... a história dos chinelos do papai!"],
+    ["02", "Eu andava pela casa seguindo os passos da mamãe e do papai. Eu adorava ficar pertinho dos pés deles."],
+    ["03", "E sabe qual era a minha caminha preferida? O chinelo! Quentinho e com cheirinho de família."],
+    ["04", "A Julia, filha do papai, veio passar o fim de semana com a gente."],
+    ["05", "Julia: “Ah, vamos logo! Tchau, tchau, Joy!”  Mamãe: “A gente já volta! Cuida da casa!”"],
+    ["06", "Fiquei sozinha... E agora? O que eu vou fazer?"],
+    ["07", "Esse é o RanRan, o meu melhor amiguinho! A gente brincava e se divertia muito juntos."],
+    ["08", "E esse ossinho vermelho era tão gostoso!"],
+    ["09", "E agora? Não tenho mais o que fazer... Quando eles vão voltar?"],
+    ["10", "Ah, olha o que eu achei! O que é isso? Uma bolinha que sobe e desce!"],
+    ["11", "Agora eu vou arrumar o chinelo da mamãe..."],
+    ["12", "Ops, saiu!"],
+    ["13", "Mamãe: “Joy, o que aconteceu aqui?”  Joy: “O que eu fiz?”  Julia: “Olha o meu, ela não pegou!”"],
+    ["14", "A mamãe e o papai foram na feira. “Olha a tirinha nova! Tem de todas as cores!”"],
+    ["15", "O papai consertou o chinelo. E quando eu fui pegar de novo... Papai: “Não, não, Joy! Chinelo não é brinquedo. O seu é o RanRan. Isso, boa menina!”"],
+    ["16", "E assim eu aprendi: chinelo é da mamãe e do papai. Brinquedo é meu!"],
+    ["18", "Julia: “Tchau, amiguinhos! Adorei participar com a Joy do Pugs Aventuras!”  Joy: “Obrigada, Julia! Você é a minha irmã. Te amo! Tchau, tchau, amiguinhos!”"],
   ].map(([n, t]) => ({ n, t })) },
 ];
 let livro = null, pag = 0, lerSozinho = true, toque = null;
 const img = (l, p) => `imagens/livrinho/ep${l.ep}-pag${p.n}.jpg`;
 function estante() {
   $("escolha").hidden = false; $("leitura").hidden = true; $("festa").hidden = true; parar();
-  $("estante").innerHTML = LIVROS.map((l, i) => `<button type="button" class="capa-livro" data-i="${i}"><img src="${img(l, l.paginas[0])}" alt=""><span class="nome">${l.titulo}</span><small>Episódio ${l.ep}${l.audio ? " · com a voz da Joy 🔊" : ""}</small></button>`).join("");
+  $("estante").innerHTML = LIVROS.map((l, i) => `<button type="button" class="capa-livro" data-i="${i}"><img src="${l.capa || img(l, l.paginas[0])}" alt=""><span class="nome">${l.titulo}</span><small>Episódio ${l.ep}${l.audio ? " · com a voz da Joy 🔊" : ""}</small></button>`).join("");
 }
 $("estante").addEventListener("click", (e) => { const b = e.target.closest(".capa-livro"); if (b) abrir(LIVROS[+b.dataset.i]); });
 function abrir(l) { livro = l; pag = 0; $("escolha").hidden = true; $("leitura").hidden = false; $("festa").hidden = true; $("ouvir").hidden = !l.audio; mostrar(); }
@@ -144,7 +145,7 @@ function mostrar() {
 function vai() { PugsSom.virar(); if (pag < livro.paginas.length - 1) { pag++; mostrar(); } else fim(); }
 function volta() { if (pag > 0) { PugsSom.virar(); pag--; mostrar(); } }
 function fim() {
-  parar(); PugsSom.festa(); $("festa").hidden = false;
+  parar(); PugsSom.festa(); setTimeout(() => PugsSom.falar("", "fim-livrinho"), 1500); $("festa").hidden = false;
   for (let i = 0; i < 20; i++) {
     const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "📖", "💗"][i % 5];
     s.style.left = Math.random() * 100 + "vw"; s.style.animationDelay = Math.random() * 0.8 + "s";

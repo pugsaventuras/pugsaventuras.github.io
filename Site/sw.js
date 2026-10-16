@@ -1,17 +1,17 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v7";
+const CACHE = "pugs-clube-v8";
 const ARQUIVOS = [
   "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html",
   "imagens/jogos/joy-face.jpg", "imagens/jogos/ranran-so.jpg", "imagens/memoria/m02.jpg",
   "estilo.css", "clube.js", "sons.js", "sons/eba-joy.mp3", "sons/voz/lista.json", ...["site", "pintar", "quebra", "memoria", "nome", "joy"].map((m) => "sons/musica-" + m + ".mp3"), "manifest.json", "apple-touch-icon.png", "favicon.png",
-  "imagens/marca-pugs-aventuras.png", "imagens/pintar-dia-das-criancas.png", "imagens/capa-ep2.jpg", "imagens/fig-ep1.jpg",
+  "imagens/marca-pugs-aventuras.png", "imagens/pintar-dia-das-criancas.png", "imagens/capa-ep2.jpg", "imagens/capa-ep1.jpg", "imagens/fig-ep1.jpg",
   "imagens/capa-dia-das-criancas.jpg", "imagens/banner-pugs-aventuras.jpg", "imagens/fig-ep1-album.jpg", "imagens/fig-ep2.jpg",
   "imagens/fig-especial-dia-das-criancas.jpg",
   ...Array.from({ length: 12 }, (_, i) => "imagens/memoria/m" + String(i + 1).padStart(2, "0") + ".jpg"),
   "supabase.js",
   ...Array.from({ length: 19 }, (_, i) => "imagens/livrinho/ep1-pag" + String(i + 1).padStart(2, "0") + ".jpg"),
-  ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17].map((i) => "imagens/livrinho/ep2-pag" + String(i).padStart(2, "0") + ".jpg"),
-  ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17].map((i) => "sons/livrinho/ep2-pag" + String(i).padStart(2, "0") + ".mp3"),
+  ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18].map((i) => "imagens/livrinho/ep2-pag" + String(i).padStart(2, "0") + ".jpg"),
+  ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,18].map((i) => "sons/livrinho/ep2-pag" + String(i).padStart(2, "0") + ".mp3"),
   ...Array.from({ length: 19 }, (_, i) => "sons/livrinho/ep1-pag" + String(i + 1).padStart(2, "0") + ".mp3"),
 ];
 self.addEventListener("install", (e) => {

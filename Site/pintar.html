@@ -142,7 +142,7 @@ document.getElementById("limpar").onclick = (e) => {
 document.getElementById("salvar").onclick = () => {
   tela.toBlob((blob) => {
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "minha-pintura-pugs-aventuras.png";
-    document.body.appendChild(a); a.click(); a.remove(); PugsSom.festa(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    document.body.appendChild(a); a.click(); a.remove(); PugsSom.festa(); setTimeout(() => PugsSom.falar("", "fim-pintar"), 1500); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   });
 };
 montarPaleta();

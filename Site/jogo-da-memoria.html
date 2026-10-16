@@ -85,7 +85,7 @@ $("mesa").addEventListener("click", (e) => {
   jogadas++; $("jogadas").textContent = jogadas;
   const [a, b] = abertas; abertas = [];
   if (a.dataset.f === b.dataset.f) {
-    setTimeout(() => { a.classList.add("achada"); b.classList.add("achada"); PugsSom.acerto(); }, 300);
+    setTimeout(() => { a.classList.add("achada"); b.classList.add("achada"); PugsSom.acerto(); PugsSom.falar("", "achou-par"); }, 300);
     achados++;
     if (achados === nivel.pares) setTimeout(festa, 900);
   } else {
@@ -94,7 +94,7 @@ $("mesa").addEventListener("click", (e) => {
   }
 });
 function festa() {
-  PugsSom.festa();
+  PugsSom.festa(); setTimeout(() => PugsSom.falar("", "fim-memoria"), 1500);
   $("festa-texto").textContent = "Você achou todos os pares em " + jogadas + " jogadas!";
   $("festa-pares").innerHTML = [...new Set([...document.querySelectorAll(".carta")].map((c) => c.dataset.f))].map((f) => `<img src="${f}" alt="">`).join("");
   $("festa").hidden = false;

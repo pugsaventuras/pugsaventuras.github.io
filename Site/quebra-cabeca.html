@@ -167,7 +167,7 @@ document.addEventListener("click", (e) => {
   if (v && selecionada && !selecionada.classList.contains("certa")) { if (colocar(selecionada, v)) selecionada = null; }
 });
 function festa() {
-  PugsSom.festa();
+  PugsSom.festa(); setTimeout(() => PugsSom.falar("", "fim-quebra"), 1500);
   $("festa-img").src = FIGURAS[figura].img; $("festa").hidden = false;
   for (let i = 0; i < 24; i++) {
     const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "💗"][i % 5];
