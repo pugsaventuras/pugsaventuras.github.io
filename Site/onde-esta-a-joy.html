@@ -115,6 +115,7 @@ function festa() {
 }
 $("denovo").onclick = () => { achou = 0; $("achou").textContent = 0; rodada(); };
 $("outra").onclick = $("trocar").onclick = telaEscolha;
+PugsSom.vozesProntas.then(() => PugsSom.preparar(["onde-esta-a-joy", "achou-a-joy", "barulhinho"].concat(SURPRESAS.map((x) => x.voz))));
 pugsSoNoClube().then((f) => { if (!f) return; $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); });
 </script>
 

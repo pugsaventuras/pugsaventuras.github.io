@@ -51,7 +51,7 @@ const PugsSom = (() => {
 
   // ---- vozes
   const VOZES = new Set();
-  fetch("sons/voz/lista.json").then((r) => r.json()).then((l) => l.forEach((k) => VOZES.add(k))).catch(() => {});
+  const vozesProntas = fetch("sons/voz/lista.json").then((r) => r.json()).then((l) => l.forEach((k) => VOZES.add(k))).catch(() => {});
   const PRONUNCIA = { Joy: "Djói", Jane: "Djêine", RanRan: "Ran Ran" };
   const LETRAS = { A: "á", B: "bê", C: "cê", D: "dê", E: "é", F: "éfe", G: "gê", H: "agá", I: "í", J: "jóta", K: "cá", L: "éle", M: "ême", N: "êne", O: "ó", P: "pê", Q: "quê", R: "érre", S: "ésse", T: "tê", U: "ú", V: "vê", W: "dáblio", X: "xis", Y: "ípsilon", Z: "zê", "Ç": "cê cedilha" };
   const NUMEROS = ["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez"];
@@ -78,20 +78,41 @@ const PugsSom = (() => {
     vozAtual = new Audio(url); vozAtual.onended = depois || null;
     const p = vozAtual.play(); if (p && p.catch) p.catch(() => {});
   }
+  // vozes gravadas tocam pelo mesmo "motor" dos efeitos: o iPad libera uma vez e depois toca sempre
+  const buffers = {};
+  let fonteVoz = null;
+  function carregar(url) {
+    const c = ac(); if (!c) return Promise.reject();
+    if (!buffers[url]) buffers[url] = fetch(url).then((r) => r.arrayBuffer()).then((b) => new Promise((ok, erro) => c.decodeAudioData(b, ok, erro)));
+    return buffers[url];
+  }
+  function tocarVoz(url) {
+    const c = ac(); if (!c) return;
+    if (fonteVoz) { try { fonteVoz.stop(); } catch (e) {} fonteVoz = null; }
+    if (window.speechSynthesis) speechSynthesis.cancel();
+    carregar(url).then((buf) => {
+      const s = c.createBufferSource(), g = c.createGain(); g.gain.value = 1.2;
+      s.buffer = buf; s.connect(g).connect(c.destination); s.start(); fonteVoz = s;
+    }).catch(() => {});
+  }
   // fala uma frase: usa a voz gravada (chave) se existir; senão a voz do aparelho (se txt vier)
   function falar(txt, chave) {
     if (!ligado) return;
-    if (chave && VOZES.has(chave)) { tocarUrl("sons/voz/" + chave + ".mp3"); return; }
+    if (chave && VOZES.has(chave)) { tocarVoz("sons/voz/" + chave + ".mp3"); return; }
     try { tts(txt); } catch (e) {}
   }
+  // deixa as vozes prontas antes (para não atrasar)
+  function preparar(chaves) { (chaves || []).forEach((k) => { if (VOZES.has(k)) carregar("sons/voz/" + k + ".mp3").catch(() => {}); }); }
   const api = {
     get ligado() { return ligado; },
     alternar() { ligado = !ligado; try { localStorage.setItem("pugs-som", ligado ? "on" : "off"); } catch (e) {} if (ligado) { ac(); api.acerto(); tocarMusica(); } else { pararMusica(); if (window.speechSynthesis) speechSynthesis.cancel(); } return ligado; },
     get musicaLigada() { return musicaLigada; },
     alternarMusica() { musicaLigada = !musicaLigada; try { localStorage.setItem("pugs-musica", musicaLigada ? "on" : "off"); } catch (e) {} if (musicaLigada) tocarMusica(); else pararMusica(); return musicaLigada; },
     musica(nome) { qual = nome; },
-    falar, tocarUrl,
+    falar, tocarUrl, preparar,
+    chaveLetra: (L) => { const b = SEM_ACENTO[L] || L; return "letra-" + (b === "Ç" ? "c-cedilha" : b.toLowerCase()); },
     temVoz: (chave) => VOZES.has(chave),
+    vozesProntas,
     // fala só a letra, do jeito que a criança conhece ("érre", não "R maiúsculo")
     letra(L) { const b = SEM_ACENTO[L] || L; falar(LETRAS[b] || b.toLowerCase(), "letra-" + (b === "Ç" ? "c-cedilha" : b.toLowerCase())); },
     numero(n) { falar(NUMEROS[n] || String(n), "numero-" + n); },

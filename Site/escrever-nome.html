@@ -109,6 +109,7 @@ async function comecar(m, n) {
   const familia = false; // gravação do nome desligada por enquanto (deu erro no iPad)
   $("gravar-caixa").hidden = !familia;
   if (familia) { const tem = await vozGuardada(nome); $("ouvir-gravado").hidden = !tem; $("gravar").textContent = tem ? "🎤 Gravar de novo" : "🎤 Gravar o nome"; $("gravar-status").textContent = ""; }
+  PugsSom.vozesProntas.then(() => PugsSom.preparar(itens.map((it) => m === "num" ? "numero-" + it : PugsSom.chaveLetra(it)).concat(["quase", "fim-alfabeto", "fim-numeros"])));
   montar(); preparar(); setTimeout(falarItem, 300);
 }
 function montar() {

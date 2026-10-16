@@ -1,5 +1,5 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v5";
+const CACHE = "pugs-clube-v6";
 const ARQUIVOS = [
   "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html",
   "imagens/jogos/joy-face.jpg", "imagens/jogos/ranran-so.jpg", "imagens/memoria/m02.jpg",
@@ -11,6 +11,7 @@ const ARQUIVOS = [
   "supabase.js",
   ...Array.from({ length: 19 }, (_, i) => "imagens/livrinho/ep1-pag" + String(i + 1).padStart(2, "0") + ".jpg"),
   ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17].map((i) => "imagens/livrinho/ep2-pag" + String(i).padStart(2, "0") + ".jpg"),
+  ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17].map((i) => "sons/livrinho/ep2-pag" + String(i).padStart(2, "0") + ".mp3"),
   ...Array.from({ length: 19 }, (_, i) => "sons/livrinho/ep1-pag" + String(i + 1).padStart(2, "0") + ".mp3"),
 ];
 self.addEventListener("install", (e) => {
