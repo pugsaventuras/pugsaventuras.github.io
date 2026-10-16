@@ -1,5 +1,5 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v6";
+const CACHE = "pugs-clube-v7";
 const ARQUIVOS = [
   "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html",
   "imagens/jogos/joy-face.jpg", "imagens/jogos/ranran-so.jpg", "imagens/memoria/m02.jpg",
