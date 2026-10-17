@@ -304,3 +304,13 @@ button.botao{font:inherit;font-weight:700;cursor:pointer}
 .botao.seta{font-size:2rem;padding:6px 26px;cursor:pointer}
 .botao.seta:disabled{opacity:.35}
 .livro-num{font-weight:700;color:var(--marrom);min-width:70px;text-align:center}
+
+/* Onde está a Joy: esconderijos com figuras do desenho */
+.esconderijo .coisa img{width:84%;height:84%;object-fit:cover;border-radius:22px;border:4px solid var(--marrom);background:#fff}
+.esconderijo .atras{flex-direction:column}
+.esconderijo .atras .quem{position:absolute;bottom:6%;left:50%;transform:translateX(-50%);background:var(--marrom);color:#fff;font-weight:700;font-size:clamp(.7rem,2.6vw,.95rem);padding:1px 10px;border-radius:999px;white-space:nowrap}
+
+/* Vamos escrever: escolher a letra ou o número */
+.grade-letras{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:10px;width:100%;max-width:640px;margin:0 auto 14px}
+.letra-escolha{font:700 2rem Fredoka,Arial,sans-serif;color:#fff;background:var(--c);border:4px solid var(--marrom);border-radius:18px;aspect-ratio:1;cursor:pointer;box-shadow:0 4px 0 var(--marrom);-webkit-text-stroke:1.5px var(--marrom);paint-order:stroke fill}
+.letra-escolha:active{transform:translateY(3px);box-shadow:0 1px 0 var(--marrom)}

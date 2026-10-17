@@ -44,7 +44,7 @@
       <p class="nome-festa" id="festa-nome"></p>
       <img src="imagens/jogos/joy-face.jpg" alt="A Joy feliz" style="width:140px;border-radius:50%">
       <br><button type="button" class="botao rosa" id="denovo">Escrever de novo</button>
-      <button type="button" class="botao" id="outra">Escolher outro</button>
+      <button type="button" class="botao" id="outra">Escolher outra</button>
     </div>
   </div>
 </div>
@@ -92,24 +92,38 @@ $("ouvir-gravado").onclick = falarNome;
 function escolha(nomes) {
   $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
   $("nomes").innerHTML = nomes.map((n, i) => `<button type="button" class="botao nivel" data-modo="nome" data-n="${n}"><span>${["🐶", "⭐", "🌈", "🐾", "💛", "🎈"][i % 6]}</span><b>${n}</b></button>`).join("")
-    + `<button type="button" class="botao nivel" data-modo="abc" aria-label="Alfabeto"><span>🔤</span><b>ABC</b></button>`
-    + `<button type="button" class="botao nivel" data-modo="num" aria-label="Números"><span>🔢</span><b>123</b></button>`;
+    + `<button type="button" class="botao nivel" data-pick="abc" aria-label="Alfabeto"><span>🔤</span><b>ABC</b></button>`
+    + `<button type="button" class="botao nivel" data-pick="num" aria-label="Números"><span>🔢</span><b>123</b></button>`;
 }
-$("nomes").addEventListener("click", (e) => { const b = e.target.closest(".nivel"); if (b) comecar(b.dataset.modo, b.dataset.n || ""); });
+// ABC / 123: a criança escolhe UMA letra (ou número) para escrever, ou todas em sequência.
+function escolherItem(m) {
+  $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
+  const lista = m === "abc" ? ALFABETO : NUMEROS;
+  $("nomes").innerHTML = `<p class="jogo-dica centro" style="width:100%">${m === "abc" ? "Qual letra você quer escrever?" : "Qual número você quer escrever?"}</p>`
+    + `<div class="grade-letras">` + lista.map((L, i) => `<button type="button" class="letra-escolha" data-modo="uma-${m}" data-n="${L}" style="--c:${CORES[i % CORES.length]}">${L}</button>`).join("") + `</div>`
+    + `<button type="button" class="botao nivel" data-modo="${m}"><span>🌈</span><b>${m === "abc" ? "A–Z" : "1–10"}</b><small>todas</small></button>`
+    + `<button type="button" class="botao nivel" data-voltar="1"><span>⬅️</span><b>Voltar</b></button>`;
+}
+$("nomes").addEventListener("click", (e) => {
+  const b = e.target.closest(".nivel, .letra-escolha"); if (!b) return;
+  if (b.dataset.voltar) return escolha(window.NOMES);
+  if (b.dataset.pick) return escolherItem(b.dataset.pick);
+  comecar(b.dataset.modo, b.dataset.n || "");
+});
 
 function falarItem() {
   const it = itens[atual]; if (!it) return;
-  if (modo === "num") PugsSom.numero(+it); else PugsSom.letra(it);
+  if (modo === "num" || modo === "uma-num") PugsSom.numero(+it); else PugsSom.letra(it);
 }
 async function comecar(m, n) {
   modo = m; nome = n; atual = 0;
-  itens = m === "abc" ? ALFABETO.slice() : m === "num" ? NUMEROS.slice() : [...n.toLocaleUpperCase("pt-BR")].filter((c) => c.trim());
+  itens = m === "abc" ? ALFABETO.slice() : m === "num" ? NUMEROS.slice() : m.startsWith("uma-") ? [n] : [...n.toLocaleUpperCase("pt-BR")].filter((c) => c.trim());
   $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
   $("montado").classList.toggle("longo", itens.length > 10);
   const familia = false; // gravação do nome desligada por enquanto (deu erro no iPad)
   $("gravar-caixa").hidden = !familia;
   if (familia) { const tem = await vozGuardada(nome); $("ouvir-gravado").hidden = !tem; $("gravar").textContent = tem ? "🎤 Gravar de novo" : "🎤 Gravar o nome"; $("gravar-status").textContent = ""; }
-  PugsSom.vozesProntas.then(() => PugsSom.preparar(itens.map((it) => m === "num" ? "numero-" + it : PugsSom.chaveLetra(it)).concat(["quase", "fim-alfabeto", "fim-numeros"])));
+  PugsSom.vozesProntas.then(() => PugsSom.preparar(itens.map((it) => (m === "num" || m === "uma-num") ? "numero-" + it : PugsSom.chaveLetra(it)).concat(["quase", "fim-alfabeto", "fim-numeros"])));
   montar(); preparar(); setTimeout(falarItem, 300);
 }
 function montar() {
@@ -158,6 +172,7 @@ function festa() {
   PugsSom.festa();
   setTimeout(() => {
     if (modo === "nome") { itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850)); setTimeout(() => PugsSom.falar("", "fim-nome"), itens.length * 850 + 300); }
+    else if (modo.startsWith("uma-")) falarItem();
     else if (modo === "abc") PugsSom.falar("", "fim-alfabeto");
     else PugsSom.falar("", "fim-numeros");
   }, 1500);
@@ -172,7 +187,7 @@ function festa() {
 }
 $("ouvir").onclick = falarItem;
 $("apagar").onclick = () => { PugsSom.apagar(); preparar(); };
-$("trocar").onclick = $("outra").onclick = () => escolha(window.NOMES);
+$("trocar").onclick = $("outra").onclick = () => (modo.startsWith("uma-") ? escolherItem(modo.slice(4)) : escolha(window.NOMES));
 $("denovo").onclick = () => comecar(modo, nome);
 addEventListener("resize", () => { if (!$("partida").hidden) preparar(); });
 

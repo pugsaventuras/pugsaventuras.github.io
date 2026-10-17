@@ -28,7 +28,7 @@
     <div class="niveis" id="niveis"></div>
   </div>
   <div id="partida" hidden>
-    <p class="jogo-dica">A Joy se escondeu! Toque para procurar. <span class="placar">Achou: <b id="achou">0</b> de 3</span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+    <p class="jogo-dica">A Joy se escondeu! Toque nas figuras do desenho para procurar. <span class="placar">Achou: <b id="achou">0</b> de 3</span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
     <div class="sala" id="sala"></div>
   </div>
   <div id="festa" class="festa" hidden>
@@ -57,20 +57,26 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 <script src="clube.js"></script>
 <script src="sons.js"></script>
 <script>
-// Onde está a Joy? Esconde-esconde: a Joy se esconde atrás de uma coisa da casa.
+// Onde está a Joy? Esconde-esconde: a Joy se esconde atrás de figuras do desenho.
 const $ = (s) => document.getElementById(s);
 const LUGARES = [
-  { e: "🛋️", n: "sofá" }, { e: "📦", n: "caixa" }, { e: "🧺", n: "cesto" },
-  { e: "🪴", n: "planta" }, { e: "🎁", n: "presente" }, { e: "🛏️", n: "cama" },
+  { img: "imagens/jogos/esc-caminha-vermelha.jpg", n: "caminha vermelha" },
+  { img: "imagens/jogos/esc-caminha-bege.jpg", n: "caminha" },
+  { img: "imagens/jogos/esc-bolsinha.jpg", n: "bolsinha de passeio" },
+  { img: "imagens/jogos/esc-poltrona.jpg", n: "poltrona" },
+  { img: "imagens/jogos/esc-sofa.jpg", n: "sofá" },
+  { img: "imagens/jogos/esc-chinelos-feira.jpg", n: "barraca de chinelos" },
 ];
+// Quem aparece quando a Joy NÃO está ali: os personagens de verdade do desenho.
+// "voz" = arquivo em sons/voz/ (enquanto não gravar, fica só o nome escrito, sem som).
 const SURPRESAS = [
-  { img: "imagens/jogos/ranran-so.jpg", fala: "Aqui não! É o RanRan!", voz: "aqui-nao-ranran" },
-  { e: "🩴", fala: "Aqui não! É o chinelo do papai!", voz: "aqui-nao-chinelo" },
-  { e: "🦴", fala: "Aqui não! Um ossinho!", voz: "aqui-nao-ossinho" },
-  { e: "⚽", fala: "Aqui não! Uma bolinha!", voz: "aqui-nao-bolinha" },
-  { e: "🧦", fala: "Aqui não! Uma meia!", voz: "aqui-nao-meia" },
-  { e: "🧸", fala: "Aqui não! Um ursinho!", voz: "aqui-nao-ursinho" },
-]
+  { img: "imagens/jogos/quem-ranran.jpg", nome: "RanRan", fala: "Aqui não! É o RanRan!", voz: "aqui-nao-ranran" },
+  { img: "imagens/jogos/quem-chinelo.jpg", nome: "Chinelo do papai", fala: "Aqui não! É o chinelo do papai!", voz: "aqui-nao-chinelo" },
+  { img: "imagens/jogos/quem-papai.jpg", nome: "Papai", fala: "Aqui não! É o papai!", voz: "aqui-nao-papai" },
+  { img: "imagens/jogos/quem-mamae.jpg", nome: "Mamãe", fala: "Aqui não! É a mamãe!", voz: "aqui-nao-mamae" },
+  { img: "imagens/jogos/quem-julia.jpg", nome: "Julia", fala: "Aqui não! É a Julia!", voz: "aqui-nao-julia" },
+  { img: "imagens/jogos/quem-jane.jpg", nome: "Jane", fala: "Aqui não! É a Jane!", voz: "aqui-nao-jane" },
+];
 const NIVEIS = [{ n: 3, emoji: "🐣" }, { n: 4, emoji: "🐶" }, { n: 6, emoji: "🏆" }];
 let nivel = null, achou = 0, onde = -1, travado = false, dica = null;
 function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -87,8 +93,8 @@ function rodada() {
   $("sala").style.setProperty("--colunas", nivel.n === 4 ? 2 : 3);
   $("sala").innerHTML = lugares.map((l, i) => {
     const s = surpresas[i % surpresas.length];
-    const atras = i === onde ? `<img src="imagens/jogos/joy-face.jpg" alt="A Joy">` : (s.img ? `<img src="${s.img}" alt="">` : `<span class="emoji">${s.e}</span>`);
-    return `<button type="button" class="esconderijo" data-i="${i}" data-fala="${i === onde ? "" : s.fala}" data-voz="${i === onde ? "" : s.voz}" aria-label="Procurar atrás do ${l.n}"><span class="atras">${atras}</span><span class="coisa">${l.e}</span></button>`;
+    const atras = i === onde ? `<img src="imagens/jogos/joy-face.jpg" alt="A Joy"><span class="quem">Joy!</span>` : `<img src="${s.img}" alt=""><span class="quem">${s.nome}</span>`;
+    return `<button type="button" class="esconderijo" data-i="${i}" data-fala="${i === onde ? "" : s.fala}" data-voz="${i === onde ? "" : s.voz}" aria-label="Procurar: ${l.n}"><span class="atras">${atras}</span><span class="coisa"><img src="${l.img}" alt=""></span></button>`;
   }).join("");
   PugsSom.falar("Cadê a Joy? Me acha!", "onde-esta-a-joy");
   clearTimeout(dica); dica = setTimeout(() => { const b = $("sala").children[onde]; if (b) { b.classList.add("mexe"); PugsSom.falar("Hihi, tô pertinho...", "barulhinho"); } }, 9000);
@@ -99,10 +105,10 @@ $("sala").addEventListener("click", (e) => {
   if (+b.dataset.i === onde) {
     travado = true; clearTimeout(dica); PugsSom.acerto(); PugsSom.falar("Achou! Lambeijo!", "achou-a-joy");
     achou++; $("achou").textContent = achou;
-    setTimeout(() => (achou >= 3 ? festa() : rodada()), 1800);
+    setTimeout(() => (achou >= 3 ? festa() : rodada()), 3000);
   } else {
-    PugsSom.pop(); PugsSom.falar(b.dataset.fala, b.dataset.voz);
-    setTimeout(() => b.classList.remove("aberto"), 1500);
+    PugsSom.pop(); PugsSom.falar("", b.dataset.voz);
+    setTimeout(() => b.classList.remove("aberto"), 2200);
   }
 });
 function festa() {
