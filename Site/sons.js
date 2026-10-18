@@ -151,7 +151,7 @@ const PugsSom = (() => {
     const b = document.createElement("button"); b.type = "button"; b.className = "botao som";
     const pinta = () => { b.textContent = ligado ? "🔊" : "🔇"; b.setAttribute("aria-label", ligado ? "Desligar o som" : "Ligar o som"); };
     pinta(); b.onclick = () => { api.alternar(); pinta(); }; topo.appendChild(b);
-    const nome = { pintar: "pintar", "quebra-cabeca": "quebra", "jogo-da-memoria": "memoria", album: "site", "escrever-nome": "nome", "onde-esta-a-joy": "joy" }[pagina];
+    const nome = { pintar: "pintar", "quebra-cabeca": "quebra", "jogo-da-memoria": "memoria", album: "site", "escrever-nome": "nome", "onde-esta-a-joy": "joy", cuidar: "site" }[pagina];
     if (nome) {
       qual = nome;
       const bm = document.createElement("button"); bm.type = "button"; bm.className = "botao som";
