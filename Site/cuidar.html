@@ -54,7 +54,7 @@
 @keyframes cd-sobe{from{transform:translateY(0) scale(.6);opacity:1}to{transform:translateY(-120px) scale(1.2);opacity:0}}
 .cd-efeito .tigela{animation:cd-aparece 2.4s ease forwards}
 @keyframes cd-aparece{0%{opacity:0;transform:scale(.4)}15%,80%{opacity:1;transform:scale(1)}100%{opacity:0}}
-.cd-noite{position:absolute;inset:0;background:rgba(20,30,80,.55);opacity:0;pointer-events:none;transition:opacity 1s;z-index:3}
+.cd-noite{position:absolute;inset:0;background:rgba(20,30,80,.32);opacity:0;pointer-events:none;transition:opacity 1s;z-index:3}
 .cd-cena.dormindo .cd-noite{opacity:1}
 .cd-brinquedo{position:absolute;font-size:clamp(2rem,7vw,3rem);background:none;border:0;cursor:pointer;padding:0;line-height:1;z-index:2;transition:left .5s ease-in,top .5s ease-in,transform .5s,opacity .5s}
 .cd-brinquedo img{width:clamp(48px,13vw,80px)}
@@ -74,6 +74,11 @@
 @keyframes cd-pisca{0%,100%{box-shadow:0 4px 0 var(--marrom)}50%{box-shadow:0 4px 0 var(--marrom),0 0 0 6px rgba(255,154,31,.45)}}
 .cd-dica{max-width:720px;margin:6px auto;font-size:1.05rem}
 @media (max-width:520px){.cd-medidores{grid-template-columns:repeat(2,1fr)}}
+.cd-cama{display:none;position:absolute;left:50%;bottom:4%;transform:translateX(-50%);width:62%;height:22%;z-index:2;border:4px solid var(--marrom);border-radius:45% 45% 28% 28%/60% 60% 30% 30%;background:radial-gradient(circle,#fff 16%,transparent 19%) 0 0/24px 24px,#d93636;box-shadow:inset 0 10px 0 rgba(0,0,0,.18)}
+.cd-cena.dormindo .cd-cama{display:block}
+.cd-cena.dormindo .cd-pet{bottom:9%;height:46%}
+.cd-cama::before{content:"";position:absolute;left:8%;right:8%;top:-14%;height:34%;border-radius:50%;background:#2a2a2a;z-index:-1}
+.cd-noite::before{content:"✨ ⭐ ✨ ⭐ ✨";position:absolute;top:5%;left:0;right:0;text-align:center;font-size:clamp(1.2rem,4vw,2rem);letter-spacing:.5em}
 </style>
 </head><body>
 <header class="topo">
@@ -103,6 +108,7 @@
       <img id="pet-img" src="imagens/jogos/pet-joy-feliz.png" alt="">
       <span class="cd-sujeira" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     </button>
+    <div class="cd-cama" aria-hidden="true"></div>
     <div class="cd-efeito" id="efeito" aria-hidden="true"></div>
     <div class="cd-noite" id="noite" aria-hidden="true"></div>
   </div>
@@ -161,7 +167,7 @@ let est = { pets: { joy: novo(), jane: novo() }, t: Date.now(), coracoes: 0, cha
 try { const s = JSON.parse(localStorage.getItem(CHAVE) || "null"); if (s && s.pets) est = Object.assign(est, s); } catch (e) {}
 let pet = "joy", dormindo = false, ocupado = false, rostoAte = 0, rostoTemp = null, falaAte = 0, ultimaBagunca = Date.now();
 const P = () => est.pets[pet];
-const noite = () => { const h = new Date().getHours(); return h >= 20 || h < 6; };
+const noite = () => { const h = new Date().getHours(); return h >= 20 || h < 6; }; // só para sugerir a hora de dormir
 function salvar() { est.t = Date.now(); try { localStorage.setItem(CHAVE, JSON.stringify(est)); } catch (e) {} }
 
 // o tempo passa mesmo com o jogo fechado (mas nunca fica abaixo de 15)
@@ -176,7 +182,7 @@ function passarTempo(horas, piso) {
 
 function falar(txt, chave, ms) {
   const b = $("balao"); b.textContent = txt; b.hidden = false; falaAte = Date.now() + (ms || 3200);
-  PugsSom.falar("", chave);
+  PugsSom.falar(txt.replace(/[^\p{L}\p{N}\s!?.,…]/gu, ""), chave, { pitch: 1.7, rate: 1.0 }); // voz gravada da Joy; enquanto não grava, voz do aparelho
   clearTimeout(falar.t); falar.t = setTimeout(() => { if (Date.now() >= falaAte) b.hidden = true; }, (ms || 3200) + 50);
 }
 function rosto(qual, ms) { rostoTemp = qual; rostoAte = Date.now() + (ms || 2500); pintar(); }
@@ -193,9 +199,9 @@ function pintar() {
   if (!$("pet-img").src.endsWith(img)) $("pet-img").src = img;
   $("pet").classList.toggle("jane", pet === "jane");
   $("pet").classList.toggle("suja", p.limpeza < 40 || p.patinhas);
-  $("cena").classList.toggle("noite", noite());
+  $("cena").classList.toggle("noite", dormindo);
   $("cena").classList.toggle("dormindo", dormindo);
-  $("astro").textContent = noite() ? "🌙" : "☀️";
+  $("astro").textContent = dormindo ? "🌙" : "☀️";
   $("coracoes").textContent = est.coracoes;
   document.querySelectorAll(".cd-pet-btn").forEach((b) => b.setAttribute("aria-selected", b.dataset.pet === pet));
   $("medidores").innerHTML = NECES.map((n) => {
@@ -222,29 +228,27 @@ function animar(cls, ms) { const e = $("pet"); e.classList.remove("pula", "balan
 const ACOES = {
   fome(p) {
     if (p.fome > 85) return falar("Já comi! Comida demais faz mal.", "pet-ja-comi"), rosto("esperta");
-    p.fome = 100; tigela("🥣"); PugsSom.pop(); animar("balanca"); rosto("feliz"); coracao(); falar("Hum, que delícia! Obrigada!", "pet-delicia");
+    p.fome = 100; tigela("🥣"); PugsSom.comer(); animar("balanca"); rosto("feliz"); coracao(); falar("Hum, que delícia! Obrigada!", "pet-delicia");
   },
   sede(p) {
     if (p.sede > 90) return falar("O potinho ainda está cheio!", "pet-potinho-cheio"), rosto("esperta");
-    p.sede = 100; tigela("💧"); PugsSom.pop(); rosto("feliz"); coracao(); falar("Água fresquinha! Glub glub!", "pet-agua");
+    p.sede = 100; tigela("💧"); PugsSom.beber(); rosto("feliz"); coracao(); falar("Água fresquinha! Glub glub!", "pet-agua");
   },
   diversao(p) {
-    if (noite()) return falar("Agora é de noite. Amanhã a gente brinca!", "pet-noite-brincar"), rosto("dormindo");
     if (p.energia < 20) return falar("Tô muito cansada... vamos dormir?", "pet-cansada"), rosto("triste");
     p.diversao = 100; p.energia = Math.max(0, p.energia - 12); p.limpeza = Math.max(0, p.limpeza - 8);
-    animar("pula", 1400); rosto("feliz", 3000); PugsSom.festa(); coracao(); falar("Eba! Que divertido!", "pet-divertido");
+    animar("pula", 1400); rosto("feliz", 3000); PugsSom.boing(); efeito(["🎾", "⭐", "🎾"]); coracao(); falar("Eba! Que divertido!", "pet-divertido");
     setTimeout(() => espalhar(3), 1500);
   },
   limpeza(p) {
     if (p.limpeza > 80 && !p.patinhas) return falar("Já tô limpinha! Banho demais faz mal pra pele.", "pet-ja-limpa"), rosto("esperta");
     const so = p.patinhas && p.limpeza > 60;
-    p.limpeza = 100; p.patinhas = false; efeito(so ? ["🫧", "🐾", "🫧"] : ["🫧", "🫧", "🧼", "🫧", "🫧"]); PugsSom.apagar(); rosto("surpresa", 1800); coracao();
+    p.limpeza = 100; p.patinhas = false; efeito(so ? ["🫧", "🐾", "🫧"] : ["🫧", "🫧", "🧼", "🫧", "🫧"]); PugsSom.bolhas(); tigela("🛁"); rosto("surpresa", 1800); coracao();
     setTimeout(() => falar(so ? "Patinhas limpinhas!" : "Cheirosa! Agora seca as dobrinhas!", so ? "pet-patinhas-limpas" : "pet-cheirosa"), 900);
   },
   passeio(p) {
-    if (noite()) return falar("Tá de noite. Vamos passear amanhã cedinho!", "pet-noite-passear");
     if (p.energia < 20) return falar("Tô muito cansada... vamos dormir?", "pet-cansada"), rosto("triste");
-    ocupado = true; $("cena").classList.add("passeio"); animar("anda", 4200); falar("Oba, passear! 🦮", "pet-oba-passear", 2500);
+    ocupado = true; $("cena").classList.add("passeio"); animar("anda", 4200); PugsSom.passos(); setTimeout(() => PugsSom.passos(), 2300); falar("Oba, passear! 🦮", "pet-oba-passear", 2500);
     setTimeout(() => {
       $("cena").classList.remove("passeio"); ocupado = false;
       p.passeio = 100; p.diversao = Math.min(100, p.diversao + 20); p.energia = Math.max(0, p.energia - 12); p.patinhas = true;
@@ -254,21 +258,21 @@ const ACOES = {
   energia(p) {
     if (est.chao.length) return falar("Antes de dormir, vamos guardar os brinquedos?", "pet-guardar-antes"), rosto("chamando");
     if (p.energia > 85 && !noite()) return falar("Ainda não tô com sono!", "pet-sem-sono"), rosto("esperta");
-    dormindo = true; falar("Boa noite... 💤", "pet-boa-noite", 2000); pintar();
+    dormindo = true; falar("Boa noite... 💤", "pet-boa-noite", 2000); pintar(); setTimeout(() => PugsSom.ninar(), 900);
     const zz = setInterval(() => efeito(["💤"], [55, 30]), 1200);
-    setTimeout(() => { clearInterval(zz); dormindo = false; p.energia = 100; coracao(); rosto("feliz"); falar("Dormi bem! Bom dia!", "pet-bom-dia"); pintar(); }, 7000);
+    setTimeout(() => { clearInterval(zz); dormindo = false; p.energia = 100; coracao(); rosto("feliz"); PugsSom.acerto(); falar("Dormi bem! Bom dia!", "pet-bom-dia"); pintar(); }, 7000);
   },
 };
 $("acoes").addEventListener("click", (e) => {
   const b = e.target.closest(".cd-acao"); if (!b || ocupado) return;
-  if (dormindo) return falar("Zzz... tô dormindo...", "pet-shh");
+  if (dormindo) return falar("Shhh... ela está dormindo.", "pet-shh");
   ACOES[b.dataset.k](P()); salvar(); pintar(); trocarDica();
 });
 // carinho
 $("pet").addEventListener("click", () => {
   if (ocupado) return;
-  if (dormindo) return falar("Zzz... tô dormindo...", "pet-shh");
-  efeito(["💛", "❤️", "💕"], [50, 35]); PugsSom.acerto(); animar("balanca", 1200); rosto("feliz");
+  if (dormindo) return falar("Shhh... ela está dormindo.", "pet-shh");
+  efeito(["💛", "❤️", "💕"], [50, 35]); if (Math.random() < 0.5) PugsSom.latido(); else PugsSom.acerto(); animar("balanca", 1200); rosto("feliz");
   if (Math.random() < 0.35) falar("Lambeijo!", "pet-lambeijo", 1800);
 });
 
@@ -289,7 +293,7 @@ function brinquedos() {
 }
 $("brinquedos").addEventListener("click", (e) => {
   const b = e.target.closest(".cd-brinquedo"); if (!b || b.classList.contains("guardando")) return;
-  b.style.left = "86%"; b.style.top = "80%"; b.classList.add("guardando"); PugsSom.pop();
+  b.style.left = "86%"; b.style.top = "80%"; b.classList.add("guardando"); PugsSom.guardar();
   setTimeout(() => {
     est.chao.splice(+b.dataset.j, 1); salvar(); brinquedos();
     if (!est.chao.length) { PugsSom.acerto(); coracao(); falar("Tudo arrumadinho! Muito bem!", "pet-arrumado"); }
@@ -307,8 +311,10 @@ function tique() {
   if (!dormindo && !ocupado) {
     passarTempo(5 / 3600 * 6, 0); // 5 s de jogo = 30 s de "vida" da pug
     const p = P(), pior = NECES.slice().sort((a, b) => p[a.k] - p[b.k])[0];
-    if (p[pior.k] < 30 && Date.now() > falaAte + 6000) { falar(PEDIDO[pior.k][0], PEDIDO[pior.k][1]); }
-    if (!est.chao.length && !noite() && Date.now() - ultimaBagunca > 45000 && Math.random() < 0.3) { ultimaBagunca = Date.now(); espalhar(2); falar("Ops! Espalhei os brinquedos!", "pet-espalhei"); rosto("esperta"); }
+    if (p[pior.k] < 30 && Date.now() > falaAte + 6000) { PugsSom.latido(); falar(PEDIDO[pior.k][0], PEDIDO[pior.k][1]); }
+    if (!est.chao.length && Date.now() - ultimaBagunca > 45000 && Math.random() < 0.3) { ultimaBagunca = Date.now(); espalhar(2); falar("Ops! Espalhei os brinquedos!", "pet-espalhei"); rosto("esperta"); }
+    else if (noite() && p.energia < 90 && Date.now() > falaAte + 30000) falar("Já tá tarde... que tal dormir?", "pet-tarde");
+    else if (Date.now() > falaAte + 20000 && Math.random() < 0.25) { PugsSom.latido(); animar("balanca", 1200); falar("Au au!", "pet-au", 1500); }
     salvar();
   }
   pintar();

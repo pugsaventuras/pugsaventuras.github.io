@@ -64,11 +64,11 @@ const PugsSom = (() => {
     return vs[0] || null;
   }
   if (window.speechSynthesis) speechSynthesis.getVoices();
-  function tts(txt) {
+  function tts(txt, op) {
     if (!window.speechSynthesis || !txt) return;
     let t = txt; for (const [k, v] of Object.entries(PRONUNCIA)) t = t.replace(new RegExp("\\b" + k + "\\b", "g"), v);
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(t); u.lang = "pt-BR"; u.rate = 0.88; u.pitch = 1.1;
+    const u = new SpeechSynthesisUtterance(t); u.lang = "pt-BR"; u.rate = (op && op.rate) || 0.88; u.pitch = (op && op.pitch) || 1.1;
     const v = melhorVoz(); if (v) u.voice = v;
     speechSynthesis.speak(u);
   }
@@ -96,10 +96,10 @@ const PugsSom = (() => {
     }).catch(() => {});
   }
   // fala uma frase: usa a voz gravada (chave) se existir; senão a voz do aparelho (se txt vier)
-  function falar(txt, chave) {
+  function falar(txt, chave, op) {
     if (!ligado) return;
     if (chave && VOZES.has(chave)) { tocarVoz("sons/voz/" + chave + ".mp3"); return; }
-    try { tts(txt); } catch (e) {}
+    try { tts(txt, op); } catch (e) {}
   }
   // deixa as vozes prontas antes (para não atrasar)
   function preparar(chaves) { (chaves || []).forEach((k) => { if (VOZES.has(k)) carregar("sons/voz/" + k + ".mp3").catch(() => {}); }); }
@@ -123,6 +123,15 @@ const PugsSom = (() => {
       const f = notas[idx >= 0 ? idx % notas.length : 0];
       tom(f, 0.35, { tipo: "sine", vol: 0.22 }); tom(f * 2, 0.18, { tipo: "sine", vol: 0.06 }); tom(f * 3, 0.1, { tipo: "triangle", vol: 0.03 });
     },
+    // efeitos do bichinho virtual
+    comer() { for (let i = 0; i < 6; i++) chiado(0.07, { de: 1800, para: 900, vol: 0.35, quando: i * 0.16, q: 3 }); },
+    beber() { for (let i = 0; i < 4; i++) tom(700 - i * 60, 0.12, { tipo: "sine", vol: 0.25, ate: 300, quando: i * 0.22 }); },
+    bolhas() { for (let i = 0; i < 10; i++) tom(900 + Math.random() * 900, 0.06, { vol: 0.15, ate: 2400, quando: i * 0.09 + Math.random() * 0.05 }); chiado(0.8, { de: 3000, para: 1500, vol: 0.06 }); },
+    boing() { tom(220, 0.35, { tipo: "triangle", vol: 0.3, ate: 660 }); tom(330, 0.3, { tipo: "triangle", vol: 0.2, ate: 990, quando: 0.3 }); },
+    passos() { for (let i = 0; i < 8; i++) chiado(0.05, { de: 400, para: 250, vol: 0.4, quando: i * 0.28, q: 2 }); },
+    ninar() { [659, 587, 523, 587, 659, 659, 659].forEach((f, i) => tom(f, 0.42, { tipo: "sine", vol: 0.16, quando: i * 0.45 })); },
+    latido() { [0, 0.28].forEach((q) => { tom(520, 0.12, { tipo: "sawtooth", vol: 0.12, ate: 300, quando: q }); chiado(0.1, { de: 900, para: 500, vol: 0.25, quando: q, q: 2 }); }); },
+    guardar() { chiado(0.3, { de: 600, para: 3000, vol: 0.15 }); tom(990, 0.12, { vol: 0.15, quando: 0.25 }); },
     pop() { tom(520, 0.09, { tipo: "triangle", vol: 0.3, ate: 980 }); tom(1300, 0.08, { vol: 0.12, quando: 0.05 }); },
     acerto() { tom(880, 0.14, { vol: 0.22 }); tom(1320, 0.22, { vol: 0.22, quando: 0.1 }); },
     erro() { tom(330, 0.22, { tipo: "triangle", vol: 0.2, ate: 160 }); },
