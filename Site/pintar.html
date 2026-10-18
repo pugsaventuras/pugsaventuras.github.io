@@ -64,6 +64,7 @@ const DESENHOS = [
   { img: "imagens/colorir-ep2-4-feira-das-tirinhas.png", nome: "Ep. 2 · Feira das tirinhas" },
   { img: "imagens/pintar-dia-das-criancas.png", nome: "Joy e Jane no Dia das Crianças" },
 ];
+const NOMES_COR = ["vermelho","coral","laranja","amarelo","verde-claro","verde","azul-claro","azul","roxo","rosa","rosa-claro","marrom-claro","marrom","bege","creme","cinza","preto","branco"];
 const CORES = ["#e53935","#ff7043","#ff9a1f","#ffd23f","#8cc63f","#2e7d32","#3aa0e8","#1f4fb4","#8e5bd0","#f06ea8","#ffb6d5","#a1887f","#5a3a22","#d9c2a3","#f3e3c3","#9e9e9e","#212121","#ffffff"];
 let cor = CORES[2], W = 0, H = 0, linhas = null, base = null, img = null, desfazer = [];
 const tela = document.getElementById("tela"), ctx = tela.getContext("2d", { willReadFrequently: true });
@@ -72,7 +73,7 @@ const pinturaCanvas = document.createElement("canvas"), pctx = pinturaCanvas.get
 function montarPaleta() {
   const p = document.getElementById("paleta");
   p.innerHTML = CORES.map((c) => `<button type="button" role="radio" class="cor" style="--c:${c}" data-c="${c}" aria-label="cor" aria-checked="${c === cor}"></button>`).join("");
-  p.onclick = (e) => { const b = e.target.closest(".cor"); if (!b) return; cor = b.dataset.c; p.querySelectorAll(".cor").forEach((x) => x.setAttribute("aria-checked", x === b)); };
+  p.onclick = (e) => { const b = e.target.closest(".cor"); if (!b) return; cor = b.dataset.c; PugsSom.falar("", "cor-" + NOMES_COR[CORES.indexOf(cor)]); p.querySelectorAll(".cor").forEach((x) => x.setAttribute("aria-checked", x === b)); };
 }
 function montarDesenhos(atual) {
   const d = document.getElementById("desenhos");

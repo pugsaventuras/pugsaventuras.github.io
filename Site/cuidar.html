@@ -200,13 +200,13 @@ const ACOES = {
 };
 $("acoes").addEventListener("click", (e) => {
   const b = e.target.closest(".cd-acao"); if (!b || ocupado) return;
-  if (dormindo) return falar("Shhh... ela está dormindo.", "pet-shh");
+  if (dormindo) return falar("Zzz... tô dormindo...", "pet-shh");
   ACOES[b.dataset.k](P()); salvar(); pintar(); trocarDica();
 });
 // carinho
 $("pet").addEventListener("click", () => {
   if (ocupado) return;
-  if (dormindo) return falar("Shhh... ela está dormindo.", "pet-shh");
+  if (dormindo) return falar("Zzz... tô dormindo...", "pet-shh");
   efeito(["💛", "❤️", "💕"], [50, 35]); PugsSom.acerto(); animar("balanca", 1200); rosto("feliz");
   if (Math.random() < 0.35) falar("Lambeijo!", "pet-lambeijo", 1800);
 });

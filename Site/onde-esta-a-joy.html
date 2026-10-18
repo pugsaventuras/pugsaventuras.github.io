@@ -60,12 +60,12 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 // Onde está a Joy? Esconde-esconde: a Joy se esconde atrás de figuras do desenho.
 const $ = (s) => document.getElementById(s);
 const LUGARES = [
-  { img: "imagens/jogos/esc-caminha-vermelha.jpg", n: "caminha vermelha" },
-  { img: "imagens/jogos/esc-caminha-bege.jpg", n: "caminha" },
-  { img: "imagens/jogos/esc-bolsinha.jpg", n: "bolsinha de passeio" },
-  { img: "imagens/jogos/esc-poltrona.jpg", n: "poltrona" },
-  { img: "imagens/jogos/esc-sofa.jpg", n: "sofá" },
-  { img: "imagens/jogos/esc-chinelos-feira.jpg", n: "barraca de chinelos" },
+  { img: "imagens/jogos/esc-caminha-vermelha.jpg", n: "caminha vermelha", voz: "estava-caminha-vermelha" },
+  { img: "imagens/jogos/esc-caminha-bege.jpg", n: "caminha", voz: "estava-caminha" },
+  { img: "imagens/jogos/esc-bolsinha.jpg", n: "bolsinha de passeio", voz: "estava-bolsinha" },
+  { img: "imagens/jogos/esc-poltrona.jpg", n: "poltrona", voz: "estava-poltrona" },
+  { img: "imagens/jogos/esc-sofa.jpg", n: "sofá", voz: "estava-sofa" },
+  { img: "imagens/jogos/esc-chinelos-feira.jpg", n: "barraca de chinelos", voz: "estava-barraca" },
 ];
 // Quem aparece quando a Joy NÃO está ali: os personagens de verdade do desenho.
 // "voz" = arquivo em sons/voz/ (enquanto não gravar, fica só o nome escrito, sem som).
@@ -94,7 +94,7 @@ function rodada() {
   $("sala").innerHTML = lugares.map((l, i) => {
     const s = surpresas[i % surpresas.length];
     const atras = i === onde ? `<img src="imagens/jogos/joy-face.jpg" alt="A Joy"><span class="quem">Joy!</span>` : `<img src="${s.img}" alt=""><span class="quem">${s.nome}</span>`;
-    return `<button type="button" class="esconderijo" data-i="${i}" data-fala="${i === onde ? "" : s.fala}" data-voz="${i === onde ? "" : s.voz}" aria-label="Procurar: ${l.n}"><span class="atras">${atras}</span><span class="coisa"><img src="${l.img}" alt=""></span></button>`;
+    return `<button type="button" class="esconderijo" data-i="${i}" data-fala="${i === onde ? "" : s.fala}" data-voz="${i === onde ? "" : s.voz}" data-lugar="${l.voz}" aria-label="Procurar: ${l.n}"><span class="atras">${atras}</span><span class="coisa"><img src="${l.img}" alt=""></span></button>`;
   }).join("");
   PugsSom.falar("Cadê a Joy? Me acha!", "onde-esta-a-joy");
   clearTimeout(dica); dica = setTimeout(() => { const b = $("sala").children[onde]; if (b) { b.classList.add("mexe"); PugsSom.falar("Hihi, tô pertinho...", "barulhinho"); } }, 9000);
@@ -105,7 +105,9 @@ $("sala").addEventListener("click", (e) => {
   if (+b.dataset.i === onde) {
     travado = true; clearTimeout(dica); PugsSom.acerto(); PugsSom.falar("Achou! Lambeijo!", "achou-a-joy");
     achou++; $("achou").textContent = achou;
-    setTimeout(() => (achou >= 3 ? festa() : rodada()), 3000);
+    const lugar = b.dataset.lugar, conta = PugsSom.temVoz(lugar);
+    if (conta) setTimeout(() => PugsSom.falar("", lugar), 1900);
+    setTimeout(() => (achou >= 3 ? festa() : rodada()), conta ? 4300 : 3000);
   } else {
     PugsSom.pop(); PugsSom.falar("", b.dataset.voz);
     setTimeout(() => b.classList.remove("aberto"), 2200);
