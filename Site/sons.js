@@ -129,6 +129,7 @@ const PugsSom = (() => {
     bolhas() { for (let i = 0; i < 10; i++) tom(900 + Math.random() * 900, 0.06, { vol: 0.15, ate: 2400, quando: i * 0.09 + Math.random() * 0.05 }); chiado(0.8, { de: 3000, para: 1500, vol: 0.06 }); },
     boing() { tom(220, 0.35, { tipo: "triangle", vol: 0.3, ate: 660 }); tom(330, 0.3, { tipo: "triangle", vol: 0.2, ate: 990, quando: 0.3 }); },
     passos() { for (let i = 0; i < 8; i++) chiado(0.05, { de: 400, para: 250, vol: 0.4, quando: i * 0.28, q: 2 }); },
+    ronco() { for (let i = 0; i < 2; i++) { chiado(0.9, { de: 160, para: 320, vol: 0.35, quando: i * 2.2, q: 4 }); tom(85, 0.9, { tipo: "sawtooth", vol: 0.05, ate: 70, quando: i * 2.2 }); chiado(0.7, { de: 900, para: 500, vol: 0.06, quando: i * 2.2 + 1.1, q: 1 }); } },
     ninar() { [659, 587, 523, 587, 659, 659, 659].forEach((f, i) => tom(f, 0.42, { tipo: "sine", vol: 0.16, quando: i * 0.45 })); },
     latido() { [0, 0.28].forEach((q) => { tom(520, 0.12, { tipo: "sawtooth", vol: 0.12, ate: 300, quando: q }); chiado(0.1, { de: 900, para: 500, vol: 0.25, quando: q, q: 2 }); }); },
     guardar() { chiado(0.3, { de: 600, para: 3000, vol: 0.15 }); tom(990, 0.12, { vol: 0.15, quando: 0.25 }); },
