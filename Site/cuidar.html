@@ -253,12 +253,15 @@ function video(url, poster) {
 function tirarVideo() { const v = $("video"); v.classList.remove("ligado"); setTimeout(() => { if (!v.classList.contains("ligado")) { v.pause(); v.removeAttribute("src"); v.load(); } }, 600); }
 let pararRonco = () => {};
 // cenas de verdade da Joy (Flow): comendo, bebendo, banho, brincando. A Jane ainda usa os desenhos
+// a Jane brinca junto com a Joy (cena do Dia das Crianças)
+const FILME_JANE = { brincando: "pet-brincando-juntas" };
 function filme(nome, sintetico) {
-  if (pet !== "joy") return sintetico();
+  const arq = pet === "joy" ? "pet-" + nome + "-joy" : FILME_JANE[nome];
+  if (!arq) return sintetico();
   ocupado = true;
-  if (!PugsSom.som("som-" + nome + "-joy", { vol: 1 })) sintetico();
+  if (!(pet === "joy" && PugsSom.som("som-" + nome + "-joy", { vol: 1 }))) sintetico();
   let feito = false; const fim = () => { if (feito) return; feito = true; tirarVideo(); ocupado = false; pintar(); };
-  video("imagens/jogos/pet-" + nome + "-joy.mp4", "imagens/jogos/pet-" + nome + "-joy.jpg").then((v) => { v.onended = fim; }).catch(() => { ocupado = false; });
+  video("imagens/jogos/" + arq + ".mp4", "imagens/jogos/" + arq + ".jpg").then((v) => { v.onended = fim; }).catch(() => { ocupado = false; });
   setTimeout(fim, 7000);
 }
 const ACOES = {
@@ -274,7 +277,7 @@ const ACOES = {
     if (p.energia < 20) return falar("Tô muito cansada... vamos dormir?", "pet-cansada"), rosto("triste");
     p.diversao = 100; p.energia = Math.max(0, p.energia - 12); p.limpeza = Math.max(0, p.limpeza - 8);
     animar("pula", 1400); rosto("feliz", 3000); filme("brincando", () => PugsSom.boing()); efeito(["🎾", "⭐", "🎾"]); coracao(); falar("Eba! Que divertido!", "pet-divertido");
-    setTimeout(() => espalhar(3), pet === "joy" ? 5800 : 1500);
+    setTimeout(() => espalhar(3), 5800);
   },
   limpeza(p) {
     if (p.limpeza > 80 && !p.patinhas) return falar("Já tô limpinha! Banho demais faz mal pra pele.", "pet-ja-limpa"), rosto("esperta");

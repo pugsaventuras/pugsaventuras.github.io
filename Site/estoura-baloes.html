@@ -43,6 +43,10 @@
 .eb-niveis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;max-width:760px;margin:12px auto}
 .eb-nivel{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 1.2rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:14px 8px;cursor:pointer;box-shadow:0 4px 0 var(--marrom)}
 .eb-nivel span{font-size:2.6rem}
+.eb-video{position:fixed;inset:0;z-index:50;background:rgba(20,20,40,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px}
+.eb-video[hidden]{display:none}
+.eb-video video{width:min(96vw,900px);max-height:78vh;border:4px solid #fff;border-radius:20px;background:#000}
+.eb-video p{color:#fff;font:700 1.4rem Fredoka,Arial,sans-serif;margin:0}
 .eb-nivel small{font-weight:500;font-size:.95rem}
 </style>
 </head><body>
@@ -60,6 +64,7 @@
       <button type="button" class="eb-nivel" data-modo="facil"><span>🎈</span>Achar o número<small>de 0 a 5</small></button>
       <button type="button" class="eb-nivel" data-modo="dificil"><span>🎈🎈</span>Achar o número<small>de 0 a 10</small></button>
       <button type="button" class="eb-nivel" data-modo="contar"><span>🔢</span>Contar em ordem<small>0, 1, 2, 3... até 10</small></button>
+      <button type="button" class="eb-nivel" id="cantar"><span>🎵</span>Música dos números<small>cante e dance com a Joy e a Jane</small></button>
     </div>
   </div>
   <div id="partida" hidden>
@@ -80,9 +85,11 @@
       <p id="festa-txt">Você estourou todos os balões!</p>
       <button type="button" class="botao rosa" id="denovo">Brincar de novo</button>
       <button type="button" class="botao" id="outra">Mudar</button>
+      <button type="button" class="botao" id="dancar">🎵 Dançar a música</button>
     </div>
   </div>
 </div>
+<div class="eb-video" id="video-box" hidden><p>🎵 Vamos cantar juntos!</p><video id="video-num" playsinline controls preload="none" poster="imagens/jogos/musica-numeros.jpg"></video><button type="button" class="botao rosa" id="fechar-video">✕ Fechar</button></div>
 </main>
 <div class="colinas" aria-hidden="true"></div>
 <footer><div class="dentro">
@@ -107,7 +114,7 @@ function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math
 const temZero = () => PugsSom.temVoz("numero-0");
 function falarNumero(n) { PugsSom.numero(n); }
 function telaEscolha() { $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true; }
-$("escolha").addEventListener("click", (e) => { const b = e.target.closest(".eb-nivel"); if (!b) return; PugsSom.pop(); comecar(b.dataset.modo); });
+$("escolha").addEventListener("click", (e) => { const b = e.target.closest(".eb-nivel"); if (!b || !b.dataset.modo) return; PugsSom.pop(); comecar(b.dataset.modo); });
 
 function comecar(m) {
   modo = m; acertos = 0; proximo = 0;
@@ -186,6 +193,14 @@ function festa(txt) {
     document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
   }
 }
+// clipe da música dos números (Joy e Jane com os balões de 0 a 10)
+function cantar() {
+  const v = $("video-num"); $("video-box").hidden = false; PugsSom.pausarMusica(); if (window.speechSynthesis) speechSynthesis.cancel();
+  if (!v.src) v.src = "imagens/jogos/musica-numeros.mp4";
+  v.currentTime = 0; v.muted = !PugsSom.ligado; const p = v.play(); if (p && p.catch) p.catch(() => {});
+}
+function pararVideo() { const v = $("video-num"); v.pause(); $("video-box").hidden = true; PugsSom.voltarMusica(); }
+$("cantar").onclick = cantar; $("dancar").onclick = cantar; $("fechar-video").onclick = pararVideo; $("video-num").onended = pararVideo;
 $("ouvir").onclick = () => falarNumero(modo === "contar" ? proximo : alvo);
 $("denovo").onclick = () => comecar(modo);
 $("outra").onclick = $("trocar").onclick = telaEscolha;
