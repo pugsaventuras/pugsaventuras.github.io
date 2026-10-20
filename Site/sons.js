@@ -154,6 +154,7 @@ const PugsSom = (() => {
       [0, 0.28].forEach((q) => { tom(520, 0.12, { tipo: "sawtooth", vol: 0.12, ate: 300, quando: q }); chiado(0.1, { de: 900, para: 500, vol: 0.25, quando: q, q: 2 }); });
     },
     carregarSons(lista) { (lista || []).forEach(arq); },
+    som(nome, op) { return tocarArq(nome, op || {}); },
     guardar() { chiado(0.3, { de: 600, para: 3000, vol: 0.15 }); tom(990, 0.12, { vol: 0.15, quando: 0.25 }); },
     pop() { tom(520, 0.09, { tipo: "triangle", vol: 0.3, ate: 980 }); tom(1300, 0.08, { vol: 0.12, quando: 0.05 }); },
     acerto() { tom(880, 0.14, { vol: 0.22 }); tom(1320, 0.22, { vol: 0.22, quando: 0.1 }); },

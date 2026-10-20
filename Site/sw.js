@@ -1,5 +1,5 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v16";
+const CACHE = "pugs-clube-v17";
 const ARQUIVOS = [
   "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html", "cuidar.html", "estoura-baloes.html", "imagens/jogos/baloes-numeros.jpg", "imagens/colorir-baloes-numeros.png", "imagens/fig-especial-tchau-lambeijo.jpg",
   "imagens/jogos/joy-face.jpg", "imagens/colorir-joy-dancando.png", "imagens/colorir-joy-na-porta.png", "imagens/colorir-pugs-na-estrada.png", ...["pet-joy-feliz","pet-joy-triste","pet-joy-surpresa","pet-joy-esperta","pet-joy-chamando","pet-joy-dormindo","pet-jane","pet-jane-sentada","pet-ranran"].map((n) => "imagens/jogos/" + n + ".png"), "imagens/jogos/ranran-so.jpg",
