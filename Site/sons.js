@@ -103,6 +103,17 @@ const PugsSom = (() => {
   }
   // deixa as vozes prontas antes (para não atrasar)
   function preparar(chaves) { (chaves || []).forEach((k) => { if (VOZES.has(k)) carregar("sons/voz/" + k + ".mp3").catch(() => {}); }); }
+  // sons gravados de efeito (latido, ronco): tocam junto com as vozes, sem cortar
+  const ARQ = {};
+  function arq(nome) { carregar("sons/" + nome + ".mp3").then((b) => { ARQ[nome] = b; }).catch(() => {}); }
+  function tocarArq(nome, { vol = 1, rate = 1 } = {}) {
+    const c = ac(); const b = ARQ[nome];
+    if (!b) { arq(nome); return null; }
+    if (!c || !ligado) return () => {};
+    const s = c.createBufferSource(), g = c.createGain(); g.gain.value = vol; s.playbackRate.value = rate;
+    s.buffer = b; s.connect(g).connect(c.destination); s.start();
+    return () => { try { g.gain.setTargetAtTime(0, c.currentTime, 0.15); s.stop(c.currentTime + 0.6); } catch (e) {} };
+  }
   const api = {
     get ligado() { return ligado; },
     alternar() { ligado = !ligado; try { localStorage.setItem("pugs-som", ligado ? "on" : "off"); } catch (e) {} if (ligado) { ac(); api.acerto(); tocarMusica(); } else { pararMusica(); if (window.speechSynthesis) speechSynthesis.cancel(); } return ligado; },
@@ -129,9 +140,20 @@ const PugsSom = (() => {
     bolhas() { for (let i = 0; i < 10; i++) tom(900 + Math.random() * 900, 0.06, { vol: 0.15, ate: 2400, quando: i * 0.09 + Math.random() * 0.05 }); chiado(0.8, { de: 3000, para: 1500, vol: 0.06 }); },
     boing() { tom(220, 0.35, { tipo: "triangle", vol: 0.3, ate: 660 }); tom(330, 0.3, { tipo: "triangle", vol: 0.2, ate: 990, quando: 0.3 }); },
     passos() { for (let i = 0; i < 8; i++) chiado(0.05, { de: 400, para: 250, vol: 0.4, quando: i * 0.28, q: 2 }); },
-    ronco() { for (let i = 0; i < 2; i++) { chiado(0.9, { de: 160, para: 320, vol: 0.35, quando: i * 2.2, q: 4 }); tom(85, 0.9, { tipo: "sawtooth", vol: 0.05, ate: 70, quando: i * 2.2 }); chiado(0.7, { de: 900, para: 500, vol: 0.06, quando: i * 2.2 + 1.1, q: 1 }); } },
+    // ronco de verdade (do vídeo da Joy dormindo); devolve uma função para parar
+    ronco(quem) {
+      const f = tocarArq("ronco-joy", { vol: 1.3, rate: quem === "jane" ? 1.1 : 1 });
+      if (f) return f;
+      for (let i = 0; i < 2; i++) { chiado(0.9, { de: 160, para: 320, vol: 0.35, quando: i * 2.2, q: 4 }); tom(85, 0.9, { tipo: "sawtooth", vol: 0.05, ate: 70, quando: i * 2.2 }); chiado(0.7, { de: 900, para: 500, vol: 0.06, quando: i * 2.2 + 1.1, q: 1 }); }
+      return () => {};
+    },
     ninar() { [659, 587, 523, 587, 659, 659, 659].forEach((f, i) => tom(f, 0.42, { tipo: "sine", vol: 0.16, quando: i * 0.45 })); },
-    latido() { [0, 0.28].forEach((q) => { tom(520, 0.12, { tipo: "sawtooth", vol: 0.12, ate: 300, quando: q }); chiado(0.1, { de: 900, para: 500, vol: 0.25, quando: q, q: 2 }); }); },
+    // latidinho de verdade da Joy ("au au", tipo um oi); a Jane late um pouquinho mais fino
+    latido(quem) {
+      if (tocarArq(quem === "jane" ? "latido-jane" : "latido-joy", { vol: 1 })) return;
+      [0, 0.28].forEach((q) => { tom(520, 0.12, { tipo: "sawtooth", vol: 0.12, ate: 300, quando: q }); chiado(0.1, { de: 900, para: 500, vol: 0.25, quando: q, q: 2 }); });
+    },
+    carregarSons(lista) { (lista || []).forEach(arq); },
     guardar() { chiado(0.3, { de: 600, para: 3000, vol: 0.15 }); tom(990, 0.12, { vol: 0.15, quando: 0.25 }); },
     pop() { tom(520, 0.09, { tipo: "triangle", vol: 0.3, ate: 980 }); tom(1300, 0.08, { vol: 0.12, quando: 0.05 }); },
     acerto() { tom(880, 0.14, { vol: 0.22 }); tom(1320, 0.22, { vol: 0.22, quando: 0.1 }); },

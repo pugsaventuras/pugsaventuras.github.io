@@ -1,5 +1,5 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v15";
+const CACHE = "pugs-clube-v16";
 const ARQUIVOS = [
   "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html", "cuidar.html", "estoura-baloes.html", "imagens/jogos/baloes-numeros.jpg", "imagens/colorir-baloes-numeros.png", "imagens/fig-especial-tchau-lambeijo.jpg",
   "imagens/jogos/joy-face.jpg", "imagens/colorir-joy-dancando.png", "imagens/colorir-joy-na-porta.png", "imagens/colorir-pugs-na-estrada.png", ...["pet-joy-feliz","pet-joy-triste","pet-joy-surpresa","pet-joy-esperta","pet-joy-chamando","pet-joy-dormindo","pet-jane","pet-jane-sentada","pet-ranran"].map((n) => "imagens/jogos/" + n + ".png"), "imagens/jogos/ranran-so.jpg",
@@ -31,13 +31,13 @@ self.addEventListener("fetch", (e) => {
   if (meu && u.pathname.endsWith("episodios.json")) return;     // episódio novo: sempre da internet
   // áudio: o iPad pede "pedaços" do arquivo (Range); responde com o pedaço certo, do arquivo guardado
   const faixa = r.headers.get("range");
-  if (meu && faixa && /\.mp3$/.test(u.pathname)) {
+  if (meu && faixa && /\.(mp3|mp4)$/.test(u.pathname)) {
     e.respondWith(caches.open(CACHE).then(async (c) => {
       let resp = await c.match(u.pathname.replace(/^\//, ""), { ignoreSearch: true }) || await c.match(r, { ignoreSearch: true });
       if (!resp) { resp = await fetch(u.href); if (resp.ok) c.put(u.href, resp.clone()); }
       const buf = await resp.arrayBuffer(), m = /bytes=(\d*)-(\d*)/.exec(faixa) || [];
       const ini = m[1] ? +m[1] : 0, fim = m[2] ? Math.min(+m[2], buf.byteLength - 1) : buf.byteLength - 1;
-      return new Response(buf.slice(ini, fim + 1), { status: 206, headers: { "Content-Type": "audio/mpeg", "Content-Range": `bytes ${ini}-${fim}/${buf.byteLength}`, "Content-Length": String(fim - ini + 1), "Accept-Ranges": "bytes" } });
+      return new Response(buf.slice(ini, fim + 1), { status: 206, headers: { "Content-Type": /\.mp4$/.test(u.pathname) ? "video/mp4" : "audio/mpeg", "Content-Range": `bytes ${ini}-${fim}/${buf.byteLength}`, "Content-Length": String(fim - ini + 1), "Accept-Ranges": "bytes" } });
     }).catch(() => fetch(r)));
     return;
   }
