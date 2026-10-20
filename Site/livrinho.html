@@ -116,6 +116,23 @@ const LIVROS = [
     ["18", "Julia: “Tchau, amiguinhos! Adorei participar com a Joy do Pugs Aventuras!”  Joy: “Obrigada, Julia! Você é a minha irmã. Te amo! Tchau, tchau, amiguinhos!”"],
   ].map(([n, t]) => ({ n, t })) },
 ];
+const EP3_NO_AR = Date.now() >= Date.parse("2026-10-21T22:00:00Z"); // Episódio 3 estreia quarta 21/10, 19h de Brasília
+if (EP3_NO_AR) LIVROS.unshift({ titulo: "A Joy e a roupinha de meia", ep: 3, audio: true, capa: "imagens/capa-ep3.jpg", paginas: [
+    ["01", "Alguns dias depois que eu cheguei... já era inverno... e fazia muito frio!"],
+    ["02", "Mamãe: “Ai, filha, você tá tremendo de frio!... Uau! Tive uma ideia!”"],
+    ["03", "Mamãe: “Ge, posso pegar uma meia sua?”  Papai: “Pode sim! Pega essa aqui, que tá sem par!”  Joy: “Sabe aquela meia que sempre perde o par? Vai virar a minha roupinha!”"],
+    ["04", "A mamãe cortou a pontinha da meia... e fez dois buraquinhos pras minhas patinhas. E o elástico ficou no meu pescocinho! Mas atenção, amiguinhos: tesoura, só com um adulto junto, tá? E a gente nunca corta a roupa de ninguém sem pedir!"],
+    ["05", "Mamãe: “Uma patinha... a outra patinha... e pronto! Ficou perfeito do seu tamanho...”"],
+    ["06", "Olha eu! A ideia da mamãe foi muito boa! Tô quentinha... e linda!"],
+    ["07", "Eu fiquei tão feliz que não parava quieta! Sobe, desce, sobe, desce!"],
+    ["08", "Mamãe: “Joy, calma... Joy, vai, caminha!”  Joy: “Tá bom, mamãe...”"],
+    ["09", "Aí eu entendi: a roupinha era carinho da mamãe... E eu fiquei quentinha, quentinha..."],
+    ["10", "E quando esfriou mais ainda... a mamãe começou a tricotar..."],
+    ["11", "E sabe o que ela fez? Um cachecol e uma cobertinha só pra mim..."],
+    ["12", "E eu aprendi que... uma meia velhinha virou roupinha... e um novelo virou cachecol! Quando faz frio, a gente se agasalha..."],
+    ["13", "Essa sou eu de verdade! A mamãe fez duas roupinhas pra mim, uma branca e uma cinza... e um cachecol de tricô! E você? Tem alguma coisa velhinha em casa que pode virar uma coisa nova? Pede ajuda pra um adulto, tá?"],
+    ["14", "Mamãe e Papai: “Tchau, tchau, amiguinhos! O carinho da família esquenta o coração!”  Joy: “Obrigada, mamãe e papai, por cuidarem de mim!”"],
+  ].map(([n, t]) => ({ n, t })) });
 let livro = null, pag = 0, lerSozinho = true, toque = null;
 const img = (l, p) => `imagens/livrinho/ep${l.ep}-pag${p.n}.jpg`;
 function estante() {

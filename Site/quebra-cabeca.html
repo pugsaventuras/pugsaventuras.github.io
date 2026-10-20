@@ -67,6 +67,8 @@ const FIGURAS = [
   { img: "imagens/capa-dia-das-criancas.jpg", nome: "Dia das Crianças" },
   { img: "imagens/banner-pugs-aventuras.jpg", nome: "Joy e Jane na estrada" },
 ];
+const EP3_NO_AR = Date.now() >= Date.parse("2026-10-21T22:00:00Z"); // Episódio 3 estreia quarta 21/10, 19h de Brasília
+if (EP3_NO_AR) FIGURAS.unshift({ img: "imagens/quebra-ep3.jpg", nome: "A roupinha de meia" });
 const NIVEIS = [{ c: 2, l: 2, nome: "4", emoji: "🐣" }, { c: 3, l: 2, nome: "6", emoji: "🐥" }, { c: 3, l: 3, nome: "9", emoji: "🐶" }, { c: 4, l: 3, nome: "12", emoji: "⭐" }, { c: 4, l: 4, nome: "16", emoji: "🌟" }, { c: 6, l: 4, nome: "24", emoji: "🚀" }, { c: 7, l: 5, nome: "35", emoji: "🏆" }];
 let figura = 0, nivel = null, selecionada = null, colocadas = 0;
 const $ = (s) => document.getElementById(s);
