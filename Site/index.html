@@ -32,7 +32,6 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p class="quando">No ar desde 07/10</p>
 <p>A mamãe sonhava com uma pug. O papai avisou: "Cachorro? Só se for pequenininho!" Até que chegou a Joy, com um lambeijo bem na portaria.</p>
 <p class="licao"><b>Lição:</b> quem chega na família é recebido com carinho, uma caminha quentinha e um nome bem bonito.</p>
-<p class="comprar"><a class="botao rosa" href="https://pay.kiwify.com.br/fhCjORQ" target="_blank" rel="noopener">📖 Comprar o livrinho · R$ 5,00</a></p>
 </article>
 <article class="cartao" data-ep="2">
 <div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/LefTp1EOWZ0" title="Pugs Aventuras - Episódio 2: A Joy e os chinelos do papai" loading="lazy"
@@ -41,7 +40,6 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p class="quando">No ar desde 14/10</p>
 <p>A família saiu para o jogo e a Joy ficou cuidando da casa. Sozinha, ela descobriu um segredo: o pininho do chinelo sobe! Ploc!</p>
 <p class="licao"><b>Lição:</b> a Joy não fazia por mal. Ela só queria ficar pertinho de quem ela ama.</p>
-<p class="comprar"><a class="botao rosa" href="https://pay.kiwify.com.br/x8jlpIi" target="_blank" rel="noopener">📖 Comprar o livrinho · R$ 12,90</a></p>
 </article>
 <article class="cartao" data-ep="3">
 <div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/eY9A0SQG6yc" title="Pugs Aventuras - Episódio 3: A roupinha de meia" loading="lazy"
@@ -50,7 +48,6 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p class="quando">Estreia quarta, 21/10, às 19h (Brasília)</p>
 <p>Fazia muito frio e a Joy tremia. Foi aí que a mamãe teve uma ideia com uma meia do papai…</p>
 <p class="licao"><b>Lição:</b> uma coisa velhinha pode virar uma coisa nova, e o carinho da família esquenta o coração.</p>
-<p class="comprar" data-desde="2026-10-21T22:00:00Z" hidden><a class="botao rosa" href="https://pay.kiwify.com.br/2v4UXdm" target="_blank" rel="noopener">📖 Comprar o livrinho · R$ 12,90</a></p>
 </article>
 <article class="cartao" data-ep="4">
 <div class="foto "><!-- foto: imagens/capa-ep4.jpg --><div class="falta"><img class="marca-falta" src="imagens/marca-pugs-aventuras.png" alt=""><span>Em breve 🐾</span></div>
@@ -65,9 +62,7 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <h2>Quer a aventura longe da tela?</h2>
 <p>Livrinho e desenhos para colorir de cada episódio, para ler e pintar junto com seu filho.</p>
 <a class="botao rosa" href="assinatura.html">Conhecer o Clube Pugs Aventuras</a>
-<p style="margin-top:12px">Ou leve só o livrinho: <a class="botao" href="https://pay.kiwify.com.br/3Yfmm2o" target="_blank" rel="noopener">📚 Kit Ep. 1 + Ep. 2 · R$ 19,90</a></p>
 </section>
-<style>.comprar{margin-top:10px;text-align:center}.comprar .botao{font-size:1rem}</style>
 
 </main>
 <div class="colinas" aria-hidden="true"></div>
@@ -81,8 +76,6 @@ Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></d
 Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
 </div></footer>
 <script>
-// botão de compra que só aparece a partir da estreia
-document.querySelectorAll("[data-desde]").forEach((p) => { if (Date.now() >= Date.parse(p.dataset.desde)) p.hidden = false; });
 // Episódio novo aparece sozinho: o site lê episodios.json, que o GitHub atualiza a cada 30 minutos a partir do canal.
 (async () => {
   try {

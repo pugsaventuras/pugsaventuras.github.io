@@ -76,6 +76,35 @@
 </div>
 <p style="text-align:center">Para assinar, é só chamar a gente no WhatsApp. Em breve: pagamento com cartão direto aqui no site.</p>
 <div class="patinhas" aria-hidden="true">🐾 🐾 🐾</div>
+<h2 id="livrinhos">Livrinhos avulsos (só para adultos)</h2>
+<section class="cartao" style="text-align:center">
+<p>Quer só o livrinho de um episódio, sem assinar o Clube? Você compra o PDF na Kiwify e recebe no e-mail.</p>
+<div id="porta-adulto">
+<p><b>Pergunta para o adulto:</b> quanto é <span id="conta"></span>?</p>
+<p><input id="resposta" inputmode="numeric" autocomplete="off" aria-label="Resposta" style="width:7em;font:inherit;padding:8px;border:2.5px solid var(--marrom);border-radius:12px;text-align:center"> <button type="button" class="botao" id="conferir">Ver os livrinhos</button></p>
+<p id="porta-msg" role="status"></p>
+</div>
+<div id="lista-livrinhos" hidden>
+<p><a class="botao rosa" href="https://pay.kiwify.com.br/fhCjORQ" target="_blank" rel="noopener">📖 Ep. 1 · Procura-se uma pug · R$ 5,00</a></p>
+<p><a class="botao rosa" href="https://pay.kiwify.com.br/x8jlpIi" target="_blank" rel="noopener">📖 Ep. 2 · A Joy e os chinelos do papai · R$ 12,90</a></p>
+<p id="livro-ep3" hidden><a class="botao rosa" href="https://pay.kiwify.com.br/2v4UXdm" target="_blank" rel="noopener">📖 Ep. 3 · A roupinha de meia · R$ 12,90</a></p>
+<p><a class="botao" href="https://pay.kiwify.com.br/3Yfmm2o" target="_blank" rel="noopener">📚 Kit Ep. 1 + Ep. 2 · R$ 19,90</a></p>
+</div>
+</section>
+<script>
+// porta para adultos: uma conta que criança pequena não faz, para ninguém comprar sem querer
+(() => {
+  const a = 11 + Math.floor(Math.random() * 8), b = 6 + Math.floor(Math.random() * 7), certo = a * b;
+  document.getElementById("conta").textContent = a + " × " + b;
+  document.getElementById("conferir").onclick = () => {
+    if (parseInt(document.getElementById("resposta").value, 10) === certo) {
+      document.getElementById("porta-adulto").hidden = true; document.getElementById("lista-livrinhos").hidden = false;
+      document.getElementById("livro-ep3").hidden = Date.now() < Date.parse("2026-10-21T22:00:00Z");
+    } else document.getElementById("porta-msg").textContent = "Resposta errada. Peça ajuda para um adulto. 🙂";
+  };
+})();
+</script>
+<div class="patinhas" aria-hidden="true">🐾 🐾 🐾</div>
 <h2>Perguntas frequentes</h2>
 <details><summary>Para que idade é?</summary><p>A partir de 3 anos. E as musiquinhas, criança de toda idade gosta!</p></details>
 <details><summary>Como recebo o material?</summary><p>Tudo fica na área da família aqui no site (botão "Entrar"), com os livrinhos e desenhos para baixar, imprimir ou pintar no tablet.</p></details>
