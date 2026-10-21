@@ -76,7 +76,13 @@ const fonte = (t) => `700 ${t}px Fredoka, "Arial Rounded MT Bold", Arial, sans-s
 function banco() { return new Promise((ok, erro) => { const r = indexedDB.open("pugs-vozes", 1); r.onupgradeneeded = () => r.result.createObjectStore("nomes"); r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error); }); }
 async function vozGuardada(n) { try { const db = await banco(); return await new Promise((ok) => { const q = db.transaction("nomes").objectStore("nomes").get(n.toLowerCase()); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); } catch (e) { return null; } }
 async function guardarVoz(n, blob) { const db = await banco(); return new Promise((ok, erro) => { const t = db.transaction("nomes", "readwrite"); t.objectStore("nomes").put(blob, n.toLowerCase()); t.oncomplete = ok; t.onerror = () => erro(t.error); }); }
-async function falarNome() { const b = await vozGuardada(nome); if (b) PugsSom.tocarUrl(URL.createObjectURL(b)); else PugsSom.falar(nome); }
+// voz do pai/mãe gravada no Clube (Meus dados › Filhos); se não tiver, usa a gravação deste aparelho
+window.IDS = {}; let UID = null;
+async function vozDaFamilia(n) {
+  const id = UID && window.IDS[n]; if (!id) return null;
+  try { const { data, error } = await pugs.storage.from("nomes").download(UID + "/" + id); return error ? null : data; } catch (e) { return null; }
+}
+async function falarNome() { const b = (await vozDaFamilia(nome)) || (await vozGuardada(nome)); if (b) PugsSom.tocarUrl(URL.createObjectURL(b)); return !!b; }
 $("gravar").onclick = async () => {
   if (!navigator.mediaDevices || !window.MediaRecorder) { $("gravar-status").textContent = "Este aparelho não deixa gravar pelo site."; return; }
   try {
@@ -172,7 +178,7 @@ function proxima() {
 function festa() {
   PugsSom.festa();
   setTimeout(() => {
-    if (modo === "nome") { itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850)); setTimeout(() => PugsSom.falar("", "fim-nome"), itens.length * 850 + 300); }
+    if (modo === "nome") { itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850)); setTimeout(() => PugsSom.falar("", "fim-nome"), itens.length * 850 + 300); setTimeout(() => falarNome(), itens.length * 850 + 3300); }
     else if (modo.startsWith("uma-")) falarItem();
     else if (modo === "abc") PugsSom.falar("", "fim-alfabeto");
     else PugsSom.falar("", "fim-numeros");
@@ -198,7 +204,7 @@ pugsSoNoClube().then(async (f) => {
   let nomes = [], chave = "pugs-nomes";
   try {
     const { data: s } = await pugs.auth.getSession(); const uid = s && s.session && s.session.user.id;
-    if (uid) { chave += "-" + uid; const { data } = await pugs.from("criancas").select("nome, criado_em").eq("familia_id", uid).order("criado_em"); nomes = (data || []).map((c) => pugsMaiuscula(c.nome).split(" ")[0]).filter(Boolean); }
+    if (uid) { chave += "-" + uid; const { data } = await pugs.from("criancas").select("id, nome, criado_em").eq("familia_id", uid).order("criado_em"); UID = uid; (data || []).forEach((c) => { const p = pugsMaiuscula(c.nome).split(" ")[0]; if (p && !window.IDS[p]) window.IDS[p] = c.id; }); nomes = (data || []).map((c) => pugsMaiuscula(c.nome).split(" ")[0]).filter(Boolean); }
   } catch (e) {}
   try { if (nomes.length) localStorage.setItem(chave, JSON.stringify(nomes)); else nomes = JSON.parse(localStorage.getItem(chave) || "[]"); } catch (e) {}
   window.NOMES = [...new Set([...nomes, "Joy", "Jane"])].slice(0, 8);

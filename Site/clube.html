@@ -75,13 +75,20 @@
 </div>
 
 <div class="patinhas" aria-hidden="true">🐾 🐾 🐾</div>
-<details><summary>Meus dados</summary>
+<style>
+.voz-filho{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff7e0;border:2px dashed var(--marrom);border-radius:14px;padding:8px 10px}
+.voz-filho[hidden]{display:none}.voz-filho .st{font-weight:600}
+.dica-voz{background:#fff7e0;border:2px solid var(--marrom);border-radius:14px;padding:10px 12px}
+.novidade-voz{display:block;margin:10px 0;text-align:center}
+</style>
+<details id="meus-dados"><summary>Meus dados</summary>
 <form id="form-dados" class="formulario" style="margin-top:12px">
 <label>Seu nome<input name="nome_responsavel" required></label>
 <label>Seu WhatsApp (com o código do país)<input name="telefone" type="tel" required placeholder="+55 11 99999-9999 ou +1 954 555-1234"></label>
 <button class="botao" type="submit">Salvar</button> <span id="salvo" role="status"></span>
 </form>
 <h3 style="margin-top:18px">Filhos 👧👦</h3>
+<p id="dica-voz" class="dica-voz" hidden>🎤 <b>Grave o nome do seu filho com a sua voz!</b> No jogo "Vamos escrever", quando a criança termina de escrever o nome, ela ouve o nome dela falado por você. 💛</p>
 <div id="meus-filhos" class="formulario"></div>
 <p><button type="button" class="botao pequeno" id="novo-filho">➕ Mais um filho</button> <span id="salvo-filhos" role="status"></span></p>
 <p style="margin-top:12px">E-mail da conta: <b id="email"></b></p>
@@ -151,6 +158,7 @@ async function abrir() {
     ? comData.map((x) => { const [, m, dd] = x.nascimento.split("-"); const i = pugsIdade(x.nascimento); return x.nome + " (" + i + (i === 1 ? " aninho" : " anos") + "): dia " + dd + "/" + m; }).join(" · ") + ". A Joy e a Jane já anotaram! 🎉"
     : "Coloque a data de nascimento em \"Meus dados\" (aqui embaixo) e a Joy e a Jane mandam um recadinho especial no aniversário! 🎉";
   desenharFilhos(filhos);
+  prepararVozes(filhos);
   const f = $("#form-dados");
   ["nome_responsavel", "telefone"].forEach((k) => f[k].value = data[k] || "");
   const { data: admin } = await pugs.rpc("sou_admin");
@@ -178,7 +186,9 @@ function linhaFilho(x) {
   d.innerHTML = `<label>Nome<input class="f-nome" maxlength="40" value="${(x.nome || "").replace(/"/g, "&quot;")}"></label>
   <label>Data de nascimento<input class="f-nasc" type="date" value="${x.nascimento || ""}" max="${new Date().toISOString().slice(0, 10)}"></label>
   <button type="button" class="botao pequeno salvar-filho">Salvar</button>
-  <button type="button" class="tirar" aria-label="Tirar esta criança">✖</button>`;
+  <button type="button" class="tirar" aria-label="Tirar esta criança">✖</button>
+  <div class="voz-filho" hidden>🎤 <button type="button" class="botao pequeno rosa gravar-voz">Gravar o nome na minha voz</button> <button type="button" class="botao pequeno ouvir-voz" hidden>▶️ Ouvir</button> <span class="st" role="status"></span></div>`;
+  if (x.id) { d.querySelector(".gravar-voz").onclick = () => gravarVoz(d, x); d.querySelector(".ouvir-voz").onclick = () => ouvirVoz(d, x); }
   d.querySelector(".salvar-filho").onclick = () => salvarFilho(d);
   d.querySelector(".tirar").onclick = () => tirarFilho(d);
   return d;
@@ -198,6 +208,49 @@ async function tirarFilho(d) {
   const r = await pugs.from("criancas").delete().eq("id", d.dataset.id);
   $("#salvo-filhos").textContent = r.error ? pugsErro(r.error) : "Pronto.";
   if (!r.error) abrir();
+}
+// ---- voz dos pais: o pai/mãe grava o nome da criança (fica guardado só para esta família)
+const VOZES_FAMILIA = new Set();
+async function prepararVozes(filhos) {
+  if (!filhos.length || !navigator.mediaDevices || !window.MediaRecorder) return;
+  const { data, error } = await pugs.storage.from("nomes").list(familia.id);
+  if (error) return; // a pasta das vozes ainda não foi criada no Supabase
+  (data || []).forEach((o) => VOZES_FAMILIA.add(o.name));
+  $("#dica-voz").hidden = false;
+  document.querySelectorAll("#meus-filhos .filho").forEach((d) => {
+    if (!d.dataset.id) return;
+    const v = d.querySelector(".voz-filho"); v.hidden = false;
+    if (VOZES_FAMILIA.has(d.dataset.id)) { d.querySelector(".ouvir-voz").hidden = false; d.querySelector(".gravar-voz").textContent = "Gravar de novo"; v.querySelector(".st").textContent = "Gravado ✅"; }
+  });
+}
+function tipoAudio() { for (const t of ["audio/mp4", "audio/webm;codecs=opus", "audio/webm"]) { try { if (MediaRecorder.isTypeSupported(t)) return t; } catch (e) {} } return ""; }
+async function gravarVoz(d, x) {
+  const st = d.querySelector(".st"), b = d.querySelector(".gravar-voz");
+  let mic;
+  try { mic = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch (e) { st.textContent = "Precisa permitir o microfone (no iPad: Ajustes › Safari › Microfone)."; return; }
+  const tipo = tipoAudio(), rec = tipo ? new MediaRecorder(mic, { mimeType: tipo }) : new MediaRecorder(mic), partes = [];
+  rec.ondataavailable = (e) => { if (e.data && e.data.size) partes.push(e.data); };
+  rec.onstop = async () => {
+    mic.getTracks().forEach((t) => t.stop());
+    const blob = new Blob(partes, { type: (rec.mimeType || tipo || "audio/mp4").split(";")[0] });
+    if (blob.size < 1500) { st.textContent = "Não gravou nada. Tente de novo, falando pertinho."; b.disabled = false; return; }
+    st.textContent = "Guardando...";
+    const { error } = await pugs.storage.from("nomes").upload(familia.id + "/" + x.id, blob, { upsert: true, contentType: blob.type });
+    b.disabled = false;
+    if (error) { st.textContent = "Não deu para guardar: " + pugsErro(error); return; }
+    VOZES_FAMILIA.add(x.id); st.textContent = "Gravado ✅"; b.textContent = "Gravar de novo"; d.querySelector(".ouvir-voz").hidden = false;
+    tocarBlob(blob);
+  };
+  b.disabled = true; rec.start();
+  let s = 3; st.textContent = "🔴 Fale o nome agora! " + s;
+  const t = setInterval(() => { s--; if (s > 0) st.textContent = "🔴 Fale o nome agora! " + s; else { clearInterval(t); if (rec.state !== "inactive") rec.stop(); } }, 1000);
+}
+function tocarBlob(blob) { const a = new Audio(URL.createObjectURL(blob)); const p = a.play(); if (p && p.catch) p.catch(() => {}); }
+async function ouvirVoz(d, x) {
+  const { data, error } = await pugs.storage.from("nomes").download(familia.id + "/" + x.id);
+  if (error || !data) { d.querySelector(".st").textContent = "Não achei a gravação."; return; }
+  tocarBlob(data);
 }
 $("#novo-filho").onclick = () => $("#meus-filhos").appendChild(linhaFilho({}));
 
