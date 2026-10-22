@@ -1,5 +1,5 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v28";
+const CACHE = "pugs-clube-v29";
 const ARQUIVOS = [
   "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html", "cuidar.html", "estoura-baloes.html", "imagens/jogos/baloes-numeros.jpg", "imagens/colorir-baloes-numeros.png", "imagens/fig-especial-tchau-lambeijo.jpg",
   "imagens/jogos/joy-face.jpg", "imagens/colorir-joy-dancando.png", "imagens/colorir-joy-na-porta.png", "imagens/colorir-pugs-na-estrada.png", ...["pet-joy-feliz","pet-joy-triste","pet-joy-surpresa","pet-joy-esperta","pet-joy-chamando","pet-joy-dormindo","pet-jane","pet-jane-sentada","pet-ranran"].map((n) => "imagens/jogos/" + n + ".png"), "imagens/jogos/ranran-so.jpg",
@@ -17,7 +17,7 @@ const ARQUIVOS = [
   ...Array.from({ length: 19 }, (_, i) => "sons/livrinho/ep1-pag" + String(i + 1).padStart(2, "0") + ".mp3"),
 ];
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => Promise.allSettled(ARQUIVOS.map((u) => c.add(u)))).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => Promise.allSettled(ARQUIVOS.map((u) => c.add(new Request(u, { cache: "reload" }))))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
@@ -44,7 +44,7 @@ self.addEventListener("fetch", (e) => {
   // mostra o que já está guardado (rápido e funciona sem internet) e atualiza por trás
   e.respondWith(caches.open(CACHE).then(async (c) => {
     const guardado = await c.match(r, { ignoreSearch: true });
-    const daRede = fetch(r).then((resp) => { if (resp && (resp.ok || resp.type === "opaque")) c.put(r, resp.clone()); return resp; }).catch(() => guardado);
+    const daRede = (meu ? fetch(r.url, { cache: "no-cache", credentials: "same-origin" }) : fetch(r)).then((resp) => { if (resp && (resp.ok || resp.type === "opaque")) c.put(r, resp.clone()); return resp; }).catch(() => guardado);
     return guardado || daRede;
   }));
 });
