@@ -382,7 +382,7 @@ pugsSoNoClube().then((f) => {
   if (!f) return;
   $("esperando").hidden = true; $("jogo").hidden = false;
   // a Jane ainda está sendo preparada: por enquanto só a Joice vê
-  pugsSouAdmin().then((adm) => { document.querySelector('.cd-pet-btn[data-pet="jane"]').hidden = !adm; });
+  (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)).then((adm) => { document.querySelector('.cd-pet-btn[data-pet="jane"]').hidden = !adm; });
   PugsSom.carregarSons(SONS_REAIS); addEventListener("pointerup", () => PugsSom.carregarSons(SONS_REAIS), { once: true });
   montarAcoes(); brinquedos(); $("dica").textContent = DICAS[iDica]; pintar();
   setTimeout(() => falar(noite() ? "Boa noite! Já tá na hora de dormir..." : "Oi! Vamos cuidar da gente hoje?", noite() ? "pet-oi-noite" : "pet-oi"), 600);

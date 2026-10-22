@@ -204,7 +204,7 @@ $("cantar").onclick = cantar; $("dancar").onclick = cantar; $("fechar-video").on
 $("ouvir").onclick = () => falarNumero(modo === "contar" ? proximo : alvo);
 $("denovo").onclick = () => comecar(modo);
 $("outra").onclick = $("trocar").onclick = telaEscolha;
-pugsSoNoClube().then(async (f) => { if (!f) return; if (!(await pugsSouAdmin())) { location.href = "clube.html"; return; } $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); }); // em teste: só a Joice
+pugsSoNoClube().then(async (f) => { if (!f) return; if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; } $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); }); // em teste: só a Joice
 </script>
 
 </body></html>

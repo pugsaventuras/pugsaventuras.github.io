@@ -168,7 +168,7 @@ async function abrir() {
   prepararVozes(filhos);
   const f = $("#form-dados");
   ["nome_responsavel", "telefone"].forEach((k) => f[k].value = data[k] || "");
-  const admin = await pugsSouAdmin();
+  const admin = await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false));
   $("#botao-painel").hidden = !admin;
   document.querySelectorAll(".so-joice").forEach((e) => { e.hidden = !admin; if (admin && !e.querySelector(".teste")) e.insertAdjacentHTML("beforeend", '<span class="teste" style="position:absolute;top:6px;left:6px;background:#fff;border:2px solid var(--marrom);border-radius:10px;padding:1px 6px;font-size:.75rem;font-weight:700">🔒 só Joice</span>'); });
   $("#carregando").hidden = true; $("#area").hidden = false;
