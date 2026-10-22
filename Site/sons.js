@@ -86,14 +86,17 @@ const PugsSom = (() => {
     if (!buffers[url]) buffers[url] = fetch(url).then((r) => r.arrayBuffer()).then((b) => new Promise((ok, erro) => c.decodeAudioData(b, ok, erro)));
     return buffers[url];
   }
-  function tocarVoz(url) {
-    const c = ac(); if (!c) return;
-    if (fonteVoz) { try { fonteVoz.stop(); } catch (e) {} fonteVoz = null; }
+  function tocarBuffer(buf, depois, vol) {
+    const c = ac(); if (!c) { if (depois) depois(); return; }
+    if (fonteVoz) { const v = fonteVoz; fonteVoz = null; v.onended = null; try { v.stop(); } catch (e) {} }
+    const s = c.createBufferSource(), g = c.createGain(); g.gain.value = vol || 1.2;
+    s.buffer = buf; s.connect(g).connect(c.destination); s.onended = () => { if (fonteVoz === s) fonteVoz = null; if (depois) depois(); };
+    s.start(); fonteVoz = s;
+  }
+  function tocarVoz(url, depois) {
+    const c = ac(); if (!c) { if (depois) depois(); return; }
     if (window.speechSynthesis) speechSynthesis.cancel();
-    carregar(url).then((buf) => {
-      const s = c.createBufferSource(), g = c.createGain(); g.gain.value = 1.2;
-      s.buffer = buf; s.connect(g).connect(c.destination); s.start(); fonteVoz = s;
-    }).catch(() => {});
+    carregar(url).then((buf) => tocarBuffer(buf, depois)).catch(() => { if (depois) depois(); });
   }
   // fala uma frase: usa a voz gravada (chave) se existir; senão a voz do aparelho (se txt vier)
   function falar(txt, chave, op) {
@@ -155,6 +158,17 @@ const PugsSom = (() => {
     },
     carregarSons(lista) { (lista || []).forEach(arq); },
     som(nome, op) { return tocarArq(nome, op || {}); },
+    // fala uma voz gravada e avisa quando terminou (para encadear falas sem atropelar)
+    falarE(chave) { return new Promise((ok) => { if (!ligado || !VOZES.has(chave)) return ok(); let feito = false; const fim = () => { if (!feito) { feito = true; ok(); } }; tocarVoz("sons/voz/" + chave + ".mp3", fim); setTimeout(fim, 7000); }); },
+    // toca uma gravação da família (Blob) pelo mesmo motor e avisa quando terminou
+    tocarBlob(blob) {
+      return new Promise((ok) => {
+        let feito = false; const fim = () => { if (!feito) { feito = true; ok(); } }; setTimeout(fim, 4000);
+        const c = ac(); if (!c || !ligado || !blob) return fim();
+        blob.arrayBuffer().then((b) => new Promise((a, e) => c.decodeAudioData(b, a, e))).then((buf) => tocarBuffer(buf, fim, 1.6))
+          .catch(() => { try { tocarUrl(URL.createObjectURL(blob), fim); } catch (e) { fim(); } });
+      });
+    },
     pausarMusica() { pararMusica(); },
     voltarMusica() { tocarMusica(); },
     guardar() { chiado(0.3, { de: 600, para: 3000, vol: 0.15 }); tom(990, 0.12, { vol: 0.15, quando: 0.25 }); },

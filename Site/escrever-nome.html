@@ -82,6 +82,7 @@ async function vozDaFamilia(n) {
   const id = UID && window.IDS[n]; if (!id) return null;
   try { const { data, error } = await pugs.storage.from("nomes").download(UID + "/" + id); return error ? null : data; } catch (e) { return null; }
 }
+let vozPai = null; // gravação do pai/mãe já baixada no começo do jogo (para tocar na hora certa)
 async function falarNome() { const b = (await vozDaFamilia(nome)) || (await vozGuardada(nome)); if (b) PugsSom.tocarUrl(URL.createObjectURL(b)); return !!b; }
 $("gravar").onclick = async () => {
   if (!navigator.mediaDevices || !window.MediaRecorder) { $("gravar-status").textContent = "Este aparelho não deixa gravar pelo site."; return; }
@@ -124,6 +125,7 @@ function falarItem() {
 }
 async function comecar(m, n) {
   modo = m; nome = n; atual = 0;
+  vozPai = null; if (m === "nome") (async () => { const b = (await vozDaFamilia(n)) || (await vozGuardada(n)); if (nome === n) vozPai = b; })();
   itens = m === "abc" ? ALFABETO.slice() : m === "num" ? NUMEROS.slice() : m.startsWith("uma-") ? [n] : [...n.toLocaleUpperCase("pt-BR")].filter((c) => c.trim());
   $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
   $("montado").classList.toggle("longo", itens.length > 10);
@@ -178,11 +180,17 @@ function proxima() {
 function festa() {
   PugsSom.festa();
   setTimeout(() => {
-    if (modo === "nome") { itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850)); setTimeout(() => PugsSom.falar("", "fim-nome"), itens.length * 850 + 300); setTimeout(() => falarNome(), itens.length * 850 + 3300); }
+    if (modo === "nome") (async () => {
+      // 1) a Joy: "Muito bem! Você escreveu o seu nome!"  2) logo em seguida o nome na voz do pai/mãe  3) as letrinhas
+      await PugsSom.falarE("fim-nome");
+      if (vozPai) { await new Promise((r) => setTimeout(r, 250)); await PugsSom.tocarBlob(vozPai); }
+      await new Promise((r) => setTimeout(r, 400));
+      itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850));
+    })();
     else if (modo.startsWith("uma-")) falarItem();
     else if (modo === "abc") PugsSom.falar("", "fim-alfabeto");
     else PugsSom.falar("", "fim-numeros");
-  }, 1500);
+  }, 700);
   $("festa-nome").classList.toggle("longo", itens.length > 10);
   $("festa-nome").innerHTML = itens.map((l, i) => `<span style="color:${CORES[i % CORES.length]}">${l}</span>`).join(modo === "num" ? " " : "");
   $("festa").hidden = false;
