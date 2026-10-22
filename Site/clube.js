@@ -21,16 +21,20 @@ function pugsData(d) {
   return x.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
 }
 
+// internet fraca: não espera para sempre (depois de alguns segundos, segue sem internet)
+function pugsPrazo(p, ms) { return Promise.race([p, new Promise((_, erro) => setTimeout(() => erro(new Error("network timeout")), ms || 5000))]); }
+function pugsAcessoGuardado() { let ate = ""; try { ate = localStorage.getItem("pugs-acesso-ate") || ""; } catch (e) {} return !!ate && new Date(ate) > new Date(); }
+function pugsTemLoginGuardado() { try { return Object.keys(localStorage).some((k) => /^sb-.*-auth-token$/.test(k)); } catch (e) { return false; } }
 // Confere se a família pode usar o Clube (teste grátis ou assinatura valendo)
 async function pugsAcesso() {
-  const { data: s } = await pugs.auth.getSession();
+  const semRede = () => ({ login: pugsTemLoginGuardado() || pugsAcessoGuardado(), ok: pugsAcessoGuardado(), familia: { offline: true } });
+  let s;
+  try { s = (await pugsPrazo(pugs.auth.getSession(), 4000)).data; } catch (e) { return semRede(); }
   if (!s.session) return { login: false, ok: false };
-  const { data, error } = await pugs.from("familias").select("*").eq("id", s.session.user.id).single();
-  if (!data && (!navigator.onLine || (error && /fetch|network/i.test(error.message || "")))) {
-    // sem internet: vale o acesso guardado da última vez
-    let ate = ""; try { ate = localStorage.getItem("pugs-acesso-ate") || ""; } catch (e) {}
-    return { login: true, ok: !!ate && new Date(ate) > new Date(), familia: { offline: true } };
-  }
+  let data = null, error = null;
+  try { ({ data, error } = await pugsPrazo(pugs.from("familias").select("*").eq("id", s.session.user.id).single(), 5000)); }
+  catch (e) { return semRede(); }
+  if (!data && (!navigator.onLine || (error && /fetch|network|timeout/i.test(error.message || "")))) return semRede();
   if (!data) return { login: true, ok: false };
   const hoje = new Date().toISOString().slice(0, 10);
   const pago = ["mensal", "anual", "cortesia"].includes(data.assinatura) && data.assinatura_ate && data.assinatura_ate >= hoje;

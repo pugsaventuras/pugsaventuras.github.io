@@ -118,10 +118,14 @@ function zap(txt) { return "https://wa.me/" + PUGS_ZAP + "?text=" + encodeURICom
 function diasAte(d) { return Math.ceil((new Date(d) - new Date()) / 86400000); }
 
 async function abrir() {
-  const { data: s } = await pugs.auth.getSession();
-  if (!s.session) { location.href = "entrar.html#entrar"; return; }
-  const { data, error } = await pugs.from("familias").select("*, criancas(id, nome, nascimento, criado_em)").eq("id", s.session.user.id).single();
-  if ((error || !data) && !navigator.onLine) {
+  let s = null, data = null, error = null, semRede = false;
+  try { s = (await pugsPrazo(pugs.auth.getSession(), 4000)).data; } catch (e) { semRede = true; }
+  if (!semRede && !s.session) { location.href = "entrar.html#entrar"; return; }
+  if (!semRede) {
+    try { ({ data, error } = await pugsPrazo(pugs.from("familias").select("*, criancas(id, nome, nascimento, criado_em)").eq("id", s.session.user.id).single(), 6000)); }
+    catch (e) { semRede = true; }
+  }
+  if (semRede || ((error || !data) && (!navigator.onLine || /fetch|network|timeout/i.test((error && error.message) || "")))) {
     let ate = ""; try { ate = localStorage.getItem("pugs-acesso-ate") || ""; } catch (e) {}
     if (ate && new Date(ate) > new Date()) {
       $("#nome-crianca").textContent = "amiguinho"; $("#status").textContent = "Sem internet agora: os jogos funcionam! O resto volta quando a internet voltar. 🐾";
