@@ -80,7 +80,8 @@ async function guardarVoz(n, blob) { const db = await banco(); return new Promis
 window.IDS = {}; let UID = null;
 async function vozDaFamilia(n) {
   const id = UID && window.IDS[n]; if (!id) return null;
-  try { const { data, error } = await pugs.storage.from("nomes").download(UID + "/" + id); return error ? null : data; } catch (e) { return null; }
+  // baixa da internet e guarda no aparelho: sem sinal, toca a cópia guardada
+  try { const { data, error } = await pugs.storage.from("nomes").download(UID + "/" + id); if (error || !data) return null; try { await guardarVoz(n, data); } catch (e) {} return data; } catch (e) { return null; }
 }
 let vozPai = null; // gravação do pai/mãe já baixada no começo do jogo (para tocar na hora certa)
 async function falarNome() { const b = (await vozDaFamilia(nome)) || (await vozGuardada(nome)); if (b) PugsSom.tocarUrl(URL.createObjectURL(b)); return !!b; }
