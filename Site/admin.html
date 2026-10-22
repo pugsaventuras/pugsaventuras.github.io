@@ -89,6 +89,7 @@ function desenhar() {
         <button class="botao" onclick="liberar('${f.id}','mensal',somar(achar('${f.id}'),1))">+1 mês</button>
         <button class="botao rosa" onclick="liberar('${f.id}','anual',somar(achar('${f.id}'),12))">+1 ano</button>
         <button class="botao" onclick="liberar('${f.id}','cortesia',somar(achar('${f.id}'),12))">Cortesia 1 ano</button>
+        <button class="botao" onclick="liberar('${f.id}','cortesia',somar(achar('${f.id}'),1))">🎁 Cortesia 1 mês</button>
         <span class="outra-data"><input type="date" id="d-${f.id}" aria-label="Outra data"><button class="botao" onclick="outraData('${f.id}')">Outra data</button></span>
         <button class="botao off-ativo" onclick="if(confirmar(this))liberar('${f.id}','cancelada',null)">Cancelar</button>
       </div></article>`;
