@@ -149,7 +149,7 @@ function rodada() {
 function pedirContar() {
   travado = false; $("pedido-txt").textContent = proximo <= 1 && !$("baloes").querySelector(".estourou") ? "Conte! Comece pelo" : "Agora o"; $("alvo").textContent = proximo;
 }
-function pugs(cls, joyImg) {
+function pugsAnima(cls, joyImg) {
   const p = document.querySelector(".eb-pugs"); p.classList.remove("pula", "ops"); void p.offsetWidth; p.classList.add(cls);
   const j = p.querySelector(".j1"); j.src = "imagens/jogos/pet-joy-" + joyImg + ".png"; clearTimeout(pugs.t); pugs.t = setTimeout(() => { j.src = "imagens/jogos/pet-joy-feliz.png"; p.classList.remove(cls); }, 1600);
 }
@@ -169,18 +169,18 @@ $("baloes").addEventListener("click", (e) => {
   const n = +b.dataset.n;
   if (modo === "contar") {
     if (n === proximo) {
-      estourar(b); falarNumero(n); pugs("pula", "feliz"); proximo++;
+      estourar(b); falarNumero(n); pugsAnima("pula", "feliz"); proximo++;
       if (proximo > 10) { travado = true; setTimeout(() => festa(temZero() ? "Você contou de 0 até 10!" : "Você contou de 1 até 10!"), 900); }
       else pedirContar();
-    } else { b.classList.remove("errou"); void b.offsetWidth; b.classList.add("errou"); PugsSom.boing(); pugs("ops", "surpresa"); }
+    } else { b.classList.remove("errou"); void b.offsetWidth; b.classList.add("errou"); PugsSom.boing(); pugsAnima("ops", "surpresa"); }
     return;
   }
   if (n === alvo) {
-    travado = true; estourar(b); acertos++; estrelas(); pugs("pula", "feliz");
+    travado = true; estourar(b); acertos++; estrelas(); pugsAnima("pula", "feliz");
     setTimeout(() => { PugsSom.acerto(); PugsSom.falar("", "acertou"); }, 300);
     setTimeout(() => (acertos >= RODADAS ? festa("Você achou " + RODADAS + " números!") : rodada()), 2000);
   } else {
-    travado = true; b.classList.remove("errou"); void b.offsetWidth; b.classList.add("errou"); PugsSom.boing(); pugs("ops", "surpresa");
+    travado = true; b.classList.remove("errou"); void b.offsetWidth; b.classList.add("errou"); PugsSom.boing(); pugsAnima("ops", "surpresa");
     setTimeout(() => PugsSom.falar("", "tenta-de-novo"), 450);
     setTimeout(() => { falarNumero(alvo); travado = false; }, 3300);
   }
