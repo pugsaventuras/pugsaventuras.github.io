@@ -73,6 +73,7 @@
 .cd-acao:active{transform:translateY(3px);box-shadow:0 1px 0 var(--marrom)}
 .cd-acao.precisa{background:#fff3c4;animation:cd-pisca 1.2s ease-in-out infinite}
 @keyframes cd-pisca{0%,100%{box-shadow:0 4px 0 var(--marrom)}50%{box-shadow:0 4px 0 var(--marrom),0 0 0 6px rgba(255,154,31,.45)}}
+.cd-pet-btn[hidden]{display:none}
 .cd-dica{max-width:720px;margin:6px auto;font-size:1.05rem}
 @media (max-width:520px){.cd-medidores{grid-template-columns:repeat(2,1fr)}}
 .cd-pet{z-index:2}
@@ -103,7 +104,7 @@
   <div class="cd-topo">
     <div class="cd-quem" role="tablist" aria-label="Quem você vai cuidar">
       <button type="button" class="cd-pet-btn" data-pet="joy" role="tab"><img src="imagens/jogos/pet-joy-feliz.png" alt=""><b>Joy</b></button>
-      <button type="button" class="cd-pet-btn" data-pet="jane" role="tab"><img src="imagens/jogos/pet-jane.png" alt=""><b>Jane</b></button>
+      <button type="button" class="cd-pet-btn" data-pet="jane" role="tab" hidden><img src="imagens/jogos/pet-jane.png" alt=""><b>Jane</b></button>
     </div>
     <div class="cd-coracoes" aria-label="Corações" hidden><span>❤️</span><b id="coracoes">0</b></div>
   </div>
@@ -380,6 +381,8 @@ const SONS_REAIS = ["latido-joy", "latido-jane", "ronco-joy", "som-comendo-joy",
 pugsSoNoClube().then((f) => {
   if (!f) return;
   $("esperando").hidden = true; $("jogo").hidden = false;
+  // a Jane ainda está sendo preparada: por enquanto só a Joice vê
+  pugsSouAdmin().then((adm) => { document.querySelector('.cd-pet-btn[data-pet="jane"]').hidden = !adm; });
   PugsSom.carregarSons(SONS_REAIS); addEventListener("pointerup", () => PugsSom.carregarSons(SONS_REAIS), { once: true });
   montarAcoes(); brinquedos(); $("dica").textContent = DICAS[iDica]; pintar();
   setTimeout(() => falar(noite() ? "Boa noite! Já tá na hora de dormir..." : "Oi! Vamos cuidar da gente hoje?", noite() ? "pet-oi-noite" : "pet-oi"), 600);

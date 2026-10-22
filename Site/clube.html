@@ -31,7 +31,7 @@
 <h2 class="brincar-titulo">Hora de brincar! 🐾</h2>
 <div class="brincar">
 <a class="brinquedo" href="cuidar.html"><span class="figura" style="background-image:url('imagens/jogos/pet-joy-feliz.png');background-size:contain;background-repeat:no-repeat;background-position:center bottom;background-color:#fde9c8"></span><span class="icone">🐶</span><span class="nome">Cuidar das pugs</span></a>
-<a class="brinquedo" href="estoura-baloes.html"><span class="figura" style="background-image:url('imagens/jogos/baloes-numeros.jpg')"></span><span class="icone">🎈</span><span class="nome">Estoura o balão</span></a>
+<a class="brinquedo so-joice" href="estoura-baloes.html" hidden><span class="figura" style="background-image:url('imagens/jogos/baloes-numeros.jpg')"></span><span class="icone">🎈</span><span class="nome">Estoura o balão</span></a>
 <a class="brinquedo" href="pintar.html"><span class="figura" style="background-image:url('imagens/pintar-dia-das-criancas.png')"></span><span class="icone">🎨</span><span class="nome">Pintar</span></a>
 <a class="brinquedo" href="quebra-cabeca.html"><span class="figura" style="background-image:url('imagens/capa-ep2.jpg')"></span><span class="icone">🧩</span><span class="nome">Quebra-cabeça</span></a>
 <a class="brinquedo" href="jogo-da-memoria.html"><span class="figura memoria"></span><span class="icone">🃏</span><span class="nome">Memória</span></a>
@@ -78,6 +78,7 @@
 
 <div class="patinhas" aria-hidden="true">🐾 🐾 🐾</div>
 <style>
+.so-joice[hidden]{display:none!important}
 .voz-filho{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff7e0;border:2px dashed var(--marrom);border-radius:14px;padding:8px 10px}
 .voz-filho[hidden]{display:none}.voz-filho .st{font-weight:600}
 .dica-voz{background:#fff7e0;border:2px solid var(--marrom);border-radius:14px;padding:10px 12px}
@@ -167,8 +168,9 @@ async function abrir() {
   prepararVozes(filhos);
   const f = $("#form-dados");
   ["nome_responsavel", "telefone"].forEach((k) => f[k].value = data[k] || "");
-  const { data: admin } = await pugs.rpc("sou_admin");
+  const admin = await pugsSouAdmin();
   $("#botao-painel").hidden = !admin;
+  document.querySelectorAll(".so-joice").forEach((e) => { e.hidden = !admin; if (admin && !e.querySelector(".teste")) e.insertAdjacentHTML("beforeend", '<span class="teste" style="position:absolute;top:6px;left:6px;background:#fff;border:2px solid var(--marrom);border-radius:10px;padding:1px 6px;font-size:.75rem;font-weight:700">🔒 só Joice</span>'); });
   $("#carregando").hidden = true; $("#area").hidden = false;
 }
 

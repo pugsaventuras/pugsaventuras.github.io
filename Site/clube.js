@@ -42,6 +42,8 @@ async function pugsAcesso() {
   try { localStorage.setItem("pugs-acesso-ate", pago ? data.assinatura_ate + "T23:59:59" : (teste ? data.teste_ate : "")); } catch (e) {}
   return { login: true, ok: pago || teste, familia: data };
 }
+// coisas ainda em teste: só a Joice (admin) vê; sem internet = ninguém vê
+async function pugsSouAdmin() { try { const { data } = await pugsPrazo(pugs.rpc("sou_admin"), 4000); return !!data; } catch (e) { return false; } }
 async function pugsSoNoClube() {
   const a = await pugsAcesso();
   if (!a.login) { location.href = "entrar.html#entrar"; return null; }
