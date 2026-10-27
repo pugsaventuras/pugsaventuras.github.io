@@ -1,3 +1,15 @@
+// Temas das datas especiais: o site todo muda sozinho na semana da data e volta ao normal depois.
+// Para testar: qualquer página com ?tema=halloween (ou ?tema=normal). Datas em UTC (meia-noite de Brasília = 03:00Z).
+(() => {
+  try {
+    const TEMAS = [
+      { nome: "halloween", de: "2026-10-24T03:00:00Z", ate: "2026-11-01T03:00:00Z" },
+    ];
+    const q = new URLSearchParams(location.search).get("tema"), t = Date.now();
+    const tema = q ? (q === "normal" ? "" : q) : ((TEMAS.find((x) => t >= Date.parse(x.de) && t < Date.parse(x.ate)) || {}).nome || "");
+    if (tema) document.documentElement.classList.add("tema-" + tema);
+  } catch (e) {}
+})();
 // Sons, músicas e vozes do Pugs Aventuras.
 // Músicas: arquivos sons/musica-<jogo>.mp3 em loop. Vozes: sons/voz/<chave>.mp3 (lista em sons/voz/lista.json);
 // enquanto uma voz não estiver gravada, o aparelho fala sozinho (voz do sistema).
