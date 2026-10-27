@@ -178,7 +178,7 @@ function terminar() {
   feitos.push(pts[0]); $("linha").setAttribute("points", feitos.map((p) => p.join(",")).join(" "));
   setTimeout(() => {
     document.querySelector(".lp-cena").classList.add("pronto"); $("cor").setAttribute("opacity", "1"); PugsSom.festa();
-    PugsSom.falar("", modo === "num" ? "fim-numeros" : modo === "abc" ? "fim-alfabeto" : "acertou");
+    PugsSom.falar("", "acertou"); // só "Isso! Acertou!" (aqui a criança liga os pontos, não escreve)
     $("fim-txt").textContent = "Muito bem! É " + desenho.nome + "! 🎉"; $("fim").hidden = false;
   }, 900);
 }
