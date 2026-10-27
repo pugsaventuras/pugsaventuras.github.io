@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Labirinto | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+<style>
+.lb-niveis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;max-width:760px;margin:12px auto}
+.lb-nivel{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 1.2rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:14px 8px;cursor:pointer;box-shadow:0 4px 0 var(--marrom)}
+.lb-nivel span{font-size:2rem}
+.lb-nivel small{font-weight:500;font-size:.95rem}
+.lb-pedido{display:flex;align-items:center;justify-content:center;gap:10px;max-width:760px;margin:6px auto;font:700 clamp(1.2rem,4.2vw,1.9rem) Fredoka,Arial,sans-serif;color:var(--marrom);flex-wrap:wrap}
+.lb-alvo{display:inline-flex;align-items:center;justify-content:center;min-width:1.8em;height:1.8em;padding:0 .3em;border-radius:50%;background:var(--sol);border:4px solid var(--marrom);font-size:1.3em}
+.lb-cena{position:relative;width:min(760px,100%,calc(100vh - 150px));width:min(760px,100%,calc(100svh - 150px));min-width:280px;margin:8px auto 0;aspect-ratio:1;border:4px solid var(--marrom);border-radius:26px;overflow:hidden;background:#bfe6a0;touch-action:none}
+.lb-cena svg{width:100%;height:100%;display:block;user-select:none;-webkit-user-select:none;touch-action:none}
+#lb-joy{transition:transform .16s ease-out}
+#lb-joy.pula image{animation:lb-pulo .45s ease-out 3;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes lb-pulo{0%,100%{transform:translateY(0)}50%{transform:translateY(-22%)}}
+#lb-joy.bate image{animation:lb-treme .35s ease-in-out;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes lb-treme{0%,100%{transform:rotate(0)}25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.lb-item circle{fill:var(--sol);stroke:var(--marrom)}
+.lb-item text{font-family:Fredoka,Arial,sans-serif;font-weight:700;fill:var(--marrom);pointer-events:none}
+.lb-item.agora circle{fill:#ff9a1f;animation:lb-pisca 1s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.lb-item.pego{animation:lb-sobe .6s ease-out forwards;transform-box:fill-box;transform-origin:center}
+@keyframes lb-pisca{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@keyframes lb-sobe{0%{transform:scale(1);opacity:1}40%{transform:scale(1.4);opacity:1}100%{transform:scale(.2);opacity:0}}
+.lb-ganhou{fill:#58b947;stroke:var(--marrom)}
+#lb-ajuda-linha{transition:opacity .4s}
+.lb-fim{text-align:center;margin:12px auto;max-width:760px}
+.lb-coletados{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;min-height:2.2rem;max-width:760px;margin:6px auto 0}
+.lb-coletados b{display:inline-flex;align-items:center;justify-content:center;width:2.1rem;height:2.1rem;border-radius:50%;background:#58b947;color:#fff;border:3px solid var(--marrom);font:700 1.1rem Fredoka,Arial,sans-serif}
+.lb-coletados b.falta{background:#fff;color:#c9b8a6;border-style:dashed}
+</style>
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Labirinto da Joy 🧩</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha">
+    <p class="jogo-dica centro">Arraste a Joy com o dedinho pelo caminho e pegue os números ou as letras na ordem!</p>
+    <div class="lb-niveis">
+      <button type="button" class="lb-nivel" data-nivel="n5"><span>1️⃣ 2️⃣ 3️⃣</span>Números<small>de 1 a 5 (fácil)</small></button>
+      <button type="button" class="lb-nivel" data-nivel="l5"><span>🅰️ 🅱️</span>Letras<small>de A até E (fácil)</small></button>
+      <button type="button" class="lb-nivel" data-nivel="n10"><span>🔟</span>Números<small>de 1 a 10</small></button>
+      <button type="button" class="lb-nivel" data-nivel="l10"><span>🔤</span>Letras<small>de A até J (para os maiores)</small></button>
+    </div>
+  </div>
+  <div id="partida" hidden>
+    <div class="lb-pedido"><span id="pedido-txt">Agora o</span> <span class="lb-alvo" id="alvo">1</span> <button type="button" class="botao pequeno" id="ouvir" aria-label="Ouvir de novo">🔊</button> <button type="button" class="botao pequeno" id="ajuda">💡 Ajuda</button> <button type="button" class="botao pequeno" id="trocar">Mudar</button></div>
+    <div class="lb-cena" id="cena">
+      <svg id="tela" viewBox="0 0 1000 1000" aria-label="Labirinto da Joy">
+        <g id="lb-chao"></g>
+        <polyline id="lb-rastro" points="" fill="none" stroke="#f06ea8" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+        <polyline id="lb-ajuda-linha" points="" fill="none" stroke="#ff9a1f" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 40" opacity="0"/>
+        <g id="lb-paredes"></g>
+        <g id="lb-itens"></g>
+        <g id="lb-meta"><image id="lb-meta-img" href="" x="0" y="0" width="0" height="0"/></g>
+        <g id="lb-joy"><image href="imagens/jogos/pet-joy-feliz.png" x="0" y="0" width="0" height="0"/></g>
+      </svg>
+    </div>
+    <div class="lb-coletados" id="coletados"></div>
+    <div class="lb-fim" id="fim" hidden>
+      <p class="festa-titulo" id="fim-txt">Muito bem! 🎉</p>
+      <button type="button" class="botao rosa" id="proximo">Outro labirinto ➜</button>
+      <button type="button" class="botao" id="outra">Mudar</button>
+    </div>
+  </div>
+</div>
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Labirinto da Joy: a criança arrasta a Joy pelo caminho; no caminho estão os números (ou letras) na ordem,
+// e a voz fala cada um quando a Joy pega. No fim ela chega na caminha, no RanRan ou na Jane.
+(() => {
+  const el = (s) => document.getElementById(s);
+  const NS = "http://www.w3.org/2000/svg";
+  const LETRAS = "ABCDEFGHIJ".split("");
+  const NIVEIS = {
+    n5: { lado: 4, qtd: 5, tipo: "num" },
+    l5: { lado: 4, qtd: 5, tipo: "abc" },
+    n10: { lado: 6, qtd: 10, tipo: "num" },
+    l10: { lado: 8, qtd: 10, tipo: "abc" },
+  };
+  const METAS = [
+    { img: "imagens/jogos/pet-cama.png", w: 400, h: 247, txt: "a caminha", fim: "A Joy chegou na caminha!", emoji: "🛏️" },
+    { img: "imagens/jogos/pet-ranran.png", w: 175, h: 220, txt: "o RanRan", fim: "A Joy achou o RanRan!", emoji: "🦝" },
+    { img: "imagens/jogos/pet-jane-sentada.png", w: 175, h: 199, txt: "a Jane", fim: "A Joy encontrou a Jane!", emoji: "🐶" },
+  ];
+  const MARGEM = 20;
+  let nivel = null, N = 4, cel = 240, aberto = [], caminho = [], itens = [], proximo = 0, joy = [0, 0], meta = [0, 0], rastro = [],
+      fimDeJogo = false, segurando = false, ultimaBatida = 0, filaMetas = [], metaAtual = null;
+
+  function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  const id = (c, r) => r * N + c;
+  const centro = (c, r) => [MARGEM + c * cel + cel / 2, MARGEM + r * cel + cel / 2];
+  const rotulo = (k) => nivel.tipo === "num" ? String(k + 1) : LETRAS[k];
+  function falar(k) { if (!nivel) return; if (nivel.tipo === "num") PugsSom.numero(k + 1); else PugsSom.letra(LETRAS[k]); }
+  function vizinhos(c, r) {
+    const v = [], a = aberto[id(c, r)];
+    if (a.n) v.push([c, r - 1]); if (a.s) v.push([c, r + 1]); if (a.l) v.push([c + 1, r]); if (a.o) v.push([c - 1, r]);
+    return v;
+  }
+  // labirinto perfeito (só um caminho entre dois lugares), feito na hora
+  function gerar() {
+    aberto = Array.from({ length: N * N }, () => ({ n: false, s: false, l: false, o: false }));
+    const visto = new Array(N * N).fill(false), pilha = [[0, 0]]; visto[0] = true;
+    while (pilha.length) {
+      const [c, r] = pilha[pilha.length - 1];
+      const op = embaralhar([[0, -1, "n", "s"], [0, 1, "s", "n"], [1, 0, "l", "o"], [-1, 0, "o", "l"]]).filter(([dc, dr]) => { const x = c + dc, y = r + dr; return x >= 0 && y >= 0 && x < N && y < N && !visto[id(x, y)]; });
+      if (!op.length) { pilha.pop(); continue; }
+      const [dc, dr, a, b] = op[0], x = c + dc, y = r + dr;
+      aberto[id(c, r)][a] = true; aberto[id(x, y)][b] = true; visto[id(x, y)] = true; pilha.push([x, y]);
+    }
+  }
+  function bfs(de) {
+    const ant = new Array(N * N).fill(-1), dist = new Array(N * N).fill(-1), fila = [de]; dist[id(...de)] = 0;
+    while (fila.length) { const [c, r] = fila.shift(); for (const [x, y] of vizinhos(c, r)) if (dist[id(x, y)] < 0) { dist[id(x, y)] = dist[id(c, r)] + 1; ant[id(x, y)] = id(c, r); fila.push([x, y]); } }
+    return { ant, dist };
+  }
+  function rota(de, para) {
+    const { ant } = bfs(de), p = []; let k = id(...para);
+    while (k >= 0) { p.unshift([k % N, Math.floor(k / N)]); if (k === id(...de)) break; k = ant[k]; }
+    return p;
+  }
+  function svg(tag, at) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); return e; }
+
+  function novoLabirinto() {
+    N = nivel.lado; cel = (1000 - 2 * MARGEM) / N;
+    // o caminho certo precisa ser comprido o bastante para caber todos os números
+    for (let t = 0; t < 200; t++) {
+      gerar();
+      const { dist } = bfs([0, 0]); let mx = 0; dist.forEach((d, i) => { if (d > dist[mx]) mx = i; });
+      meta = [mx % N, Math.floor(mx / N)];
+      caminho = rota([0, 0], meta);
+      if (caminho.length >= nivel.qtd + 3 && (N < 5 || caminho.length >= N * 2)) break;
+    }
+    // números espalhados pelo caminho, na ordem
+    const L = caminho.length, passos = [];
+    for (let k = 0; k < nivel.qtd; k++) passos.push(1 + Math.round(k * (L - 3) / Math.max(1, nivel.qtd - 1)));
+    itens = passos.map((p, k) => ({ c: caminho[p][0], r: caminho[p][1], k, pego: false }));
+    if (!filaMetas.length) filaMetas = embaralhar(METAS.slice());
+    metaAtual = filaMetas.shift();
+    joy = [0, 0]; rastro = [[0, 0]]; proximo = 0; fimDeJogo = false;
+    desenhar(); atualizar();
+    el("fim").hidden = true;
+    setTimeout(() => { const t = document.querySelector(".lb-pedido"); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
+    setTimeout(() => falar(0), 600);
+  }
+
+  function desenhar() {
+    const chao = el("lb-chao"), par = el("lb-paredes"), it = el("lb-itens");
+    chao.innerHTML = ""; par.innerHTML = ""; it.innerHTML = "";
+    // chão do caminho clarinho
+    chao.appendChild(svg("rect", { x: MARGEM, y: MARGEM, width: 1000 - 2 * MARGEM, height: 1000 - 2 * MARGEM, fill: "#fffaf0" }));
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if ((c + r) % 2) chao.appendChild(svg("rect", { x: MARGEM + c * cel, y: MARGEM + r * cel, width: cel, height: cel, fill: "#fff3d6" }));
+    // paredes (cerquinhas marrons, grossas e arredondadas)
+    const g = Math.max(10, cel * 0.11), linhas = [];
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      const x = MARGEM + c * cel, y = MARGEM + r * cel, a = aberto[id(c, r)];
+      if (!a.n) linhas.push([x, y, x + cel, y]);
+      if (!a.o) linhas.push([x, y, x, y + cel]);
+      if (c === N - 1 && !a.l) linhas.push([x + cel, y, x + cel, y + cel]);
+      if (r === N - 1 && !a.s) linhas.push([x, y + cel, x + cel, y + cel]);
+    }
+    linhas.forEach(([x1, y1, x2, y2]) => par.appendChild(svg("line", { x1, y1, x2, y2, stroke: "#5a3a22", "stroke-width": g, "stroke-linecap": "round" })));
+    // números / letras
+    itens.forEach((o) => {
+      const [x, y] = centro(o.c, o.r), gr = svg("g", { class: "lb-item", "data-k": o.k });
+      gr.appendChild(svg("circle", { cx: x, cy: y, r: cel * 0.27, "stroke-width": Math.max(4, cel * 0.03) }));
+      const t = svg("text", { x, y: y + cel * 0.11, "text-anchor": "middle", "font-size": cel * 0.32 }); t.textContent = rotulo(o.k);
+      gr.appendChild(t); it.appendChild(gr); o.g = gr;
+    });
+    // onde a Joy tem que chegar
+    const m = metaAtual, s = Math.min(cel * 0.9 / m.w, cel * 0.9 / m.h), [mx, my] = centro(...meta), mi = el("lb-meta-img");
+    mi.setAttribute("href", m.img); mi.setAttribute("width", m.w * s); mi.setAttribute("height", m.h * s);
+    mi.setAttribute("x", mx - m.w * s / 2); mi.setAttribute("y", my - m.h * s / 2);
+    const ji = el("lb-joy").querySelector("image"), js = cel * 0.92 / 340;
+    ji.setAttribute("width", 252 * js); ji.setAttribute("height", 340 * js); ji.setAttribute("x", -252 * js / 2); ji.setAttribute("y", -340 * js / 2);
+    el("lb-rastro").setAttribute("stroke-width", cel * 0.16); el("lb-ajuda-linha").setAttribute("stroke-width", cel * 0.12);
+    el("lb-ajuda-linha").setAttribute("stroke-dasharray", "1 " + cel * 0.3);
+    el("lb-joy").style.transition = "none"; posJoy(); void el("lb-joy").getBoundingClientRect(); el("lb-joy").style.transition = "";
+  }
+  function posJoy() { let [x, y] = centro(...joy); if (fimDeJogo) x -= cel * 0.24; el("lb-joy").setAttribute("transform", `translate(${x} ${y})`); el("lb-joy").style.transform = `translate(${x}px, ${y}px)`; }
+  function atualizar() {
+    itens.forEach((o) => o.g && o.g.classList.toggle("agora", !o.pego && o.k === proximo));
+    if (proximo < itens.length) { el("pedido-txt").textContent = nivel.tipo === "num" ? "Agora o número" : "Agora a letra"; el("alvo").textContent = rotulo(proximo); }
+    else { el("pedido-txt").textContent = "Agora vá até " + metaAtual.txt; el("alvo").textContent = metaAtual.emoji; }
+    el("coletados").innerHTML = itens.map((o) => `<b class="${o.pego ? "" : "falta"}">${rotulo(o.k)}</b>`).join("");
+    el("lb-rastro").setAttribute("points", rastro.map((p) => centro(...p).join(",")).join(" "));
+  }
+
+  function andar(para) {
+    joy = para;
+    const n = rastro.length;
+    if (n > 1 && rastro[n - 2][0] === para[0] && rastro[n - 2][1] === para[1]) rastro.pop(); else rastro.push(para);
+    posJoy();
+    const o = itens.find((x) => !x.pego && x.c === para[0] && x.r === para[1]);
+    if (o) {
+      if (o.k === proximo) {
+        o.pego = true; o.g.classList.remove("agora"); o.g.classList.add("pego"); const gg = o.g; setTimeout(() => { gg.style.display = "none"; }, 650); falar(o.k); proximo++;
+      } else if (o.k > proximo) {
+        // passou por um número que ainda não é a vez dele (só acontece se voltar pelo caminho)
+        PugsSom.boing(); setTimeout(() => falar(proximo), 450);
+      }
+    }
+    atualizar();
+    if (para[0] === meta[0] && para[1] === meta[1]) {
+      if (proximo >= itens.length) ganhar();
+      else { PugsSom.boing(); setTimeout(() => falar(proximo), 450); }
+    }
+  }
+  function ganhar() {
+    fimDeJogo = true; segurando = false; posJoy();
+    const mi = el("lb-meta-img"); mi.setAttribute("x", +mi.getAttribute("x") + cel * 0.2);
+    setTimeout(() => {
+      el("lb-joy").classList.remove("pula"); void el("lb-joy").getBoundingClientRect(); el("lb-joy").classList.add("pula");
+      PugsSom.festa(); PugsSom.latido("joy");
+      const vozFim = nivel.tipo === "num" ? "fim-numeros" : "fim-alfabeto"; setTimeout(() => PugsSom.falar("", vozFim), 1300);
+      el("fim-txt").textContent = metaAtual.fim + " 🎉"; el("fim").hidden = false;
+      el("fim").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 350);
+  }
+  function bater() {
+    const t = Date.now(); if (t - ultimaBatida < 700) return; ultimaBatida = t;
+    PugsSom.erro(); const j = el("lb-joy"); j.classList.remove("bate"); void j.getBoundingClientRect(); j.classList.add("bate");
+  }
+  // dedo na tela: a Joy vai até a casinha do dedo se ela estiver pertinho e sem cerquinha no meio
+  function casaDoToque(ev) {
+    const r = el("tela").getBoundingClientRect(), x = (ev.clientX - r.left) * 1000 / r.width - MARGEM, y = (ev.clientY - r.top) * 1000 / r.height - MARGEM;
+    const c = Math.floor(x / cel), l = Math.floor(y / cel);
+    return c >= 0 && l >= 0 && c < N && l < N ? [c, l] : null;
+  }
+  function seguir(ev) {
+    if (fimDeJogo || !nivel) return;
+    const alvo = casaDoToque(ev); if (!alvo || (alvo[0] === joy[0] && alvo[1] === joy[1])) return;
+    const { dist } = bfs(joy), d = dist[id(...alvo)];
+    if (d > 0 && d <= 3) { rota(joy, alvo).slice(1).forEach((p) => { if (!fimDeJogo) andar(p); }); return; }
+    // dedo logo ao lado, mas tem cerquinha
+    if (Math.abs(alvo[0] - joy[0]) + Math.abs(alvo[1] - joy[1]) === 1) bater();
+  }
+  const tela = el("tela");
+  tela.addEventListener("pointerdown", (ev) => { segurando = true; try { tela.setPointerCapture(ev.pointerId); } catch (e) {} seguir(ev); ev.preventDefault(); });
+  tela.addEventListener("pointermove", (ev) => { if (segurando) seguir(ev); });
+  ["pointerup", "pointercancel"].forEach((t) => addEventListener(t, () => { segurando = false; }));
+  tela.addEventListener("touchmove", (ev) => ev.preventDefault(), { passive: false });
+
+  // 💡 mostra o caminho por um tempinho
+  let ajudaT = 0;
+  el("ajuda").onclick = () => {
+    if (fimDeJogo) return;
+    const destino = proximo < itens.length ? [itens[proximo].c, itens[proximo].r] : meta;
+    const p = rota(joy, destino); el("lb-ajuda-linha").setAttribute("points", p.map((q) => centro(...q).join(",")).join(" "));
+    el("lb-ajuda-linha").setAttribute("opacity", "1"); PugsSom.pop();
+    clearTimeout(ajudaT); ajudaT = setTimeout(() => el("lb-ajuda-linha").setAttribute("opacity", "0"), 2500);
+  };
+  el("ouvir").onclick = () => { if (proximo < itens.length) falar(proximo); else PugsSom.latido("joy"); };
+  el("proximo").onclick = () => { PugsSom.pop(); novoLabirinto(); };
+  function telaEscolha() { el("escolha").hidden = false; el("partida").hidden = true; nivel = null; }
+  el("outra").onclick = el("trocar").onclick = telaEscolha;
+  el("escolha").addEventListener("click", (e) => {
+    const b = e.target.closest(".lb-nivel"); if (!b) return;
+    PugsSom.pop(); nivel = NIVEIS[b.dataset.nivel]; filaMetas = [];
+    el("escolha").hidden = true; el("partida").hidden = false;
+    const chaves = nivel.tipo === "num" ? Array.from({ length: nivel.qtd }, (_, i) => "numero-" + (i + 1)) : LETRAS.slice(0, nivel.qtd).map((L) => PugsSom.chaveLetra(L));
+    PugsSom.vozesProntas.then(() => PugsSom.preparar(chaves.concat(["fim-numeros", "fim-alfabeto"])));
+    PugsSom.carregarSons(["latido-joy"]);
+    novoLabirinto();
+  });
+
+  // em teste: só a Joice vê
+  pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
+    el("esperando").hidden = true; el("jogo").hidden = false; telaEscolha();
+  });
+})();
+</script>
+</body></html>
