@@ -57,6 +57,7 @@
       <button type="button" class="lb-nivel" data-nivel="l5"><span>🅰️ 🅱️</span>Letras<small>de A até E (fácil)</small></button>
       <button type="button" class="lb-nivel" data-nivel="n10"><span>🔟</span>Números<small>de 1 a 10</small></button>
       <button type="button" class="lb-nivel" data-nivel="l10"><span>🔤</span>Letras<small>de A até J (para os maiores)</small></button>
+      <button type="button" class="lb-nivel" data-nivel="dz"><span>🏆</span>Desafio<small>labirinto gigante, sem números, só 3 dicas</small></button>
     </div>
   </div>
   <div id="partida" hidden>
@@ -106,15 +107,16 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     l5: { lado: 4, qtd: 5, tipo: "abc" },
     n10: { lado: 6, qtd: 10, tipo: "num" },
     l10: { lado: 8, qtd: 10, tipo: "abc" },
+    dz: { lado: 10, qtd: 0, tipo: "num", dicas: 3 },
   };
   const METAS = [
-    { img: "imagens/jogos/pet-cama.png", w: 400, h: 247, txt: "a caminha", fim: "A Joy chegou na caminha!", emoji: "🛏️" },
-    { img: "imagens/jogos/pet-ranran.png", w: 175, h: 220, txt: "o RanRan", fim: "A Joy achou o RanRan!", emoji: "🦝" },
-    { img: "imagens/jogos/pet-jane-sentada.png", w: 175, h: 199, txt: "a Jane", fim: "A Joy encontrou a Jane!", emoji: "🐶" },
+    { img: "imagens/jogos/pet-cama.png", w: 400, h: 247, chave: "caminha", txt: "a caminha", fim: "A Joy chegou na caminha!", emoji: "🛏️" },
+    { img: "imagens/jogos/pet-ranran.png", w: 175, h: 220, chave: "ranran", txt: "o RanRan", fim: "A Joy achou o RanRan!", emoji: "🦝" },
+    { img: "imagens/jogos/pet-jane-sentada.png", w: 175, h: 199, chave: "jane", txt: "a Jane", fim: "A Joy encontrou a Jane!", emoji: "🐶" },
   ];
   const MARGEM = 20;
   let nivel = null, N = 4, cel = 240, aberto = [], caminho = [], itens = [], proximo = 0, joy = [0, 0], meta = [0, 0], rastro = [],
-      fimDeJogo = false, segurando = false, ultimaBatida = 0, filaMetas = [], metaAtual = null;
+      fimDeJogo = false, segurando = false, ultimaBatida = 0, filaMetas = [], metaAtual = null, dicas = 0;
 
   function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
   const id = (c, r) => r * N + c;
@@ -170,7 +172,10 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     desenhar(); atualizar();
     el("fim").hidden = true;
     setTimeout(() => { const t = document.querySelector(".lb-pedido"); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
-    setTimeout(() => falar(0), 600);
+    dicas = nivel.dicas || 0; pintarAjuda();
+    // a Joy pede ajuda (quando a voz estiver gravada) e depois fala o primeiro número
+    const ini = "lab-ini-" + metaAtual.chave;
+    setTimeout(() => (PugsSom.temVoz(ini) ? PugsSom.falarE(ini) : Promise.resolve()).then(() => { if (!fimDeJogo && itens.length && proximo === 0) falar(0); }), 600);
   }
 
   function desenhar() {
@@ -210,7 +215,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   function atualizar() {
     itens.forEach((o) => o.g && o.g.classList.toggle("agora", !o.pego && o.k === proximo));
     if (proximo < itens.length) { el("pedido-txt").textContent = nivel.tipo === "num" ? "Agora o número" : "Agora a letra"; el("alvo").textContent = rotulo(proximo); }
-    else { el("pedido-txt").textContent = "Agora vá até " + metaAtual.txt; el("alvo").textContent = metaAtual.emoji; }
+    else { el("pedido-txt").textContent = (itens.length ? "Agora leve a Joy até " : "Leve a Joy até ") + metaAtual.txt; el("alvo").textContent = metaAtual.emoji; }
     el("coletados").innerHTML = itens.map((o) => `<b class="${o.pego ? "" : "falta"}">${rotulo(o.k)}</b>`).join("");
     el("lb-rastro").setAttribute("points", rastro.map((p) => centro(...p).join(",")).join(" "));
   }
@@ -241,7 +246,12 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     setTimeout(() => {
       el("lb-joy").classList.remove("pula"); void el("lb-joy").getBoundingClientRect(); el("lb-joy").classList.add("pula");
       PugsSom.festa(); PugsSom.latido("joy");
-      const vozFim = nivel.tipo === "num" ? "fim-numeros" : "fim-alfabeto"; setTimeout(() => PugsSom.falar("", vozFim), 1300);
+      // a fala do fim combina com o lugar onde a Joy chegou (não fala de "escrever")
+      const vozFim = "lab-fim-" + metaAtual.chave, naCama = metaAtual.chave === "caminha";
+      setTimeout(() => {
+        if (PugsSom.temVoz(vozFim)) PugsSom.falar("", vozFim);
+        else PugsSom.falarE("acertou").then(() => { if (naCama) PugsSom.falar("", "pet-boa-noite"); });
+      }, 1300);
       el("fim-txt").textContent = metaAtual.fim + " 🎉"; el("fim").hidden = false;
       el("fim").scrollIntoView({ behavior: "smooth", block: "nearest" });
     }, 350);
@@ -272,14 +282,21 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 
   // 💡 mostra o caminho por um tempinho
   let ajudaT = 0;
+  function pintarAjuda() {
+    const b = el("ajuda"); if (!nivel) return;
+    if (nivel.dicas) { b.textContent = "💡 Dica (" + dicas + ")"; b.disabled = dicas <= 0; b.style.opacity = dicas > 0 ? 1 : 0.5; }
+    else { b.textContent = "💡 Ajuda"; b.disabled = false; b.style.opacity = 1; }
+  }
   el("ajuda").onclick = () => {
     if (fimDeJogo) return;
+    // no Desafio: só 3 dicas, e cada dica mostra só um pedacinho do caminho
+    if (nivel.dicas) { if (dicas <= 0) { PugsSom.erro(); return; } dicas--; pintarAjuda(); }
     const destino = proximo < itens.length ? [itens[proximo].c, itens[proximo].r] : meta;
-    const p = rota(joy, destino); el("lb-ajuda-linha").setAttribute("points", p.map((q) => centro(...q).join(",")).join(" "));
+    let p = rota(joy, destino); if (nivel.dicas) p = p.slice(0, 5); el("lb-ajuda-linha").setAttribute("points", p.map((q) => centro(...q).join(",")).join(" "));
     el("lb-ajuda-linha").setAttribute("opacity", "1"); PugsSom.pop();
     clearTimeout(ajudaT); ajudaT = setTimeout(() => el("lb-ajuda-linha").setAttribute("opacity", "0"), 2500);
   };
-  el("ouvir").onclick = () => { if (proximo < itens.length) falar(proximo); else PugsSom.latido("joy"); };
+  el("ouvir").onclick = () => { const ini = "lab-ini-" + metaAtual.chave; if (proximo < itens.length) falar(proximo); else if (PugsSom.temVoz(ini)) PugsSom.falar("", ini); else PugsSom.latido("joy"); };
   el("proximo").onclick = () => { PugsSom.pop(); novoLabirinto(); };
   function telaEscolha() { el("escolha").hidden = false; el("partida").hidden = true; nivel = null; }
   el("outra").onclick = el("trocar").onclick = telaEscolha;
@@ -288,7 +305,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     PugsSom.pop(); nivel = NIVEIS[b.dataset.nivel]; filaMetas = [];
     el("escolha").hidden = true; el("partida").hidden = false;
     const chaves = nivel.tipo === "num" ? Array.from({ length: nivel.qtd }, (_, i) => "numero-" + (i + 1)) : LETRAS.slice(0, nivel.qtd).map((L) => PugsSom.chaveLetra(L));
-    PugsSom.vozesProntas.then(() => PugsSom.preparar(chaves.concat(["fim-numeros", "fim-alfabeto"])));
+    PugsSom.vozesProntas.then(() => PugsSom.preparar(chaves.concat(["acertou", "pet-boa-noite"], METAS.flatMap((m) => ["lab-ini-" + m.chave, "lab-fim-" + m.chave]))));
     PugsSom.carregarSons(["latido-joy"]);
     novoLabirinto();
   });
