@@ -85,7 +85,8 @@ body.halloween .lb-bandeirinhas{display:block}
     <div class="lb-coletados" id="coletados"></div>
     <div class="lb-fim" id="fim" hidden>
       <p class="festa-titulo" id="fim-txt">Muito bem! 🎉</p>
-      <button type="button" class="botao rosa" id="proximo">Outro labirinto ➜</button>
+      <button type="button" class="botao rosa" id="subir">Subir de nível ⬆️</button>
+      <button type="button" class="botao" id="proximo">Outro igual ➜</button>
       <button type="button" class="botao" id="outra">Mudar</button>
     </div>
   </div>
@@ -329,20 +330,28 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   el("proximo").onclick = () => { PugsSom.pop(); novoLabirinto(); };
   function telaEscolha() { el("escolha").hidden = false; el("partida").hidden = true; nivel = null; }
   el("outra").onclick = el("trocar").onclick = telaEscolha;
-  el("escolha").addEventListener("click", (e) => {
-    const b = e.target.closest(".lb-nivel"); if (!b) return;
-    PugsSom.pop(); nivel = NIVEIS[b.dataset.nivel]; filaMetas = [];
+  // os níveis vão subindo: fácil → mais difícil → Desafio
+  const ORDEM = ["n5", "l5", "n10", "l10", "dz"];
+  const NOME_NIVEL = { n5: "Números 1 a 5", l5: "Letras A até E", n10: "Números 1 a 10", l10: "Letras A até J", dz: "🏆 Desafio" };
+  let chaveNivel = "n5";
+  function pintarSubir() {
+    const i = ORDEM.indexOf(chaveNivel), prox = ORDEM[i + 1], b = el("subir");
+    b.hidden = !prox; if (prox) b.textContent = "Subir de nível ⬆️ " + NOME_NIVEL[prox];
+  }
+  el("subir").onclick = () => { const prox = ORDEM[ORDEM.indexOf(chaveNivel) + 1]; if (prox) { PugsSom.acerto(); escolherNivel(prox); } };
+  el("escolha").addEventListener("click", (e) => { const b = e.target.closest(".lb-nivel"); if (b) { PugsSom.pop(); escolherNivel(b.dataset.nivel); } });
+  function escolherNivel(chave) {
+    chaveNivel = chave; nivel = NIVEIS[chave]; filaMetas = []; pintarSubir();
     el("escolha").hidden = true; el("partida").hidden = false;
     const chaves = nivel.tipo === "num" ? Array.from({ length: nivel.qtd }, (_, i) => "numero-" + (i + 1)) : LETRAS.slice(0, nivel.qtd).map((L) => PugsSom.chaveLetra(L));
     PugsSom.vozesProntas.then(() => PugsSom.preparar(chaves.concat(["acertou", "pet-boa-noite"], METAS.flatMap((m) => ["lab-ini-" + m.chave, "lab-fim-" + m.chave]))));
     PugsSom.carregarSons(["latido-joy"]);
     novoLabirinto();
-  });
+  }
 
-  // em teste: só a Joice vê
-  pugsSoNoClube().then(async (f) => {
+  // liberado para as famílias do Clube em 28/10/2026 (a Joice aprovou)
+  pugsSoNoClube().then((f) => {
     if (!f) return;
-    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
     el("esperando").hidden = true; el("jogo").hidden = false; telaEscolha();
   });
 })();
