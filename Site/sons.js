@@ -204,19 +204,19 @@ const PugsSom = (() => {
       if (c && ligado && eba) { const s = c.createBufferSource(); s.buffer = eba; s.connect(c.destination); s.start(c.currentTime + 0.5); }
     },
   };
-  // 🎶 Caixinha de música (musiquinhas do YouTube). Em teste: só aparece para a Joice (admin).
+  // 🎶 Caixinha da Joy e da Jane (musiquinhas e episódios do YouTube, com telinha). Em teste: só aparece para a Joice (admin).
   function botaoCaixinha() {
     if (document.querySelector(".cx-botao")) return;
     const b = document.createElement("button"); b.type = "button"; b.className = "cx-botao"; b.textContent = "🎶"; b.setAttribute("aria-label", "Caixinha de música");
     const site = !!document.querySelector(".musica-site");
     b.style.cssText = "position:fixed;left:14px;bottom:" + (site ? 84 : 14) + "px;z-index:26;width:58px;height:58px;border-radius:50%;border:4px solid #5a3a22;background:#ffe1ee;font-size:1.7rem;box-shadow:0 4px 0 #5a3a22;cursor:pointer;line-height:1;padding:0";
     ["pointerup", "touchend"].forEach((ev) => b.addEventListener(ev, (e) => e.stopPropagation()));
-    b.onclick = (e) => {
-      e.stopPropagation();
-      if (window.PugsCaixinha) return PugsCaixinha.abrir();
-      const sc = document.createElement("script"); sc.src = "caixinha.js"; sc.onload = () => window.PugsCaixinha && PugsCaixinha.abrir(); document.head.appendChild(sc);
-    };
+    const comCaixinha = (fn) => { if (window.PugsCaixinha) return fn(); const sc = document.createElement("script"); sc.src = "caixinha.js"; sc.onload = () => window.PugsCaixinha && fn(); document.head.appendChild(sc); };
+    b.onclick = (e) => { e.stopPropagation(); comCaixinha(() => PugsCaixinha.abrir()); };
     document.body.appendChild(b);
+    // a telinha estava ligada na página anterior: volta no mesmo vídeo
+    let tv = null; try { tv = sessionStorage.getItem("pugs-tv"); } catch (e) {}
+    if (tv) comCaixinha(() => PugsCaixinha.restaurar && PugsCaixinha.restaurar());
   }
   document.addEventListener("DOMContentLoaded", () => {
     let adm = false; try { adm = localStorage.getItem("pugs-admin") === "1"; } catch (e) {}
