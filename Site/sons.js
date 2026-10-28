@@ -3,13 +3,15 @@
 (() => {
   try {
     const TEMAS = [
-      { nome: "halloween", de: "2026-10-24T03:00:00Z", ate: "2026-11-01T03:00:00Z", banner: "imagens/banner-halloween.jpg", alt: "Festinha de Halloween: a Joy de abobrinha e a Jane de bruxinha." },
+      { nome: "halloween", de: "2026-10-24T03:00:00Z", ate: "2026-11-01T03:00:00Z", banner: "imagens/banner-halloween.jpg", alt: "Festinha de Halloween: a Joy de abobrinha e a Jane de bruxinha.",
+        musica: "halloween", musicaDesde: "2026-10-29T14:00:00Z" },  // música de fundo do site = a música da data (depois que ela for lançada)
     ];
     const q = new URLSearchParams(location.search).get("tema"), t = Date.now();
     const tema = q ? (q === "normal" ? "" : q) : ((TEMAS.find((x) => t >= Date.parse(x.de) && t < Date.parse(x.ate)) || {}).nome || "");
     if (tema) document.documentElement.classList.add("tema-" + tema);
     // na data, o banner da página inicial vira a arte da data
     const info = TEMAS.find((x) => x.nome === tema);
+    if (info && info.musica && (q || !info.musicaDesde || t >= Date.parse(info.musicaDesde))) window.PUGS_MUSICA_TEMA = info.musica;
     if (info && info.banner) document.addEventListener("DOMContentLoaded", () => {
       const im = document.querySelector('.banner img[src*="banner-pugs-aventuras"]');
       if (im) { im.src = info.banner; if (info.alt) im.alt = info.alt; }
@@ -36,7 +38,7 @@ const PugsSom = (() => {
   let qual = null, faixa = null, calado = false;
   function tocarMusica() {
     if (calado || !ligado || !musicaLigada || !qual || document.hidden) return;
-    if (!faixa) { faixa = new Audio("sons/musica-" + qual + ".mp3"); faixa.loop = true; faixa.preload = "auto"; faixa.volume = qual === "site" ? 0.5 : 0.7; }
+    if (!faixa) { faixa = new Audio("sons/musica-" + (qual === "site" && window.PUGS_MUSICA_TEMA ? window.PUGS_MUSICA_TEMA : qual) + ".mp3"); faixa.loop = true; faixa.preload = "auto"; faixa.volume = qual === "site" ? 0.5 : 0.7; }
     if (faixa.paused) { const p = faixa.play(); if (p && p.catch) p.catch(() => {}); }
   }
   function pararMusica() { if (faixa) faixa.pause(); }
@@ -204,7 +206,7 @@ const PugsSom = (() => {
       if (c && ligado && eba) { const s = c.createBufferSource(); s.buffer = eba; s.connect(c.destination); s.start(c.currentTime + 0.5); }
     },
   };
-  // 🎶 Caixinha da Joy e da Jane (musiquinhas e episódios do YouTube, com telinha). Em teste: só aparece para a Joice (admin).
+  // 🎶 Caixinha da Joy e da Jane (musiquinhas e episódios do YouTube, com telinha).
   function botaoCaixinha() {
     if (document.querySelector(".cx-botao")) return;
     const b = document.createElement("button"); b.type = "button"; b.className = "cx-botao"; b.textContent = "🎶"; b.setAttribute("aria-label", "Caixinha de música");
@@ -219,9 +221,7 @@ const PugsSom = (() => {
     if (tv) comCaixinha(() => PugsCaixinha.restaurar && PugsCaixinha.restaurar());
   }
   document.addEventListener("DOMContentLoaded", () => {
-    let adm = false; try { adm = localStorage.getItem("pugs-admin") === "1"; } catch (e) {}
-    if (adm) setTimeout(botaoCaixinha, 0);
-    else if (typeof pugsSouAdmin === "function") pugsSouAdmin().then((ok) => { if (ok) { try { localStorage.setItem("pugs-admin", "1"); } catch (e) {} botaoCaixinha(); } }).catch(() => {});
+    setTimeout(botaoCaixinha, 0);   // liberada para todos em 28/10/2026 (a Joice aprovou)
   });
   // botões de som e música
   document.addEventListener("DOMContentLoaded", () => {
