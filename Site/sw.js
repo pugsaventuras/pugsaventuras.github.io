@@ -1,5 +1,5 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v45";
+const CACHE = "pugs-clube-v46";
 const ARQUIVOS = [
   "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html", "cuidar.html", "estoura-baloes.html", "ligue-pontos.html", "imagens/jogos/ligue-pontos.jpg", "labirinto.html", "imagens/jogos/labirinto.jpg", "imagens/jogos/pet-cama.png", "imagens/jogos/baloes-numeros.jpg", "imagens/colorir-baloes-numeros.png", "imagens/fig-especial-tchau-lambeijo.jpg",
   "imagens/jogos/joy-face.jpg", "imagens/colorir-joy-dancando.png", "imagens/colorir-joy-na-porta.png", "imagens/colorir-pugs-na-estrada.png", ...["pet-joy-feliz","pet-joy-triste","pet-joy-surpresa","pet-joy-esperta","pet-joy-chamando","pet-joy-dormindo","pet-jane","pet-jane-sentada","pet-ranran"].map((n) => "imagens/jogos/" + n + ".png"), "imagens/jogos/ranran-so.jpg",
@@ -28,7 +28,7 @@ self.addEventListener("fetch", (e) => {
   if (u.hostname.endsWith("supabase.co")) return;              // login e cadastro sempre pela internet
   const meu = u.origin === location.origin, cdn = u.hostname === "cdn.jsdelivr.net";
   if (!meu && !cdn) return;
-  if (meu && u.pathname.endsWith("episodios.json")) return;     // episódio novo: sempre da internet
+  if (meu && (u.pathname.endsWith("episodios.json") || u.pathname.endsWith("musiquinhas.json"))) return;     // episódio novo: sempre da internet
   // áudio: o iPad pede "pedaços" do arquivo (Range); responde com o pedaço certo, do arquivo guardado
   const faixa = r.headers.get("range");
   if (meu && faixa && /\.(mp3|mp4)$/.test(u.pathname)) {

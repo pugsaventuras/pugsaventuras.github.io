@@ -1,11 +1,11 @@
 // Caixinha de música da Joy e da Jane: as musiquinhas tocam pelo player do YouTube (assim conta visualização no canal).
-// A lista vem sozinha da playlist "Pugs Aventuras - Musiquinhas 🎵": a música nova que entra na playlist aparece aqui.
-// Vídeo agendado ou privado não aparece (o YouTube não deixa tocar), então só entra o que já foi lançado.
+// A lista fica em musiquinhas.json: { id do vídeo, nome, desde (data de lançamento, opcional) }.
+// Música nova = uma linha nova no musiquinhas.json. Com "desde", ela só aparece depois do lançamento.
+// Se o YouTube ainda não deixar tocar (vídeo privado/agendado), ela sai da caixinha sozinha.
 (() => {
   if (window.PugsCaixinha) return;
-  const PLAYLIST = "PLV21PCZw5g98";
-  const RESERVA = ["JTYJNlcolCY", "d0eg8tHLH-Y"]; // se a playlist não abrir
-  const NOMES = { JTYJNlcolCY: "Dia das Crianças", "d0eg8tHLH-Y": "Tchau, tchau, Lambeijo!", LbfaEABEswc: "Festinha de Halloween" };
+  const RESERVA = [{ id: "d0eg8tHLH-Y", nome: "Tchau, tchau, Lambeijo!" }, { id: "JTYJNlcolCY", nome: "Dia das Crianças" }]; // se a lista não abrir
+  const NOMES = {};
 
   const css = document.createElement("style");
   css.textContent = `
@@ -31,7 +31,7 @@ html.tema-halloween .cx-caixa{background:#fff6ee;border-color:#5b2d82;box-shadow
 
   const fundo = document.createElement("div"); fundo.className = "cx-fundo"; fundo.hidden = true;
   fundo.innerHTML = `<div class="cx-caixa" role="dialog" aria-label="Caixinha de música">
-    <div class="cx-topo"><span style="font-size:1.8rem">🎶</span><b>Caixinha de música</b><button type="button" class="cx-x" aria-label="Fechar">✖</button></div>
+    <div class="cx-topo"><span style="font-size:1.8rem">🎶</span><b>Caixinha de música<br><small style="font-weight:500;font-size:.9rem">Toque numa musiquinha para escolher 🎵</small></b><button type="button" class="cx-x" aria-label="Fechar">✖</button></div>
     <div class="cx-tela"><div id="cx-player"></div><div class="cx-aviso" id="cx-aviso">Abrindo as musiquinhas... 🐾</div></div>
     <div class="cx-controles"><button type="button" id="cx-ant" aria-label="Música anterior">⏮</button><button type="button" id="cx-tocar" aria-label="Tocar ou pausar">▶️</button><button type="button" id="cx-prox" aria-label="Próxima música">⏭</button></div>
     <div class="cx-lista" id="cx-lista"></div></div>`;
@@ -60,21 +60,20 @@ html.tema-halloween .cx-caixa{background:#fff6ee;border-color:#5b2d82;box-shadow
   $(".cx-x").onclick = fechar;
   fundo.addEventListener("click", (e) => { if (e.target === fundo) fechar(); });
 
-  function montar(ids) {
-    lista = ids.filter(Boolean); if (!lista.length) lista = RESERVA.slice();
-    atual = 0; pintarLista(); aviso("Escolha uma musiquinha! 🎵");
+  function montar(musicas) {
+    const agora = Date.now();
+    const boas = (musicas || []).filter((m) => m && m.id && (!m.desde || Date.parse(m.desde) <= agora));
+    (boas.length ? boas : RESERVA).forEach((m) => { NOMES[m.id] = m.nome; });
+    lista = (boas.length ? boas : RESERVA).map((m) => m.id);
+    atual = 0; pintarLista();
   }
   function criarPlayer() {
     player = new YT.Player("cx-player", {
       host: "https://www.youtube.com",
-      playerVars: { listType: "playlist", list: PLAYLIST, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, fs: 0 },
+      videoId: lista[0],
+      playerVars: { rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3, fs: 0 },
       events: {
-        onReady: () => {
-          // pega a lista da playlist (só o que já foi lançado)
-          let tentativas = 0;
-          const ler = () => { const l = player.getPlaylist && player.getPlaylist(); if (l && l.length) montar(l); else if (++tentativas < 12) setTimeout(ler, 400); else montar(RESERVA); };
-          ler();
-        },
+        onReady: () => aviso(""),
         onStateChange: (e) => {
           tocando = e.data === 1; pronto = e.data === 1 || e.data === 2;
           $("#cx-tocar").textContent = tocando ? "⏸" : "▶️";
@@ -101,7 +100,7 @@ html.tema-halloween .cx-caixa{background:#fff6ee;border-color:#5b2d82;box-shadow
     abrir() {
       if (window.PugsSom) { if (PugsSom.calar) PugsSom.calar(true); else PugsSom.pausarMusica(); }
       fundo.hidden = false;
-      if (!player) carregarApi();
+      if (!player) fetch("musiquinhas.json?t=" + Date.now(), { cache: "no-store" }).then((r) => r.json()).catch(() => null).then((l) => { montar(l); carregarApi(); });
     },
   };
 })();
