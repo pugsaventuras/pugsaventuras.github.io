@@ -20,28 +20,57 @@
 <nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
 </header>
 <main>
+<style>
+.mm-modo{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 14px}
+.mm-modo button{display:flex;align-items:center;gap:8px;font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:6px 16px 6px 8px;cursor:pointer}
+.mm-modo button.ativo{background:var(--sol);box-shadow:0 3px 0 var(--marrom)}
+.mm-modo img{width:40px;height:40px;object-fit:contain;object-position:top}
+.mm-modo .dupla img+img{margin-left:-14px}
+.mm-times{display:flex;justify-content:center;gap:12px;margin:6px auto 8px;max-width:640px}
+.mm-times[hidden]{display:none}
+.mm-time{flex:1;display:flex;align-items:center;gap:8px;border:4px solid var(--marrom);border-radius:20px;padding:6px 10px;background:#fff;opacity:.55;transition:transform .2s,opacity .2s;font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom)}
+.mm-time img{width:52px;height:52px;object-fit:contain;object-position:top}
+.mm-time b{font-size:1.8rem;margin-left:auto}
+.mm-time.vez{opacity:1;transform:scale(1.05)}
+.mm-time.joy.vez{background:#d8ecfb;border-color:#3a8fd0}
+.mm-time.jane.vez{background:#ffe1ee;border-color:#f06ea8}
+.carta.achada.t-joy .frente{outline:6px solid #3a8fd0}
+.carta.achada.t-jane .frente{outline:6px solid #f06ea8}
+.mm-subir[hidden]{display:none}
+</style>
 <div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Jogo da memória 🃏</h1></div>
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
   <div id="escolha">
+    <div id="modo-box" hidden>
+      <p class="jogo-dica">Quem vai jogar?</p>
+      <div class="mm-modo" id="modo">
+        <button type="button" data-modo="1" class="ativo"><img src="imagens/jogos/pet-joy-feliz.png" alt="">Sozinho</button>
+        <button type="button" data-modo="2" class="dupla"><img src="imagens/jogos/pet-joy-feliz.png" alt=""><img src="imagens/jogos/pet-jane-sentada.png" alt="">2 jogadores</button>
+      </div>
+    </div>
     <p class="jogo-dica">Quantas cartas?</p>
     <div class="niveis" id="niveis"></div>
   </div>
   <div id="partida" hidden>
-    <p class="jogo-dica">Vire duas cartas e ache os pares iguais! <span class="placar">Jogadas: <b id="jogadas">0</b></span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+    <p class="jogo-dica"><span id="dica-txt">Vire duas cartas e ache os pares iguais!</span> <span class="placar" id="placar-1">Jogadas: <b id="jogadas">0</b></span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+    <div class="mm-times" id="times" hidden>
+      <div class="mm-time joy" id="time-joy"><img src="imagens/jogos/pet-joy-feliz.png" alt="">Time Joy<b id="pontos-joy">0</b></div>
+      <div class="mm-time jane" id="time-jane"><img src="imagens/jogos/pet-jane-sentada.png" alt="">Time Jane<b id="pontos-jane">0</b></div>
+    </div>
     <div class="mesa" id="mesa"></div>
   </div>
   <div id="festa" class="festa" hidden>
     <div class="festa-cartao cartao">
-      <p class="festa-titulo">Parabéns! 🎉</p>
+      <p class="festa-titulo" id="festa-titulo">Parabéns! 🎉</p>
       <p id="festa-texto">Você achou todos os pares!</p>
       <div class="festa-pares" id="festa-pares"></div>
+      <button type="button" class="botao rosa mm-subir" id="subir" hidden>Subir de nível ⬆️</button>
       <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
       <button type="button" class="botao" id="outra">Mudar</button>
     </div>
   </div>
 </div>
-
 </main>
 <div class="colinas" aria-hidden="true"></div>
 <footer><div class="dentro">
@@ -58,23 +87,41 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 <script src="sons.js"></script>
 <script>
 // Para pôr uma carta nova: imagem quadrada em imagens/memoria/ e mais uma linha aqui.
+// 2 jogadores (28/10, ideia da Joice: jogar com o papai, a mamãe e os amiguinhos): Time Joy 💙 × Time Jane 🩷.
+// Achou um par, joga de novo; errou, passa a vez. Em teste: o modo 2 jogadores e o nível 24 cartas são só da Joice.
 const CARTAS = ["m01","m02","m03","m04","m05","m06","m07","m08","m09","m10","m11","m12"].map((n) => "imagens/memoria/" + n + ".jpg");
-const NIVEIS = [{ pares: 3, nome: "6 cartas", emoji: "🐣" }, { pares: 6, nome: "12 cartas", emoji: "🐶" }, { pares: 8, nome: "16 cartas", emoji: "🏆" }];
-let nivel = null, abertas = [], travado = false, achados = 0, jogadas = 0;
+const NIVEIS = [{ pares: 3, nome: "6 cartas", emoji: "🐣" }, { pares: 6, nome: "12 cartas", emoji: "🐶" }, { pares: 8, nome: "16 cartas", emoji: "🏆" }, { pares: 12, nome: "24 cartas", emoji: "🔥", novo: true }];
+let nivel = null, nivelI = 0, abertas = [], travado = false, achados = 0, jogadas = 0, modo = 1, vez = "joy", pontos = { joy: 0, jane: 0 }, souAdmin = false;
 const $ = (s) => document.getElementById(s);
 function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const niveisVisiveis = () => NIVEIS.filter((n) => !n.novo || souAdmin);
 function telaEscolha() {
   $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
-  $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}" aria-label="${n.nome}"><span>${n.emoji}</span><b>${n.pares * 2}</b><small>${"🃏".repeat(i + 1)}</small></button>`).join("");
+  $("modo-box").hidden = !souAdmin;
+  $("niveis").innerHTML = niveisVisiveis().map((n, i) => `<button type="button" class="botao nivel" data-i="${i}" aria-label="${n.nome}"><span>${n.emoji}</span><b>${n.pares * 2}</b><small>${"🃏".repeat(Math.min(i + 1, 4))}</small></button>`).join("");
 }
-$("niveis").addEventListener("click", (e) => { const n = e.target.closest(".nivel"); if (n) { nivel = NIVEIS[+n.dataset.i]; comecar(); } });
+$("modo").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  modo = +b.dataset.modo; PugsSom.pop();
+  $("modo").querySelectorAll("button").forEach((x) => x.classList.toggle("ativo", x === b));
+  if (modo === 2) { PugsSom.latido("joy"); setTimeout(() => PugsSom.latido("jane"), 500); }
+});
+$("niveis").addEventListener("click", (e) => { const n = e.target.closest(".nivel"); if (n) { nivelI = +n.dataset.i; nivel = niveisVisiveis()[nivelI]; comecar(); } });
+function pintarVez() {
+  $("time-joy").classList.toggle("vez", vez === "joy"); $("time-jane").classList.toggle("vez", vez === "jane");
+  $("pontos-joy").textContent = pontos.joy; $("pontos-jane").textContent = pontos.jane;
+  $("dica-txt").textContent = modo === 2 ? (vez === "joy" ? "Vez do Time Joy 💙" : "Vez do Time Jane 🩷") : "Vire duas cartas e ache os pares iguais!";
+}
 function comecar() {
   $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
   abertas = []; travado = false; achados = 0; jogadas = 0; $("jogadas").textContent = 0;
+  pontos = { joy: 0, jane: 0 }; vez = "joy";
+  $("times").hidden = modo !== 2; $("placar-1").hidden = modo === 2; pintarVez();
   const figs = embaralhar(CARTAS.slice()).slice(0, nivel.pares);
   const baralho = embaralhar(figs.concat(figs));
   const mesa = $("mesa");
-  mesa.style.setProperty("--colunas", nivel.pares <= 3 ? 3 : 4);
+  mesa.style.setProperty("--colunas", nivel.pares <= 3 ? 3 : nivel.pares >= 12 ? 6 : 4);
+  mesa.style.gap = nivel.pares >= 12 ? "8px" : "";
   mesa.innerHTML = baralho.map((f) => `<button type="button" class="carta" data-f="${f}" aria-label="carta virada"><span class="lado verso"></span><span class="lado frente" style="background-image:url('${f}')"></span></button>`).join("");
 }
 $("mesa").addEventListener("click", (e) => {
@@ -85,18 +132,32 @@ $("mesa").addEventListener("click", (e) => {
   jogadas++; $("jogadas").textContent = jogadas;
   const [a, b] = abertas; abertas = [];
   if (a.dataset.f === b.dataset.f) {
-    setTimeout(() => { a.classList.add("achada"); b.classList.add("achada"); PugsSom.acerto(); PugsSom.falar("", "achou-par"); }, 300);
-    achados++;
+    const quem = vez;
+    setTimeout(() => { a.classList.add("achada"); b.classList.add("achada"); if (modo === 2) { a.classList.add("t-" + quem); b.classList.add("t-" + quem); } PugsSom.acerto(); PugsSom.falar("", "achou-par"); }, 300);
+    achados++; if (modo === 2) { pontos[quem]++; pintarVez(); }
     if (achados === nivel.pares) setTimeout(festa, 900);
   } else {
     travado = true;
-    setTimeout(() => { PugsSom.virar(); a.classList.remove("virada"); b.classList.remove("virada"); a.setAttribute("aria-label", "carta virada"); b.setAttribute("aria-label", "carta virada"); travado = false; }, 1100);
+    setTimeout(() => {
+      PugsSom.virar(); a.classList.remove("virada"); b.classList.remove("virada"); a.setAttribute("aria-label", "carta virada"); b.setAttribute("aria-label", "carta virada"); travado = false;
+      if (modo === 2) { vez = vez === "joy" ? "jane" : "joy"; pintarVez(); PugsSom.latido(vez); }
+    }, 1100);
   }
 });
 function festa() {
-  PugsSom.festa(); setTimeout(() => PugsSom.falar("", "fim-memoria"), 1500);
-  $("festa-texto").textContent = "Você achou todos os pares em " + jogadas + " jogadas!";
-  $("festa-pares").innerHTML = [...new Set([...document.querySelectorAll(".carta")].map((c) => c.dataset.f))].map((f) => `<img src="${f}" alt="">`).join("");
+  PugsSom.festa(); setTimeout(() => PugsSom.falar("", modo === 2 ? "acertou" : "fim-memoria"), 1500);
+  if (modo === 2) {
+    const g = pontos.joy === pontos.jane ? null : (pontos.joy > pontos.jane ? "joy" : "jane");
+    $("festa-titulo").textContent = g ? (g === "joy" ? "Time Joy ganhou! 💙" : "Time Jane ganhou! 🩷") : "Empate! 🎉";
+    $("festa-texto").textContent = g ? `Placar: Time Joy ${pontos.joy} × ${pontos.jane} Time Jane. Os dois jogaram muito bem!` : `${pontos.joy} × ${pontos.jane}: os dois são campeões!`;
+    setTimeout(() => PugsSom.latido(g || "joy"), 700); if (!g) setTimeout(() => PugsSom.latido("jane"), 1200);
+  } else {
+    $("festa-titulo").textContent = "Parabéns! 🎉";
+    $("festa-texto").textContent = "Você achou todos os pares em " + jogadas + " jogadas!";
+  }
+  $("festa-pares").innerHTML = [...new Set([...document.querySelectorAll(".carta")].map((c) => c.dataset.f))].slice(0, 8).map((f) => `<img src="${f}" alt="">`).join("");
+  const prox = niveisVisiveis()[nivelI + 1];
+  $("subir").hidden = !prox || !souAdmin; if (prox) $("subir").textContent = "Subir de nível ⬆️ " + prox.nome;
   $("festa").hidden = false;
   for (let i = 0; i < 24; i++) {
     const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "💗"][i % 5];
@@ -104,8 +165,14 @@ function festa() {
     document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
   }
 }
+$("subir").onclick = () => { const prox = niveisVisiveis()[nivelI + 1]; if (prox) { nivelI++; nivel = prox; PugsSom.acerto(); comecar(); } };
 $("denovo").onclick = comecar; $("outra").onclick = telaEscolha; $("trocar").onclick = telaEscolha;
-pugsSoNoClube().then((f) => { if (!f) return; $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); });
+PugsSom.carregarSons(["latido-joy", "latido-jane"]);
+pugsSoNoClube().then(async (f) => {
+  if (!f) return;
+  souAdmin = await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false));
+  $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha();
+});
 </script>
 
 </body></html>
