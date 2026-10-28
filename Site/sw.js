@@ -1,11 +1,11 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v44";
+const CACHE = "pugs-clube-v45";
 const ARQUIVOS = [
   "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html", "cuidar.html", "estoura-baloes.html", "ligue-pontos.html", "imagens/jogos/ligue-pontos.jpg", "labirinto.html", "imagens/jogos/labirinto.jpg", "imagens/jogos/pet-cama.png", "imagens/jogos/baloes-numeros.jpg", "imagens/colorir-baloes-numeros.png", "imagens/fig-especial-tchau-lambeijo.jpg",
   "imagens/jogos/joy-face.jpg", "imagens/colorir-joy-dancando.png", "imagens/colorir-joy-na-porta.png", "imagens/colorir-pugs-na-estrada.png", ...["pet-joy-feliz","pet-joy-triste","pet-joy-surpresa","pet-joy-esperta","pet-joy-chamando","pet-joy-dormindo","pet-jane","pet-jane-sentada","pet-ranran"].map((n) => "imagens/jogos/" + n + ".png"), "imagens/jogos/ranran-so.jpg",
   ...["quem-ranran","quem-chinelo","quem-papai","quem-mamae","quem-julia","quem-jane","esc-caminha-vermelha","esc-caminha-bege","esc-bolsinha","esc-poltrona","esc-sofa","esc-chinelos-feira"].map((n) => "imagens/jogos/" + n + ".jpg"),
   ...["ep1-1-lambeijo","ep1-2-joy-na-caminha","ep1-3-feirinha","ep1-4-lacinho-rosa","ep2-1-joy-e-ranran","ep2-2-chinelo-ploc","ep2-3-dormindo-com-ranran","ep2-4-feira-das-tirinhas"].map((n) => "imagens/colorir-" + n + ".png"), "imagens/memoria/m02.jpg",
-  "estilo.css", "clube.js", "sons.js", "sons/eba-joy.mp3", "sons/voz/lista.json", ...["site", "pintar", "quebra", "memoria", "nome", "joy"].map((m) => "sons/musica-" + m + ".mp3"), "manifest.json", "apple-touch-icon.png", "favicon.png",
+  "estilo.css", "clube.js", "sons.js", "caixinha.js", "sons/eba-joy.mp3", "sons/voz/lista.json", ...["site", "pintar", "quebra", "memoria", "nome", "joy"].map((m) => "sons/musica-" + m + ".mp3"), "manifest.json", "apple-touch-icon.png", "favicon.png",
   "imagens/marca-pugs-aventuras.png", "imagens/pintar-dia-das-criancas.png", "imagens/capa-ep2.jpg", "imagens/capa-ep1.jpg", "imagens/fig-ep1.jpg",
   "imagens/capa-dia-das-criancas.jpg", "imagens/banner-pugs-aventuras.jpg", "imagens/fig-ep1-album.jpg", "imagens/fig-ep2.jpg",
   "imagens/fig-especial-dia-das-criancas.jpg",
