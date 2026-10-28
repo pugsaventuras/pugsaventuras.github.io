@@ -3,11 +3,17 @@
 (() => {
   try {
     const TEMAS = [
-      { nome: "halloween", de: "2026-10-24T03:00:00Z", ate: "2026-11-01T03:00:00Z" },
+      { nome: "halloween", de: "2026-10-24T03:00:00Z", ate: "2026-11-01T03:00:00Z", banner: "imagens/banner-halloween.jpg", alt: "Festinha de Halloween: a Joy de abobrinha e a Jane de bruxinha." },
     ];
     const q = new URLSearchParams(location.search).get("tema"), t = Date.now();
     const tema = q ? (q === "normal" ? "" : q) : ((TEMAS.find((x) => t >= Date.parse(x.de) && t < Date.parse(x.ate)) || {}).nome || "");
     if (tema) document.documentElement.classList.add("tema-" + tema);
+    // na data, o banner da página inicial vira a arte da data
+    const info = TEMAS.find((x) => x.nome === tema);
+    if (info && info.banner) document.addEventListener("DOMContentLoaded", () => {
+      const im = document.querySelector('.banner img[src*="banner-pugs-aventuras"]');
+      if (im) { im.src = info.banner; if (info.alt) im.alt = info.alt; }
+    });
   } catch (e) {}
 })();
 // Sons, músicas e vozes do Pugs Aventuras.
