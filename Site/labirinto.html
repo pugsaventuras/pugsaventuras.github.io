@@ -59,6 +59,15 @@ body.halloween .lb-bandeirinhas{display:block}
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
   <div id="escolha">
+<style>
+.qm-modo{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 14px}
+.qm-modo a,.qm-modo span{display:flex;align-items:center;gap:8px;font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:6px 16px 6px 8px;text-decoration:none;cursor:pointer}
+.qm-modo .ativo{background:var(--sol);box-shadow:0 3px 0 var(--marrom)}
+.qm-modo img{width:40px;height:40px;object-fit:contain;object-position:top}
+.qm-modo .dupla img+img{margin-left:-14px}
+</style>
+    <p class="jogo-dica">Quem vai jogar?</p>
+    <div class="qm-modo"><span class="ativo"><img src="imagens/jogos/pet-joy-feliz.png" alt="">Sozinho</span><a href="labirinto-dupla.html" class="dupla"><img src="imagens/jogos/pet-joy-feliz.png" alt=""><img src="imagens/jogos/pet-jane-sentada.png" alt="">2 jogadores</a></div>
     <p class="jogo-dica centro">Arraste a Joy com o dedinho pelo caminho e pegue os números ou as letras na ordem!</p>
     <div class="lb-niveis">
       <button type="button" class="lb-nivel" data-nivel="n5"><span>1️⃣ 2️⃣ 3️⃣</span>Números<small>de 1 a 5 (fácil)</small></button>

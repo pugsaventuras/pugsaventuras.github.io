@@ -53,6 +53,15 @@
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
   <div id="escolha" class="ld-escolha">
+<style>
+.qm-modo{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 14px}
+.qm-modo a,.qm-modo span{display:flex;align-items:center;gap:8px;font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:6px 16px 6px 8px;text-decoration:none;cursor:pointer}
+.qm-modo .ativo{background:var(--sol);box-shadow:0 3px 0 var(--marrom)}
+.qm-modo img{width:40px;height:40px;object-fit:contain;object-position:top}
+.qm-modo .dupla img+img{margin-left:-14px}
+</style>
+    <p class="jogo-dica">Quem vai jogar?</p>
+    <div class="qm-modo"><a href="labirinto.html"><img src="imagens/jogos/pet-joy-feliz.png" alt="">Sozinho</a><span class="dupla ativo"><img src="imagens/jogos/pet-joy-feliz.png" alt=""><img src="imagens/jogos/pet-jane-sentada.png" alt="">2 jogadores</span></div>
     <p class="jogo-dica">Dois jogadores, cada um no seu labirinto! O Time Joy 💙 leva a Joy e o Time Jane 🩷 leva a Jane até a caminha. Os dois labirintos são iguaizinhos.</p>
     <p class="ld-aviso-fone">📱 No celular os labirintos ficam um embaixo do outro. Fica melhor no iPad ou no computador, um de cada lado.</p>
     <h2>Como vocês vão jogar?</h2>
@@ -97,7 +106,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 <script>
 // Labirinto em dupla: dois jogadores, cada um no seu labirinto (iguais), ao mesmo tempo (dá para usar os dois dedos no iPad).
 // Corrida = quem chega primeiro ganha. Juntos = só acaba quando as duas chegam (para irmãos parceiros).
-// Em teste: só a Joice (admin) vê.
+// Liberado para todos em 29/10/2026 (a Joice aprovou). Fica dentro do Labirinto: "Quem vai jogar? 2 jogadores".
 (() => {
   const el = (s) => document.getElementById(s);
   const NS = "http://www.w3.org/2000/svg";
@@ -250,9 +259,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   function telaEscolha() { el("escolha").hidden = false; el("partida").hidden = true; }
   el("outra").onclick = el("trocar").onclick = telaEscolha;
 
-  pugsSoNoClube().then(async (f) => {
+  pugsSoNoClube().then((f) => {
     if (!f) return;
-    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
     el("esperando").hidden = true; el("jogo").hidden = false; telaEscolha();
   });
 })();
