@@ -134,9 +134,9 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     { img: "imagens/jogos/pet-jane-sentada.png", w: 175, h: 199, chave: "jane", txt: "a Jane", fim: "A Joy encontrou a Jane!", emoji: "🐶" },
   ];
   const MARGEM = 20;
-  // semana do Halloween (até 31/10, meia-noite de Brasília); para testar: labirinto.html?tema=halloween
+  // semana do Halloween (até o fim do domingo 1º/11, meia-noite de Brasília); para testar: labirinto.html?tema=halloween
   const agora = Date.now(), tema = new URLSearchParams(location.search).get("tema");
-  const HALLOWEEN = tema === "halloween" || (tema !== "normal" && agora >= Date.parse("2026-10-24T03:00:00Z") && agora < Date.parse("2026-11-01T03:00:00Z"));
+  const HALLOWEEN = tema === "halloween" || (tema !== "normal" && agora >= Date.parse("2026-10-24T03:00:00Z") && agora < Date.parse("2026-11-02T03:00:00Z"));
   if (HALLOWEEN) { document.body.classList.add("halloween"); const h = document.querySelector(".jogo-titulo"); if (h) h.textContent = "Labirinto da Joy 🎃"; }
   let nivel = null, N = 4, cel = 240, aberto = [], caminho = [], itens = [], proximo = 0, joy = [0, 0], meta = [0, 0], rastro = [],
       fimDeJogo = false, segurando = false, ultimaBatida = 0, filaMetas = [], metaAtual = null, dicas = 0;

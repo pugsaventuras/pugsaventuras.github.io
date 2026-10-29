@@ -3,7 +3,7 @@
 (() => {
   try {
     const TEMAS = [
-      { nome: "halloween", de: "2026-10-24T03:00:00Z", ate: "2026-11-01T03:00:00Z", banner: "imagens/banner-halloween.jpg", alt: "Festinha de Halloween: a Joy de abobrinha e a Jane de bruxinha.",
+      { nome: "halloween", de: "2026-10-24T03:00:00Z", ate: "2026-11-02T03:00:00Z", banner: "imagens/banner-halloween.jpg", alt: "Festinha de Halloween: a Joy de abobrinha e a Jane de bruxinha.",
         musica: "halloween", musicaDesde: "2026-10-29T14:00:00Z" },  // música de fundo do site = a música da data (depois que ela for lançada)
     ];
     const q = new URLSearchParams(location.search).get("tema"), t = Date.now();
