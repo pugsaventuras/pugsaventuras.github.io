@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Labirinto em dupla | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<style>
+.ld-escolha h2{font-size:1.25rem;margin:14px 0 6px}
+.ld-opcoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;max-width:820px}
+.ld-op{display:flex;flex-direction:column;align-items:center;gap:4px;font:700 1.15rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:12px 8px;cursor:pointer;box-shadow:0 4px 0 var(--marrom)}
+.ld-op span{font-size:2rem}
+.ld-op small{font-weight:500;font-size:.92rem;text-align:center}
+.ld-op.ativo{background:var(--sol)}
+.ld-placas{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1100px;margin:8px auto 0}
+@media (max-width:700px){.ld-placas{grid-template-columns:1fr}}
+.ld-lado{border:4px solid var(--marrom);border-radius:24px;padding:8px;background:#fff}
+.ld-lado.joy{border-color:#3a8fd0;background:#eef7fe}
+.ld-lado.jane{border-color:#f06ea8;background:#fff1f7}
+.ld-cab{display:flex;align-items:center;gap:8px;font:700 1.15rem Fredoka,Arial,sans-serif;color:var(--marrom);margin-bottom:6px}
+.ld-cab img{width:44px;height:44px;object-fit:contain;object-position:top}
+.ld-cab .alvo{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;min-width:2.1em;height:2.1em;padding:0 .3em;border-radius:50%;background:var(--sol);border:3px solid var(--marrom);font-size:1.1rem}
+.ld-cena{position:relative;width:100%;aspect-ratio:1;border:3px solid var(--marrom);border-radius:18px;overflow:hidden;background:#bfe6a0;touch-action:none}
+.ld-cena svg{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+.ld-cena .pronto{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 clamp(1.4rem,4vw,2.2rem) Fredoka,Arial,sans-serif;color:#fff;-webkit-text-stroke:6px var(--marrom);paint-order:stroke fill;background:rgba(255,255,255,.35);text-align:center;padding:10px}
+.ld-cena .pronto[hidden]{display:none}
+.ld-peca{transition:transform .16s ease-out}
+.ld-item circle{fill:var(--sol);stroke:var(--marrom)}
+.ld-item text{font-family:Fredoka,Arial,sans-serif;font-weight:700;fill:var(--marrom);pointer-events:none}
+.ld-item.agora circle{fill:#ff9a1f}
+.ld-item.pego{display:none}
+.ld-topo-partida{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;max-width:1100px;margin:6px auto;font:700 1.2rem Fredoka,Arial,sans-serif;color:var(--marrom)}
+.ld-fim{text-align:center;margin:14px auto;max-width:760px}
+.ld-aviso-fone{display:none;font-size:.95rem;color:var(--marrom);background:#fff8e6;border:2px dashed var(--marrom);border-radius:14px;padding:6px 10px;margin:8px 0}
+@media (max-width:700px){.ld-aviso-fone{display:block}}
+</style>
+<main>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Labirinto em dupla 👫</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha" class="ld-escolha">
+    <p class="jogo-dica">Dois jogadores, cada um no seu labirinto! O Time Joy 💙 leva a Joy e o Time Jane 🩷 leva a Jane até a caminha. Os dois labirintos são iguaizinhos.</p>
+    <p class="ld-aviso-fone">📱 No celular os labirintos ficam um embaixo do outro. Fica melhor no iPad ou no computador, um de cada lado.</p>
+    <h2>Como vocês vão jogar?</h2>
+    <div class="ld-opcoes" id="modos">
+      <button type="button" class="ld-op ativo" data-modo="corrida"><span>🏁</span>Corrida<small>quem chegar primeiro ganha</small></button>
+      <button type="button" class="ld-op" data-modo="juntos"><span>🤝</span>Juntos<small>só acaba quando as duas chegarem</small></button>
+    </div>
+    <h2>Qual labirinto?</h2>
+    <div class="ld-opcoes" id="tamanhos">
+      <button type="button" class="ld-op" data-t="0"><span>🐶</span>Médio<small>números de 1 a 8</small></button>
+      <button type="button" class="ld-op" data-t="1"><span>🦴</span>Grande<small>letras de A até J</small></button>
+      <button type="button" class="ld-op" data-t="2"><span>🏆</span>Gigante<small>letras de A até O</small></button>
+      <button type="button" class="ld-op" data-t="3"><span>🔥</span>Super desafio<small>labirinto enorme, sem letras, só achar o caminho</small></button>
+    </div>
+  </div>
+  <div id="partida" hidden>
+    <div class="ld-topo-partida"><span id="titulo-partida">🏁 Corrida!</span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></div>
+    <div class="ld-placas" id="placas"></div>
+    <div class="ld-fim" id="fim" hidden>
+      <p class="festa-titulo" id="fim-txt">Muito bem! 🎉</p>
+      <button type="button" class="botao rosa" id="subir">Labirinto maior ⬆️</button>
+      <button type="button" class="botao" id="denovo">Outro igual ➜</button>
+      <button type="button" class="botao" id="outra">Mudar</button>
+    </div>
+  </div>
+</div>
+</main>
+
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Labirinto em dupla: dois jogadores, cada um no seu labirinto (iguais), ao mesmo tempo (dá para usar os dois dedos no iPad).
+// Corrida = quem chega primeiro ganha. Juntos = só acaba quando as duas chegam (para irmãos parceiros).
+// Em teste: só a Joice (admin) vê.
+(() => {
+  const el = (s) => document.getElementById(s);
+  const NS = "http://www.w3.org/2000/svg";
+  const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const TAMANHOS = [
+    { lado: 6, qtd: 8, tipo: "num", nome: "Médio" },
+    { lado: 8, qtd: 10, tipo: "abc", nome: "Grande" },
+    { lado: 10, qtd: 15, tipo: "abc", nome: "Gigante" },
+    { lado: 13, qtd: 0, tipo: "num", nome: "Super desafio" },
+  ];
+  const TIMES = {
+    joy: { nome: "Time Joy 💙", peca: "imagens/jogos/pet-joy-feliz.png", pw: 252, ph: 340, cama: "imagens/jogos/pet-cama.png", cor: "#3a8fd0" },
+    jane: { nome: "Time Jane 🩷", peca: "imagens/jogos/pet-jane-sentada.png", pw: 175, ph: 199, cama: "imagens/jogos/pet-cama-jane.png", cor: "#f06ea8" },
+  };
+  const MARGEM = 20;
+  let modo = "corrida", tI = 0, tam = TAMANHOS[0], N = 6, cel = 160, aberto = [], caminho = [], itensPos = [], meta = [0, 0], lados = [], acabou = false, vencedor = null;
+
+  function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  const id = (c, r) => r * N + c;
+  const centro = (c, r) => [MARGEM + c * cel + cel / 2, MARGEM + r * cel + cel / 2];
+  const rotulo = (k) => tam.tipo === "num" ? String(k + 1) : LETRAS[k];
+  function falar(k) { if (tam.tipo === "num") PugsSom.numero(k + 1); else PugsSom.letra(LETRAS[k]); }
+  function svg(tag, at) { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); return e; }
+  function vizinhos(c, r) { const v = [], a = aberto[id(c, r)]; if (a.n) v.push([c, r - 1]); if (a.s) v.push([c, r + 1]); if (a.l) v.push([c + 1, r]); if (a.o) v.push([c - 1, r]); return v; }
+  function gerar() {
+    aberto = Array.from({ length: N * N }, () => ({ n: false, s: false, l: false, o: false }));
+    const visto = new Array(N * N).fill(false), pilha = [[0, 0]]; visto[0] = true;
+    while (pilha.length) {
+      const [c, r] = pilha[pilha.length - 1];
+      const op = embaralhar([[0, -1, "n", "s"], [0, 1, "s", "n"], [1, 0, "l", "o"], [-1, 0, "o", "l"]]).filter(([dc, dr]) => { const x = c + dc, y = r + dr; return x >= 0 && y >= 0 && x < N && y < N && !visto[id(x, y)]; });
+      if (!op.length) { pilha.pop(); continue; }
+      const [dc, dr, a, b] = op[0], x = c + dc, y = r + dr;
+      aberto[id(c, r)][a] = true; aberto[id(x, y)][b] = true; visto[id(x, y)] = true; pilha.push([x, y]);
+    }
+  }
+  function bfs(de) {
+    const ant = new Array(N * N).fill(-1), dist = new Array(N * N).fill(-1), fila = [de]; dist[id(...de)] = 0;
+    while (fila.length) { const [c, r] = fila.shift(); for (const [x, y] of vizinhos(c, r)) if (dist[id(x, y)] < 0) { dist[id(x, y)] = dist[id(c, r)] + 1; ant[id(x, y)] = id(c, r); fila.push([x, y]); } }
+    return { ant, dist };
+  }
+  function rota(de, para) { const { ant } = bfs(de), p = []; let k = id(...para); while (k >= 0) { p.unshift([k % N, Math.floor(k / N)]); if (k === id(...de)) break; k = ant[k]; } return p; }
+
+  function novoJogo() {
+    N = tam.lado; cel = (1000 - 2 * MARGEM) / N; acabou = false; vencedor = null;
+    for (let t = 0; t < 300; t++) {
+      gerar();
+      const { dist } = bfs([0, 0]); let mx = 0; dist.forEach((d, i) => { if (d > dist[mx]) mx = i; });
+      meta = [mx % N, Math.floor(mx / N)]; caminho = rota([0, 0], meta);
+      if (caminho.length >= tam.qtd + 3 && caminho.length >= N * 2) break;
+    }
+    const L = caminho.length; itensPos = [];
+    for (let k = 0; k < tam.qtd; k++) itensPos.push(caminho[1 + Math.round(k * (L - 3) / Math.max(1, tam.qtd - 1))]);
+    el("placas").innerHTML = ""; lados = ["joy", "jane"].map(montarLado);
+    el("fim").hidden = true;
+    el("titulo-partida").textContent = (modo === "corrida" ? "🏁 Corrida" : "🤝 Juntos") + " · " + tam.nome;
+    const prox = TAMANHOS[tI + 1]; el("subir").hidden = !prox; if (prox) el("subir").textContent = "Labirinto maior ⬆️ " + prox.nome;
+    setTimeout(() => (PugsSom.temVoz("lab-ini-caminha") ? PugsSom.falarE("lab-ini-caminha") : Promise.resolve()).then(() => { if (!acabou && tam.qtd) falar(0); }), 500);
+    setTimeout(() => el("placas").scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+  }
+
+  function montarLado(quem) {
+    const T = TIMES[quem], caixa = document.createElement("div"); caixa.className = "ld-lado " + quem;
+    caixa.innerHTML = `<div class="ld-cab"><img src="${T.peca}" alt="">${T.nome}<span class="alvo">${tam.qtd ? rotulo(0) : "🛏️"}</span></div><div class="ld-cena"><svg viewBox="0 0 1000 1000" aria-label="Labirinto do ${T.nome}"></svg><div class="pronto" hidden></div></div>`;
+    el("placas").appendChild(caixa);
+    const tela = caixa.querySelector("svg"), lado = { quem, T, caixa, tela, pos: [0, 0], rastro: [[0, 0]], proximo: 0, feito: false, itens: [], dedos: new Set(), ultimaBatida: 0 };
+    // chão e paredes
+    tela.appendChild(svg("rect", { x: MARGEM, y: MARGEM, width: 1000 - 2 * MARGEM, height: 1000 - 2 * MARGEM, fill: "#fffaf0" }));
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if ((c + r) % 2) tela.appendChild(svg("rect", { x: MARGEM + c * cel, y: MARGEM + r * cel, width: cel, height: cel, fill: "#fff3d6" }));
+    lado.linha = svg("polyline", { points: "", fill: "none", stroke: T.cor, "stroke-width": cel * 0.16, "stroke-linecap": "round", "stroke-linejoin": "round", opacity: ".5" }); tela.appendChild(lado.linha);
+    const g = Math.max(8, cel * 0.11);
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      const x = MARGEM + c * cel, y = MARGEM + r * cel, a = aberto[id(c, r)], ls = [];
+      if (!a.n) ls.push([x, y, x + cel, y]); if (!a.o) ls.push([x, y, x, y + cel]);
+      if (c === N - 1 && !a.l) ls.push([x + cel, y, x + cel, y + cel]); if (r === N - 1 && !a.s) ls.push([x, y + cel, x + cel, y + cel]);
+      ls.forEach(([x1, y1, x2, y2]) => tela.appendChild(svg("line", { x1, y1, x2, y2, stroke: "#5a3a22", "stroke-width": g, "stroke-linecap": "round" })));
+    }
+    itensPos.forEach(([c, r], k) => {
+      const [x, y] = centro(c, r), gr = svg("g", { class: "ld-item" + (k === 0 ? " agora" : "") });
+      gr.appendChild(svg("circle", { cx: x, cy: y, r: cel * 0.28, "stroke-width": Math.max(3, cel * 0.03) }));
+      const t = svg("text", { x, y: y + cel * 0.12, "text-anchor": "middle", "font-size": cel * 0.34 }); t.textContent = rotulo(k);
+      gr.appendChild(t); tela.appendChild(gr); lado.itens.push(gr);
+    });
+    const s = cel * 0.95 / 400, [mx, my] = centro(...meta);
+    tela.appendChild(svg("image", { href: T.cama, x: mx - 200 * s, y: my - 123 * s, width: 400 * s, height: 247 * s }));
+    const ps = cel * 0.9 / Math.max(T.pw, T.ph);
+    lado.peca = svg("g", { class: "ld-peca" }); lado.peca.appendChild(svg("image", { href: T.peca, x: -T.pw * ps / 2, y: -T.ph * ps / 2, width: T.pw * ps, height: T.ph * ps }));
+    tela.appendChild(lado.peca); posPeca(lado);
+    // dedo na tela (cada labirinto escuta só os seus dedos: os dois podem jogar ao mesmo tempo)
+    const casa = (ev) => { const b = tela.getBoundingClientRect(), x = (ev.clientX - b.left) * 1000 / b.width - MARGEM, y = (ev.clientY - b.top) * 1000 / b.height - MARGEM, c = Math.floor(x / cel), l = Math.floor(y / cel); return c >= 0 && l >= 0 && c < N && l < N ? [c, l] : null; };
+    const seguir = (ev) => {
+      if (lado.feito || acabou) return;
+      const alvo = casa(ev); if (!alvo || (alvo[0] === lado.pos[0] && alvo[1] === lado.pos[1])) return;
+      const d = bfs(lado.pos).dist[id(...alvo)];
+      if (d > 0 && d <= 3) { rota(lado.pos, alvo).slice(1).forEach((p) => { if (!lado.feito && !acabou) andar(lado, p); }); return; }
+      if (Math.abs(alvo[0] - lado.pos[0]) + Math.abs(alvo[1] - lado.pos[1]) === 1) { const t = Date.now(); if (t - lado.ultimaBatida > 700) { lado.ultimaBatida = t; PugsSom.erro(); } }
+    };
+    tela.addEventListener("pointerdown", (ev) => { lado.dedos.add(ev.pointerId); try { tela.setPointerCapture(ev.pointerId); } catch (e) {} seguir(ev); ev.preventDefault(); });
+    tela.addEventListener("pointermove", (ev) => { if (lado.dedos.has(ev.pointerId)) seguir(ev); });
+    ["pointerup", "pointercancel"].forEach((t) => tela.addEventListener(t, (ev) => lado.dedos.delete(ev.pointerId)));
+    tela.addEventListener("touchmove", (ev) => ev.preventDefault(), { passive: false });
+    return lado;
+  }
+  function posPeca(lado) { const [x, y] = centro(...lado.pos); lado.peca.setAttribute("transform", `translate(${x} ${y})`); lado.peca.style.transform = `translate(${x}px, ${y}px)`; }
+  function andar(lado, para) {
+    lado.pos = para; const n = lado.rastro.length;
+    if (n > 1 && lado.rastro[n - 2][0] === para[0] && lado.rastro[n - 2][1] === para[1]) lado.rastro.pop(); else lado.rastro.push(para);
+    lado.linha.setAttribute("points", lado.rastro.map((p) => centro(...p).join(",")).join(" ")); posPeca(lado);
+    const k = lado.proximo;
+    if (k < itensPos.length && itensPos[k][0] === para[0] && itensPos[k][1] === para[1]) {
+      lado.itens[k].classList.add("pego"); lado.itens[k].classList.remove("agora"); falar(k); lado.proximo++;
+      if (lado.itens[lado.proximo]) lado.itens[lado.proximo].classList.add("agora");
+      lado.caixa.querySelector(".alvo").textContent = lado.proximo < itensPos.length ? rotulo(lado.proximo) : "🛏️";
+    }
+    if (para[0] === meta[0] && para[1] === meta[1]) {
+      if (lado.proximo < itensPos.length) { PugsSom.boing(); setTimeout(() => falar(lado.proximo), 400); return; }
+      chegou(lado);
+    }
+  }
+  function aviso(lado, t) { const p = lado.caixa.querySelector(".pronto"); p.textContent = t; p.hidden = false; }
+  function chegou(lado) {
+    lado.feito = true; PugsSom.latido(lado.quem);
+    if (modo === "corrida") {
+      acabou = true; vencedor = lado.quem;
+      aviso(lado, "Chegou primeiro! 🏆"); lados.filter((x) => x !== lado).forEach((x) => aviso(x, "Quase! 💪"));
+      fim(lado.quem === "joy" ? "Time Joy ganhou! 💙" : "Time Jane ganhou! 🩷");
+    } else {
+      aviso(lado, "Chegou! Agora ajude o parceiro 🤝");
+      if (lados.every((x) => x.feito)) { acabou = true; lados.forEach((x) => aviso(x, "Chegamos! 🎉")); fim("As duas chegaram na caminha! Que dupla! 🤝"); }
+    }
+  }
+  function fim(texto) {
+    setTimeout(() => {
+      PugsSom.festa(); setTimeout(() => PugsSom.falar("", PugsSom.temVoz("lab-fim-caminha") ? "lab-fim-caminha" : "acertou"), 1300);
+      el("fim-txt").textContent = texto; el("fim").hidden = false; el("fim").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 500);
+  }
+
+  function marcar(grupo, attr, val) { el(grupo).querySelectorAll(".ld-op").forEach((b) => b.classList.toggle("ativo", b.dataset[attr] === val)); }
+  el("modos").addEventListener("click", (e) => { const b = e.target.closest(".ld-op"); if (!b) return; modo = b.dataset.modo; marcar("modos", "modo", modo); PugsSom.pop(); });
+  el("tamanhos").addEventListener("click", (e) => { const b = e.target.closest(".ld-op"); if (!b) return; PugsSom.pop(); comecar(+b.dataset.t); });
+  function comecar(i) {
+    tI = i; tam = TAMANHOS[i]; el("escolha").hidden = true; el("partida").hidden = false;
+    const chaves = tam.tipo === "num" ? Array.from({ length: tam.qtd }, (_, k) => "numero-" + (k + 1)) : LETRAS.slice(0, tam.qtd).map((L) => PugsSom.chaveLetra(L));
+    PugsSom.vozesProntas.then(() => PugsSom.preparar(chaves.concat(["acertou", "lab-ini-caminha", "lab-fim-caminha"])));
+    PugsSom.carregarSons(["latido-joy", "latido-jane"]);
+    novoJogo();
+  }
+  el("subir").onclick = () => { if (TAMANHOS[tI + 1]) { PugsSom.acerto(); comecar(tI + 1); } };
+  el("denovo").onclick = () => { PugsSom.pop(); novoJogo(); };
+  function telaEscolha() { el("escolha").hidden = false; el("partida").hidden = true; }
+  el("outra").onclick = el("trocar").onclick = telaEscolha;
+
+  pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
+    el("esperando").hidden = true; el("jogo").hidden = false; telaEscolha();
+  });
+})();
+</script>
+</body></html>
