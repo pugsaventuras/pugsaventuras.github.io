@@ -20,22 +20,46 @@
 <nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
 </header>
 <main>
+<style>
+.mm-modo{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 14px}
+.mm-modo button{display:flex;align-items:center;gap:8px;font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:6px 16px 6px 8px;cursor:pointer}
+.mm-modo button.ativo{background:var(--sol);box-shadow:0 3px 0 var(--marrom)}
+.mm-modo img{width:40px;height:40px;object-fit:contain;object-position:top}
+.mm-modo .dupla img+img{margin-left:-14px}
+.mm-times{display:flex;justify-content:center;gap:12px;margin:6px auto 10px;max-width:640px}
+.mm-times[hidden]{display:none}
+.mm-time{flex:1;display:flex;align-items:center;gap:8px;border:4px solid var(--marrom);border-radius:20px;padding:6px 10px;background:#fff;opacity:.55;transition:transform .2s,opacity .2s;font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom)}
+.mm-time img{width:52px;height:52px;object-fit:contain;object-position:top}
+.mm-time b{font-size:1.8rem;margin-left:auto}
+.mm-time.vez{opacity:1;transform:scale(1.05)}
+.mm-time.joy.vez{background:#d8ecfb;border-color:#3a8fd0}
+.mm-time.jane.vez{background:#ffe1ee;border-color:#f06ea8}
+</style>
 <div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Onde está a Joy? 🔎</h1></div>
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
   <div id="escolha">
+    <p class="jogo-dica">Quem vai jogar?</p>
+    <div class="mm-modo" id="modo">
+      <button type="button" data-modo="1" class="ativo"><img src="imagens/jogos/pet-joy-feliz.png" alt="">Sozinho</button>
+      <button type="button" data-modo="2" class="dupla"><img src="imagens/jogos/pet-joy-feliz.png" alt=""><img src="imagens/jogos/pet-jane-sentada.png" alt="">2 jogadores</button>
+    </div>
     <p class="jogo-dica">Quantos esconderijos?</p>
     <div class="niveis" id="niveis"></div>
   </div>
   <div id="partida" hidden>
-    <p class="jogo-dica">A Joy se escondeu! Toque nas figuras do desenho para procurar. <span class="placar">Achou: <b id="achou">0</b> de 3</span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+    <p class="jogo-dica"><span id="dica-txt">A Joy se escondeu! Toque nas figuras do desenho para procurar.</span> <span class="placar" id="placar-1">Achou: <b id="achou">0</b> de 3</span> <button type="button" class="botao pequeno" id="trocar">Mudar</button></p>
+    <div class="mm-times" id="times" hidden>
+      <div class="mm-time joy" id="time-joy"><img src="imagens/jogos/pet-joy-feliz.png" alt="">Time Joy<b id="pontos-joy">0</b></div>
+      <div class="mm-time jane" id="time-jane"><img src="imagens/jogos/pet-jane-sentada.png" alt="">Time Jane<b id="pontos-jane">0</b></div>
+    </div>
     <div class="sala" id="sala"></div>
   </div>
   <div id="festa" class="festa" hidden>
     <div class="festa-cartao cartao">
-      <p class="festa-titulo">Achou a Joy! 🎉</p>
+      <p class="festa-titulo" id="festa-titulo">Achou a Joy! 🎉</p>
       <img src="imagens/jogos/joy-face.jpg" alt="A Joy feliz" style="width:180px;border-radius:50%">
-      <p>Você achou a Joy 3 vezes. Lambeijo! 💛</p>
+      <p id="festa-texto">Você achou a Joy 3 vezes. Lambeijo! 💛</p>
       <button type="button" class="botao rosa" id="denovo">Brincar de novo</button>
       <button type="button" class="botao" id="outra">Mudar</button>
     </div>
@@ -79,15 +103,34 @@ const SURPRESAS = [
 ];
 const NIVEIS = [{ n: 3, emoji: "🐣" }, { n: 4, emoji: "🐶" }, { n: 6, emoji: "🏆" }];
 let nivel = null, achou = 0, onde = -1, travado = false, dica = null;
+// 2 jogadores (29/10): Time Joy 💙 × Time Jane 🩷, cada um procura uma vez. Quem acha a Joy ganha o ponto; 5 rodadas.
+let modo = 1, vez = "joy", comeca = "joy", pontos = { joy: 0, jane: 0 }, rodadas = 0;
+const RODADAS_DUPLA = 5;
+document.getElementById("modo").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  modo = +b.dataset.modo; PugsSom.pop();
+  document.getElementById("modo").querySelectorAll("button").forEach((x) => x.classList.toggle("ativo", x === b));
+  if (modo === 2) { PugsSom.latido("joy"); setTimeout(() => PugsSom.latido("jane"), 500); }
+});
+function pintarVez() {
+  $("time-joy").classList.toggle("vez", vez === "joy"); $("time-jane").classList.toggle("vez", vez === "jane");
+  $("pontos-joy").textContent = pontos.joy; $("pontos-jane").textContent = pontos.jane;
+  $("dica-txt").textContent = modo === 2 ? (vez === "joy" ? "Vez do Time Joy 💙 procurar!" : "Vez do Time Jane 🩷 procurar!") + " (rodada " + Math.min(rodadas + 1, RODADAS_DUPLA) + " de " + RODADAS_DUPLA + ")" : "A Joy se escondeu! Toque nas figuras do desenho para procurar.";
+}
+function comecarPartida() {
+  achou = 0; $("achou").textContent = 0; pontos = { joy: 0, jane: 0 }; rodadas = 0; vez = comeca = "joy";
+  $("times").hidden = modo !== 2; $("placar-1").hidden = modo === 2; rodada();
+}
 function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function telaEscolha() {
   clearTimeout(dica);
   $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
   $("niveis").innerHTML = NIVEIS.map((n, i) => `<button type="button" class="botao nivel" data-i="${i}" aria-label="${n.n} esconderijos"><span>${n.emoji}</span><b>${n.n}</b><small>${"🔎".repeat(i + 1)}</small></button>`).join("");
 }
-$("niveis").addEventListener("click", (e) => { const b = e.target.closest(".nivel"); if (b) { nivel = NIVEIS[+b.dataset.i]; achou = 0; $("achou").textContent = 0; rodada(); } });
+$("niveis").addEventListener("click", (e) => { const b = e.target.closest(".nivel"); if (b) { nivel = NIVEIS[+b.dataset.i]; comecarPartida(); } });
 function rodada() {
   $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true; travado = false;
+  if (modo === 2) { vez = comeca; pintarVez(); }
   const lugares = embaralhar(LUGARES.slice()).slice(0, nivel.n), surpresas = embaralhar(SURPRESAS.slice());
   onde = Math.floor(Math.random() * nivel.n);
   $("sala").style.setProperty("--colunas", nivel.n === 4 ? 2 : 3);
@@ -105,15 +148,23 @@ $("sala").addEventListener("click", (e) => {
   if (+b.dataset.i === onde) {
     travado = true; clearTimeout(dica); PugsSom.acerto(); PugsSom.falar("Achou! Lambeijo!", "achou-a-joy");
     achou++; $("achou").textContent = achou;
+    if (modo === 2) { pontos[vez]++; rodadas++; pintarVez(); setTimeout(() => PugsSom.latido(vez), 900); comeca = comeca === "joy" ? "jane" : "joy"; }
     const lugar = b.dataset.lugar, conta = PugsSom.temVoz(lugar);
     if (conta) setTimeout(() => PugsSom.falar("", lugar), 1900);
-    setTimeout(() => (achou >= 3 ? festa() : rodada()), conta ? 4300 : 3000);
+    const acabou = modo === 2 ? rodadas >= RODADAS_DUPLA : achou >= 3;
+    setTimeout(() => (acabou ? festa() : rodada()), conta ? 4300 : 3000);
   } else {
     PugsSom.pop(); PugsSom.falar("", b.dataset.voz);
     setTimeout(() => b.classList.remove("aberto"), 2200);
+    if (modo === 2) { travado = true; setTimeout(() => { vez = vez === "joy" ? "jane" : "joy"; pintarVez(); PugsSom.latido(vez); travado = false; }, 1400); }
   }
 });
 function festa() {
+  if (modo === 2) {
+    const g = pontos.joy === pontos.jane ? null : (pontos.joy > pontos.jane ? "joy" : "jane");
+    $("festa-titulo").textContent = g ? (g === "joy" ? "Time Joy ganhou! 💙" : "Time Jane ganhou! 🩷") : "Empate! 🎉";
+    $("festa-texto").textContent = `Placar: Time Joy ${pontos.joy} × ${pontos.jane} Time Jane. Os dois procuraram muito bem! 💛`;
+  } else { $("festa-titulo").textContent = "Achou a Joy! 🎉"; $("festa-texto").textContent = "Você achou a Joy 3 vezes. Lambeijo! 💛"; }
   PugsSom.festa(); $("festa").hidden = false;
   for (let i = 0; i < 24; i++) {
     const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "🔎"][i % 5];
@@ -121,8 +172,9 @@ function festa() {
     document.body.appendChild(s); setTimeout(() => s.remove(), 3500);
   }
 }
-$("denovo").onclick = () => { achou = 0; $("achou").textContent = 0; rodada(); };
+$("denovo").onclick = comecarPartida;
 $("outra").onclick = $("trocar").onclick = telaEscolha;
+PugsSom.carregarSons(["latido-joy", "latido-jane"]);
 PugsSom.vozesProntas.then(() => PugsSom.preparar(["onde-esta-a-joy", "achou-a-joy", "barulhinho"].concat(SURPRESAS.map((x) => x.voz))));
 pugsSoNoClube().then((f) => { if (!f) return; $("esperando").hidden = true; $("jogo").hidden = false; telaEscolha(); });
 </script>
