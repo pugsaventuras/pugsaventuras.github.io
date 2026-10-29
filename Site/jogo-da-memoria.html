@@ -88,16 +88,16 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 <script>
 // Para pôr uma carta nova: imagem quadrada em imagens/memoria/ e mais uma linha aqui.
 // 2 jogadores (28/10, ideia da Joice: jogar com o papai, a mamãe e os amiguinhos): Time Joy 💙 × Time Jane 🩷.
-// Achou um par, joga de novo; errou, passa a vez. Em teste: o modo 2 jogadores e o nível 24 cartas são só da Joice.
+// Achou um par, joga de novo; errou, passa a vez. Liberado para todos em 28/10/2026.
 const CARTAS = ["m01","m02","m03","m04","m05","m06","m07","m08","m09","m10","m11","m12"].map((n) => "imagens/memoria/" + n + ".jpg");
 const NIVEIS = [{ pares: 3, nome: "6 cartas", emoji: "🐣" }, { pares: 6, nome: "12 cartas", emoji: "🐶" }, { pares: 8, nome: "16 cartas", emoji: "🏆" }, { pares: 12, nome: "24 cartas", emoji: "🔥", novo: true }];
 let nivel = null, nivelI = 0, abertas = [], travado = false, achados = 0, jogadas = 0, modo = 1, vez = "joy", pontos = { joy: 0, jane: 0 }, souAdmin = false;
 const $ = (s) => document.getElementById(s);
 function embaralhar(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-const niveisVisiveis = () => NIVEIS.filter((n) => !n.novo || souAdmin);
+const niveisVisiveis = () => NIVEIS;   // liberado para todos em 28/10 (a Joice e o Ge testaram e aprovaram)
 function telaEscolha() {
   $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
-  $("modo-box").hidden = !souAdmin;
+  $("modo-box").hidden = false;
   $("niveis").innerHTML = niveisVisiveis().map((n, i) => `<button type="button" class="botao nivel" data-i="${i}" aria-label="${n.nome}"><span>${n.emoji}</span><b>${n.pares * 2}</b><small>${"🃏".repeat(Math.min(i + 1, 4))}</small></button>`).join("");
 }
 $("modo").addEventListener("click", (e) => {
@@ -157,7 +157,7 @@ function festa() {
   }
   $("festa-pares").innerHTML = [...new Set([...document.querySelectorAll(".carta")].map((c) => c.dataset.f))].slice(0, 8).map((f) => `<img src="${f}" alt="">`).join("");
   const prox = niveisVisiveis()[nivelI + 1];
-  $("subir").hidden = !prox || !souAdmin; if (prox) $("subir").textContent = "Subir de nível ⬆️ " + prox.nome;
+  $("subir").hidden = !prox; if (prox) $("subir").textContent = "Subir de nível ⬆️ " + prox.nome;
   $("festa").hidden = false;
   for (let i = 0; i < 24; i++) {
     const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🐾", "⭐", "💛", "🎉", "💗"][i % 5];
