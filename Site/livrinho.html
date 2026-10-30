@@ -133,6 +133,25 @@ if (EP3_NO_AR) LIVROS.unshift({ titulo: "A Joy e a roupinha de meia", ep: 3, aud
     ["13", "Essa sou eu de verdade! A mamãe fez duas roupinhas pra mim, uma branca e uma cinza... e um cachecol de tricô! E você? Tem alguma coisa velhinha em casa que pode virar uma coisa nova? Pede ajuda pra um adulto, tá?"],
     ["14", "Mamãe e Papai: “Tchau, tchau, amiguinhos! O carinho da família esquenta o coração!”  Joy: “Obrigada, mamãe e papai, por cuidarem de mim!”"],
   ].map(([n, t]) => ({ n, t })) });
+const EP4_NO_AR = Date.now() >= Date.parse("2026-10-28T22:00:00Z"); // Episódio 4 estreou quarta 28/10, 19h de Brasília
+if (EP4_NO_AR) LIVROS.unshift({ titulo: "O papai que não queria cachorro", ep: 4, audio: true, capa: "imagens/capa-ep4.jpg", paginas: [
+    ["01", "Oi, amiguinhos! Eu sou a Joy! Hoje eu vou contar a história do papai que não queria cachorro!"],
+    ["02", "Antes de eu chegar, o papai dizia assim: “Cachorro, cachorro não! A nossa vida é muito corrida... Só se for bem pequenininho!”"],
+    ["03", "E eu era bem pequenininha mesmo! Cabia na mão do papai. Papai: “Oi, coisinha... coisinha feia igual o papai!”"],
+    ["04", "Na minha primeira noite em casa, todo mundo dizia que cachorrinho chora a noite inteira... Mas eu não chorei nadinha! Dormi a noite todinha! E você? Na hora de dormir, quem dá boa noite pra você?"],
+    ["05", "Eu aprendi a hora que o papai chegava do trabalho... e ficava esperando bem na porta!"],
+    ["06", "Papai: “Oi, Joy!”  Mamãe: “E eu, que cuido dela o dia inteiro? Hahaha!”"],
+    ["07", "Um dia eu caí do sofá... aí o papai pôs um colchãozinho no chão, pra eu não me machucar! Papai: “Vai, Joy, pula! Isso!”  Joy: “Eba! Caí no macio!”"],
+    ["08", "A gente brincava de lutinha... de mentirinha, tá?"],
+    ["09", "Soco, soco, bate, bate... soco, soco, vira, vira... soco, bate, soco, vira... soco, bate e vira!"],
+    ["10", "Joy: “Pega eu, papai!”  Papai: “Vou te pegar! Corre!”"],
+    ["11", "Papai: “Pega o RanRan, pega!”  Joy: “Aqui, papai! De novo, de novo!”  Papai: “Então pega de novo!” E você? Qual é a brincadeira que você mais gosta de fazer com alguém da sua família?"],
+    ["12", "Mamãe: “Já sei! Vou fazer uma página pra todo mundo conhecer a Joy!”"],
+    ["13", "Olha eu ali! Eu virei a estrela da casa!"],
+    ["14", "E o papai, que não queria cachorro... virou o meu melhor amigo."],
+    ["15", "Esse é o papai de verdade comigo! Às vezes a gente acha que não vai gostar de alguém... mas, quando conhece de verdade, pode virar o melhor amigo."],
+    ["16", "Mamãe e Papai: “Tchau, tchau, amiguinhos! Semana que vem a gente conta mais uma historinha...”  Joy: “Obrigada, mamãe e papai, por serem meus amigos!” E você? Quem é o seu melhor amigo?"],
+  ].map(([n, t]) => ({ n, t })) });
 let livro = null, pag = 0, lerSozinho = true, toque = null;
 const img = (l, p) => `imagens/livrinho/ep${l.ep}-pag${p.n}.jpg`;
 function estante() {
