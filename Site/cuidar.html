@@ -259,6 +259,8 @@ const FILME_JANE = { brincando: "pet-brincando-juntas" };
 // cenas com o papai (dos episódios): às vezes, no lugar da cena normal, aparece uma delas
 // brincando: o papai jogando o RanRan (Ep. 4), com as vozes do episódio
 const COM_PAPAI = { brincando: "brincando-papai" };
+// banho: o banho no balde (Ep. 5), com as vozes do episódio — entra quando o episódio estreia
+if (Date.now() >= Date.parse("2026-11-04T22:00:00Z")) COM_PAPAI.banho = "banho-balde";
 let vezPapai = Math.random() < 0.5;
 function filme(nome, sintetico) {
   let base = nome, tempo = 7000;
@@ -290,9 +292,9 @@ const ACOES = {
   },
   limpeza(p) {
     if (p.limpeza > 80 && !p.patinhas) return falar("Já tô limpinha! Banho demais faz mal pra pele.", "pet-ja-limpa"), rosto("esperta");
-    const so = p.patinhas && p.limpeza > 60;
-    p.limpeza = 100; p.patinhas = false; efeito(so ? ["🫧", "🐾", "🫧"] : ["🫧", "🫧", "🧼", "🫧", "🫧"]); if (so) { PugsSom.bolhas(); tigela("🛁"); } else filme("banho", () => { PugsSom.bolhas(); tigela("🛁"); }); rosto("feliz", 2500); coracao();
-    setTimeout(() => falar(so ? "Patinhas limpinhas!" : "Cheirosa! Agora seca as dobrinhas!", so ? "pet-patinhas-limpas" : "pet-cheirosa"), 900);
+    const so = p.patinhas && p.limpeza > 60; let qualBanho = "";
+    p.limpeza = 100; p.patinhas = false; efeito(so ? ["🫧", "🐾", "🫧"] : ["🫧", "🫧", "🧼", "🫧", "🫧"]); if (so) { PugsSom.bolhas(); tigela("🛁"); } else qualBanho = filme("banho", () => { PugsSom.bolhas(); tigela("🛁"); }); rosto("feliz", 2500); coracao();
+    if (qualBanho !== "banho-balde") setTimeout(() => falar(so ? "Patinhas limpinhas!" : "Cheirosa! Agora seca as dobrinhas!", so ? "pet-patinhas-limpas" : "pet-cheirosa"), 900);
   },
   passeio(p) {
     if (p.energia < 20) return falar("Tô muito cansada... vamos dormir?", "pet-cansada"), rosto("triste");
@@ -385,7 +387,7 @@ function tique() {
   pintar();
 }
 
-const SONS_REAIS = ["latido-joy", "latido-jane", "ronco-joy", "som-comendo-joy", "som-bebendo-joy", "som-banho-joy", "som-brincando-joy", "som-brincando-papai-joy"];
+const SONS_REAIS = ["latido-joy", "latido-jane", "ronco-joy", "som-comendo-joy", "som-bebendo-joy", "som-banho-joy", "som-brincando-joy", "som-brincando-papai-joy", "som-banho-balde-joy"];
 pugsSoNoClube().then((f) => {
   if (!f) return;
   $("esperando").hidden = true; $("jogo").hidden = false;

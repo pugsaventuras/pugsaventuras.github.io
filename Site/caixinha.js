@@ -123,7 +123,7 @@ html.tema-halloween .cx-caixa{background:#fff6ee;border-color:#5b2d82;box-shadow
     listasProntas = Promise.all([pega("musiquinhas.json"), pega("episodios.json")]).then(([mus, eps]) => {
       const m = (mus || []).filter((x) => x && x.id && (!x.desde || Date.parse(x.desde) <= agora));
       LISTAS.mus = m.length ? m : RESERVA_MUS;
-      const e = ((eps && eps.videos) || []).filter((v) => v && v.id && v.ep).sort((a, b) => a.ep - b.ep)
+      const e = ((eps && eps.videos) || []).filter((v) => v && v.id && v.ep && (!v.desde || Date.parse(v.desde) <= agora)).sort((a, b) => a.ep - b.ep)
         .map((v) => ({ id: v.id, nome: "Ep. " + v.ep + " · " + String(v.titulo || "").split(/[!|🐾]/)[0].trim() }));
       LISTAS.eps = e.length ? e : RESERVA_EPS;
     });

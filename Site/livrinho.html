@@ -152,6 +152,25 @@ if (EP4_NO_AR) LIVROS.unshift({ titulo: "O papai que não queria cachorro", ep: 
     ["15", "Esse é o papai de verdade comigo! Às vezes a gente acha que não vai gostar de alguém... mas, quando conhece de verdade, pode virar o melhor amigo."],
     ["16", "Mamãe e Papai: “Tchau, tchau, amiguinhos! Semana que vem a gente conta mais uma historinha...”  Joy: “Obrigada, mamãe e papai, por serem meus amigos!” E você? Quem é o seu melhor amigo?"],
   ].map(([n, t]) => ({ n, t })) });
+const EP5_NO_AR = Date.now() >= Date.parse("2026-11-04T22:00:00Z"); // Episódio 5 estreia quarta 04/11, 19h de Brasília
+if (EP5_NO_AR) LIVROS.unshift({ titulo: "A Joy e o banho no balde", ep: 5, audio: true, capa: "imagens/capa-ep5.jpg", paginas: [
+    ["01", "Oi, amiguinhos! Eu sou a Joy! Hoje eu vou contar o meu primeiro banho... dentro de um balde!"],
+    ["02", "Um dia, depois de brincar muito, a mamãe me pegou no colo e disse: “Joy, tá na hora do banho!” Banho? O que é banho?"],
+    ["03", "Mamãe: “Você ainda não tomou todas as vacinas... Então o banho vai ser aqui em casa.”"],
+    ["04", "E eu era tão pequenininha... que cabia dentro de um balde! Mamãe: “A coleira fica aqui do ladinho, sequinha.” E você? Sabe por que o filhotinho precisa tomar vacina?"],
+    ["05", "Eu não queria ficar no balde! Tentei sair de todo jeito! Mamãe: “Calma, Joy... é rapidinho!” Papai: “Oi, olha aqui!” E o papai? Só tirando foto!"],
+    ["06", "Espuminha... hmmm... até que é cheiroso! Mamãe: “Tá vendo como banho é gostoso?”"],
+    ["07", "Depois a mamãe me enrolou na toalha vermelha... quentinha! Mamãe: “Viu como banho é bom?”"],
+    ["08", "Papai: “Hahaha, tá molhando o meu celular!” Joy: Ops!"],
+    ["09", "E aí eu saí correndo pela casa toda! Vruuum! E você? Depois do banho, gosta de correr ou de ficar quentinho na toalha?"],
+    ["10", "E a toalha vermelha? Virou o meu brinquedo preferido!"],
+    ["11", "Depois veio o secador... um ventinho quentinho! Eu adorava!"],
+    ["12", "E a minha coleirinha de estrela voltou pro lugar! Mamãe: “Agora sim! Tá cheirosinha!”"],
+    ["13", "Papai: “Olha só! Tirei um monte de fotos!” Joy: E eu, no balde! Hihi!"],
+    ["14", "Depois de tanta aventura... eu dormi limpinha, quentinha e cheirosa."],
+    ["15", "Essa sou eu de verdade! No começo eu não queria... mas depois do banho eu gostei muito!"],
+    ["16", "Mamãe: “Tchau, tchau, amiguinhos! A Joy deu trabalho no banho!” Papai: “Mas ficou cheirosinha! Semana que vem a gente conta mais uma historinha.” E você? Gosta de tomar banho?"],
+  ].map(([n, t]) => ({ n, t })) });
 let livro = null, pag = 0, lerSozinho = true, toque = null;
 const img = (l, p) => `imagens/livrinho/ep${l.ep}-pag${p.n}.jpg`;
 function estante() {

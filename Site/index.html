@@ -56,11 +56,18 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p class="licao"><b>Lição:</b> uma coisa velhinha pode virar uma coisa nova, e o carinho da família esquenta o coração.</p>
 </article>
 <article class="cartao" data-ep="4">
-<div class="foto "><!-- foto: imagens/capa-ep4.jpg --><div class="falta"><img class="marca-falta" src="imagens/marca-pugs-aventuras.png" alt=""><span>Em breve 🐾</span></div>
-<img src="imagens/capa-ep4.jpg" alt="Capa do Episódio 4 (quando estiver pronta)" loading="lazy" onerror="this.remove()"></div>
+<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/f56vT2lhwPA" title="Pugs Aventuras - Episódio 4: O papai que não queria cachorro" loading="lazy"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 <h2>Episódio 4 · O papai que não queria cachorro</h2>
-<p class="quando">Quarta, 28/10</p>
+<p class="quando">No ar desde 28/10</p>
 <p>Ele dizia que não queria cachorro. Em poucos dias, quem não desgrudava da Joy era ele!</p>
+<p class="licao"><b>Lição:</b> às vezes a gente acha que não vai gostar de alguém, mas quando conhece de verdade, pode virar o melhor amigo.</p>
+</article>
+<article class="cartao" data-ep="5">
+<div class="foto "><img src="imagens/capa-ep5.jpg" alt="Capa do Episódio 5: A Joy e o banho no balde" loading="lazy"></div>
+<h2>Episódio 5 · A Joy e o banho no balde</h2>
+<p class="quando">Estreia quarta, 04/11, às 19h (Brasília)</p>
+<p>O primeiro banho da Joy foi dentro de um balde, cheio de espuminha!</p>
 </article>
 </div>
 <div class="patinhas" aria-hidden="true">🐾 🐾 🐾</div>
@@ -89,7 +96,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     const { videos } = await r.json();
     const grade = document.getElementById("episodios");
     const hoje = new Date().toISOString().slice(0, 10);
-    for (const v of videos.filter((x) => x.ep).sort((a, b) => a.ep - b.ep)) {
+    for (const v of videos.filter((x) => x.ep && (!x.desde || Date.now() >= Date.parse(x.desde))).sort((a, b) => a.ep - b.ep)) {
       let card = grade.querySelector(`[data-ep="${v.ep}"]`);
       if (!card) {
         card = document.createElement("article"); card.className = "cartao"; card.dataset.ep = v.ep;
