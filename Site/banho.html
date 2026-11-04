@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hora do banho | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<style>
+.bn-escolha{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;max-width:820px;margin:8px auto 0}
+.bn-op{display:flex;flex-direction:column;align-items:center;gap:6px;font:700 1.2rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:10px;cursor:pointer;box-shadow:0 4px 0 var(--marrom)}
+.bn-op img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px}
+.bn-op small{font-weight:500;font-size:.95rem}
+.bn-topo{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin:6px auto 8px;max-width:900px}
+.bn-passo{font:700 clamp(1.2rem,3.6vw,1.6rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center}
+.bn-barra{width:min(420px,80%);height:18px;border:3px solid var(--marrom);border-radius:999px;background:#fff;overflow:hidden}
+.bn-barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7fd3ff,#b98cff);transition:width .25s}
+.bn-cena{position:relative;max-width:900px;margin:0 auto;border:4px solid var(--marrom);border-radius:26px;overflow:hidden;background:#d7f0fc;touch-action:none;user-select:none;-webkit-user-select:none}
+.bn-cena img.fundo{display:block;width:100%;height:auto;pointer-events:none}
+.bn-cena canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+.bn-bolhas{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.bolha{position:absolute;border-radius:50%;pointer-events:auto;cursor:pointer;
+  background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 9%,rgba(255,255,255,.15) 18%,rgba(160,220,255,.25) 55%,rgba(255,170,240,.45) 80%,rgba(255,255,255,.7) 96%);
+  box-shadow:inset 0 0 8px rgba(255,255,255,.8);animation:sobe linear forwards}
+@keyframes sobe{from{transform:translate(0,0)}to{transform:translate(var(--dx),calc(-1 * var(--sobe)))}}
+.ploc{position:absolute;font:700 1.5rem Fredoka,Arial,sans-serif;color:#fff;-webkit-text-stroke:5px #3a8fd0;paint-order:stroke fill;pointer-events:none;animation:ploc .7s ease-out forwards}
+@keyframes ploc{from{transform:translate(-50%,-50%) scale(.6);opacity:1}to{transform:translate(-50%,-120%) scale(1.3);opacity:0}}
+.respingo{position:absolute;width:10px;height:10px;border-radius:50%;background:rgba(160,220,255,.9);pointer-events:none;animation:respingo .5s ease-out forwards}
+@keyframes respingo{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+.bn-ferramenta{position:absolute;font-size:clamp(2.2rem,7vw,3.4rem);pointer-events:none;transform:translate(-50%,-60%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
+.bn-acoes{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:12px auto}
+.bn-toalha{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2)}
+.bn-toalha img{width:100%;height:100%;object-fit:cover;animation:entra .6s ease-out}
+@keyframes entra{from{transform:translateY(-100%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.bolha{animation-duration:12s!important}}
+</style>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Hora do banho 🛁</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha">
+    <p class="jogo-dica">Vamos dar banho! Faz espuminha, estoura as bolhas de sabão, enxágua e enrola na toalha quentinha.</p>
+    <div class="bn-escolha" id="cenas"></div>
+  </div>
+  <div id="partida" hidden>
+    <div class="bn-topo"><span class="bn-passo" id="passo">Esfrega, esfrega! 🧼</span><span class="bn-barra"><i id="barra"></i></span></div>
+    <div class="bn-cena" id="cena">
+      <img class="fundo" id="fundo" alt="">
+      <canvas id="espuma"></canvas>
+      <div class="bn-bolhas" id="bolhas"></div>
+      <span class="bn-ferramenta" id="ferramenta" hidden></span>
+    </div>
+    <div class="bn-acoes" id="acoes">
+      <button type="button" class="botao" id="trocar">Mudar</button>
+    </div>
+    <div class="bn-acoes" id="fim" hidden>
+      <p class="festa-titulo" style="width:100%;text-align:center;margin:0">Tá cheirosinha! 💙</p>
+      <button type="button" class="botao rosa" id="denovo">Dar banho de novo</button>
+      <button type="button" class="botao" id="outra">Outro banho</button>
+    </div>
+  </div>
+</div>
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Hora do banho: esfrega (espuma) → estoura as bolhas (ploc!) → enxágua (chuveirinho) → toalha quentinha
+(() => {
+  const $ = (s) => document.getElementById(s);
+  const CENAS = [
+    { img: "imagens/jogos/banho-balde.jpg", nome: "A Joy no balde", sub: "Episódio 5 · o primeiro banho", fim: "imagens/livrinho/ep5-pag07.jpg" },
+    { img: "imagens/jogos/banho-banheira.jpg", nome: "Joy e Jane na banheira", sub: "da musiquinha Hora do Banho", fim: null },
+  ];
+  const META_ESPUMA = 0.32, META_BOLHAS = 15;
+  let cena = 0, passo = 0, cel = null, celFeitas = 0, bolhasFeitas = 0, timerBolha = null, espumaIni = 0, mede = null, somAte = 0;
+  const cv = $("espuma"), ctx = cv.getContext("2d"), area = $("cena"), caixa = $("bolhas"), fer = $("ferramenta");
+
+  function escolha() {
+    $("escolha").hidden = false; $("partida").hidden = true; parar();
+    $("cenas").innerHTML = CENAS.map((c, i) => `<button type="button" class="bn-op" data-i="${i}"><img src="${c.img}" alt=""><span>${c.nome}</span><small>${c.sub}</small></button>`).join("");
+  }
+  $("cenas").addEventListener("click", (e) => { const b = e.target.closest(".bn-op"); if (b) comecar(+b.dataset.i); });
+
+  function comecar(i) {
+    cena = i; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; $("acoes").hidden = false;
+    area.querySelectorAll(".bn-toalha").forEach((t) => t.remove());
+    const f = $("fundo"); f.onload = () => { medir(); irPara(0); }; f.src = CENAS[i].img; if (f.complete && f.naturalWidth) { medir(); irPara(0); }
+  }
+  function medir() {
+    const r = area.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d);
+    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, r.width, r.height);
+    cel = new Uint8Array(16 * 12); celFeitas = 0;
+  }
+  function barra(v) { $("barra").style.width = Math.round(Math.min(1, v) * 100) + "%"; }
+  function texto(t) { $("passo").textContent = t; }
+
+  function irPara(p) {
+    passo = p; parar();
+    if (p === 0) { texto("Esfrega, esfrega! Faz bastante espuma 🧼"); barra(0); bolhasFeitas = 0; PugsSom.falar("Tô sujinha... banho?", "pet-sujinha"); }
+    if (p === 1) { texto("Ploc! Estoura as bolhas de sabão 🫧"); barra(0); timerBolha = setInterval(soltarBolha, 650); soltarBolha(); }
+    if (p === 2) {
+      texto("Agora o chuveirinho! Tira toda a espuma 🚿"); barra(0);
+      espumaIni = quantaEspuma() || 1; mede = setInterval(() => { const resta = quantaEspuma() / espumaIni; barra(1 - resta); if (resta < 0.07) { const r = area.getBoundingClientRect(); ctx.clearRect(0, 0, r.width, r.height); irPara(3); } }, 350);
+    }
+    if (p === 3) {
+      texto("Toalha quentinha! 🧣"); barra(1); PugsSom.acerto();
+      PugsSom.falar("Cheirosa! Agora seca as dobrinhas!", "pet-cheirosa");
+      $("acoes").innerHTML = '<button type="button" class="botao rosa" id="toalha" style="font-size:1.4rem">🧣 Enrolar na toalha</button><button type="button" class="botao" id="trocar">Mudar</button>';
+      $("toalha").onclick = toalha; $("trocar").onclick = escolha;
+    }
+  }
+  function parar() { clearInterval(timerBolha); clearInterval(mede); timerBolha = mede = null; }
+
+  // ---- espuma (passo 0) e chuveirinho (passo 2)
+  let dedo = false;
+  function pos(e) { const r = area.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height }; }
+  function puff(x, y, w) {
+    for (let k = 0; k < 4; k++) {
+      const rr = w * (0.018 + Math.random() * 0.022), ox = (Math.random() - 0.5) * w * 0.05, oy = (Math.random() - 0.5) * w * 0.05;
+      ctx.beginPath(); ctx.arc(x + ox, y + oy, rr, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255,0.93)"; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(150,200,235,0.8)"; ctx.stroke();
+    }
+  }
+  function lavar(x, y, w) {
+    ctx.save(); ctx.globalCompositeOperation = "destination-out"; ctx.beginPath(); ctx.arc(x, y, w * 0.075, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    if (Math.random() < 0.5) { const s = document.createElement("span"); s.className = "respingo"; s.style.left = x + "px"; s.style.top = y + "px"; s.style.setProperty("--dx", (Math.random() - 0.5) * 60 + "px"); s.style.setProperty("--dy", 20 + Math.random() * 40 + "px"); caixa.appendChild(s); setTimeout(() => s.remove(), 520); }
+  }
+  function quantaEspuma() {
+    try { const d = ctx.getImageData(0, 0, cv.width, cv.height).data; let n = 0; for (let i = 3; i < d.length; i += 4 * 9) if (d[i] > 60) n++; return n; } catch (e) { return 0; }
+  }
+  function mexe(e) {
+    if (passo !== 0 && passo !== 2) return;
+    const p = pos(e);
+    if (passo === 2) { fer.hidden = false; fer.textContent = "🚿"; fer.style.left = p.x + "px"; fer.style.top = p.y + "px"; }
+    if (!dedo) return;
+    const agora = Date.now();
+    if (passo === 0) {
+      puff(p.x, p.y, p.w);
+      const cx = Math.min(15, Math.floor(p.x / p.w * 16)), cy = Math.min(11, Math.floor(p.y / p.h * 12)), k = cy * 16 + cx;
+      if (!cel[k]) { cel[k] = 1; celFeitas++; barra(celFeitas / (192 * META_ESPUMA)); }
+      if (agora > somAte) { PugsSom.bolhas(); somAte = agora + 900; }
+      if (celFeitas >= 192 * META_ESPUMA) { dedo = false; PugsSom.acerto(); irPara(1); }
+    } else {
+      lavar(p.x, p.y, p.w);
+      if (agora > somAte) { PugsSom.bolhas(); somAte = agora + 1100; }
+    }
+  }
+  area.addEventListener("pointerdown", (e) => { if (e.target.classList.contains("bolha")) return; dedo = true; try { area.setPointerCapture(e.pointerId); } catch (x) {} mexe(e); });
+  area.addEventListener("pointermove", mexe);
+  ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => area.addEventListener(ev, () => { dedo = false; if (passo !== 2) fer.hidden = true; }));
+
+  // ---- bolhas de sabão (passo 1 e brincadeira livre no fim)
+  function soltarBolha() {
+    if (caixa.querySelectorAll(".bolha").length > 9) return;
+    const r = area.getBoundingClientRect(), t = r.width * (0.08 + Math.random() * 0.08);
+    const b = document.createElement("span"); b.className = "bolha";
+    b.style.width = b.style.height = t + "px"; b.style.left = (Math.random() * (r.width - t)) + "px"; b.style.top = (r.height - t * 0.4) + "px";
+    b.style.setProperty("--sobe", (r.height + t) + "px"); b.style.setProperty("--dx", ((Math.random() - 0.5) * 80) + "px");
+    b.style.animationDuration = (5 + Math.random() * 3) + "s";
+    b.addEventListener("animationend", () => b.remove());
+    b.addEventListener("pointerdown", (e) => { e.stopPropagation(); estourar(b); });
+    caixa.appendChild(b);
+  }
+  function estourar(b) {
+    const br = b.getBoundingClientRect(), ar = area.getBoundingClientRect(), x = br.left - ar.left + br.width / 2, y = br.top - ar.top + br.height / 2;
+    b.remove(); PugsSom.pop();
+    const p = document.createElement("span"); p.className = "ploc"; p.textContent = "Ploc!"; p.style.left = x + "px"; p.style.top = y + "px"; caixa.appendChild(p); setTimeout(() => p.remove(), 720);
+    for (let k = 0; k < 6; k++) { const s = document.createElement("span"); s.className = "respingo"; s.style.left = x + "px"; s.style.top = y + "px"; const a = k / 6 * Math.PI * 2; s.style.setProperty("--dx", Math.cos(a) * 34 + "px"); s.style.setProperty("--dy", Math.sin(a) * 34 + "px"); caixa.appendChild(s); setTimeout(() => s.remove(), 520); }
+    if (passo === 1) { bolhasFeitas++; barra(bolhasFeitas / META_BOLHAS); if (bolhasFeitas >= META_BOLHAS) { PugsSom.acerto(); caixa.querySelectorAll(".bolha").forEach((x) => x.remove()); irPara(2); } }
+  }
+
+  // ---- toalha e festa
+  function toalha() {
+    const c = CENAS[cena];
+    if (c.fim) { const t = document.createElement("div"); t.className = "bn-toalha"; t.innerHTML = `<img src="${c.fim}" alt="A Joy enrolada na toalha vermelha">`; area.appendChild(t); }
+    $("acoes").hidden = true; texto("Tá cheirosinha! 💙"); passo = 4;
+    setTimeout(() => {
+      PugsSom.festa(); PugsSom.falar("Você é um ótimo cuidador!", "pet-otimo");
+      $("fim").hidden = false; timerBolha = setInterval(soltarBolha, 900); // bolhas livres para estourar à vontade
+    }, 900);
+  }
+  $("denovo").onclick = () => { $("acoes").innerHTML = '<button type="button" class="botao" id="trocar">Mudar</button>'; $("trocar").onclick = escolha; comecar(cena); };
+  $("outra").onclick = () => { $("acoes").innerHTML = '<button type="button" class="botao" id="trocar">Mudar</button>'; $("trocar").onclick = escolha; escolha(); };
+  $("trocar").onclick = escolha;
+  addEventListener("resize", () => { if (passo === 0 && !celFeitas) medir(); });
+
+  // novo: por enquanto só a Joice vê, até ela aprovar
+  pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
+    PugsSom.preparar(["pet-sujinha", "pet-cheirosa", "pet-otimo"]);
+    $("esperando").hidden = true; $("jogo").hidden = false; escolha();
+  });
+})();
+</script>
+</body></html>
