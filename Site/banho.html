@@ -25,27 +25,49 @@
 .bn-op{display:flex;flex-direction:column;align-items:center;gap:6px;font:700 1.2rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:10px;cursor:pointer;box-shadow:0 4px 0 var(--marrom)}
 .bn-op img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px}
 .bn-op small{font-weight:500;font-size:.95rem}
-.bn-topo{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin:6px auto 8px;max-width:900px}
-.bn-passo{font:700 clamp(1.2rem,3.6vw,1.6rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center}
+.bn-op .par{display:flex;gap:4px;width:100%}.bn-op .par img{width:50%}
+.bn-modo{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:4px 0 12px}
+.bn-modo button{font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:6px 18px;cursor:pointer}
+.bn-modo button.ativo{background:var(--sol);box-shadow:0 3px 0 var(--marrom)}
+.bn-modo[hidden]{display:none}
+.bn-placas{display:grid;grid-template-columns:1fr;gap:14px;max-width:min(640px,100%);margin:0 auto}
+.bn-placas.dupla{grid-template-columns:1fr 1fr;max-width:min(900px,100%)}
+@media (max-width:700px){.bn-placas.dupla{grid-template-columns:1fr}}
+.bn-lado{display:flex;flex-direction:column;gap:6px}
+.bn-lado.joy .bn-cena{border-color:#3a8fd0}.bn-lado.jane .bn-cena{border-color:#f06ea8}
+.bn-topo{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px}
+.bn-passo{font:700 clamp(1.05rem,3.2vw,1.5rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center}
+.bn-quem{font:700 1.1rem Fredoka,Arial,sans-serif}
+.bn-lado.joy .bn-quem{color:#2a72ad}.bn-lado.jane .bn-quem{color:#d6457f}
 .bn-barra{width:min(420px,80%);height:18px;border:3px solid var(--marrom);border-radius:999px;background:#fff;overflow:hidden}
 .bn-barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,#7fd3ff,#b98cff);transition:width .25s}
-.bn-cena{position:relative;max-width:900px;margin:0 auto;border:4px solid var(--marrom);border-radius:26px;overflow:hidden;background:#d7f0fc;touch-action:none;user-select:none;-webkit-user-select:none}
+.bn-lado.jane .bn-barra i{background:linear-gradient(90deg,#ffb6d5,#f06ea8)}
+.bn-cena{position:relative;border:4px solid var(--marrom);border-radius:26px;overflow:hidden;background:#d7f0fc;touch-action:none;user-select:none;-webkit-user-select:none}
 .bn-cena img.fundo{display:block;width:100%;height:auto;pointer-events:none}
 .bn-cena canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
 .bn-bolhas{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .bolha{position:absolute;border-radius:50%;pointer-events:auto;cursor:pointer;
   background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 9%,rgba(255,255,255,.15) 18%,rgba(160,220,255,.25) 55%,rgba(255,170,240,.45) 80%,rgba(255,255,255,.7) 96%);
   box-shadow:inset 0 0 8px rgba(255,255,255,.8);animation:sobe linear forwards}
+.bn-lado.joy .bolha{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 9%,rgba(255,255,255,.15) 18%,rgba(120,190,255,.35) 60%,rgba(80,160,240,.55) 85%,rgba(255,255,255,.7) 96%)}
+.bn-lado.jane .bolha{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0 9%,rgba(255,255,255,.15) 18%,rgba(255,170,210,.35) 60%,rgba(240,110,168,.55) 85%,rgba(255,255,255,.7) 96%)}
 @keyframes sobe{from{transform:translate(0,0)}to{transform:translate(var(--dx),calc(-1 * var(--sobe)))}}
 .ploc{position:absolute;font:700 1.5rem Fredoka,Arial,sans-serif;color:#fff;-webkit-text-stroke:5px #3a8fd0;paint-order:stroke fill;pointer-events:none;animation:ploc .7s ease-out forwards}
+.bn-lado.jane .ploc{-webkit-text-stroke-color:#f06ea8}
 @keyframes ploc{from{transform:translate(-50%,-50%) scale(.6);opacity:1}to{transform:translate(-50%,-120%) scale(1.3);opacity:0}}
 .respingo{position:absolute;width:10px;height:10px;border-radius:50%;background:rgba(160,220,255,.9);pointer-events:none;animation:respingo .5s ease-out forwards}
 @keyframes respingo{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
 .bn-ferramenta{position:absolute;font-size:clamp(2.2rem,7vw,3.4rem);pointer-events:none;transform:translate(-50%,-60%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
-.bn-acoes{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:12px auto}
-.bn-toalha{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2)}
+.bn-acoes{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:6px auto}
+.bn-toalha{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .bn-toalha img{width:100%;height:100%;object-fit:cover;animation:entra .6s ease-out}
-@keyframes entra{from{transform:translateY(-100%)}to{transform:none}}
+.bn-toalha .pano{position:absolute;left:8%;right:8%;bottom:-4%;height:46%;border-radius:40% 40% 18px 18px;animation:entra .6s ease-out;box-shadow:0 -4px 0 rgba(0,0,0,.08) inset}
+.bn-lado.joy .pano{background:repeating-linear-gradient(45deg,#4aa3e8 0 14px,#6bb8f0 14px 28px)}
+.bn-lado.jane .pano{background:repeating-linear-gradient(45deg,#f06ea8 0 14px,#f58dbd 14px 28px)}
+.bn-selo{position:absolute;left:50%;top:12%;transform:translateX(-50%);font:700 clamp(1.2rem,4vw,1.8rem) Fredoka,Arial,sans-serif;color:#fff;-webkit-text-stroke:6px var(--marrom);paint-order:stroke fill;white-space:nowrap;pointer-events:none}
+@keyframes entra{from{transform:translateY(100%)}to{transform:none}}
+.bn-toalha img{animation-name:desce}@keyframes desce{from{transform:translateY(-100%)}to{transform:none}}
+.bn-fim{text-align:center;margin:12px auto}
 @media (prefers-reduced-motion:reduce){.bolha{animation-duration:12s!important}}
 </style>
 <div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Hora do banho 🛁</h1></div>
@@ -53,24 +75,18 @@
 <div id="jogo" hidden>
   <div id="escolha">
     <p class="jogo-dica">Vamos dar banho! Faz espuminha, estoura as bolhas de sabão, enxágua e enrola na toalha quentinha.</p>
+    <div class="bn-modo" id="quem"><button type="button" class="ativo" data-q="1">🙋 Sozinho</button><button type="button" data-q="2">👫 2 jogadores</button></div>
+    <div class="bn-modo" id="como" hidden><button type="button" class="ativo" data-c="corrida">🏁 Corrida</button><button type="button" data-c="juntos">🤝 Juntos</button></div>
     <div class="bn-escolha" id="cenas"></div>
   </div>
   <div id="partida" hidden>
-    <div class="bn-topo"><span class="bn-passo" id="passo">Esfrega, esfrega! 🧼</span><span class="bn-barra"><i id="barra"></i></span></div>
-    <div class="bn-cena" id="cena">
-      <img class="fundo" id="fundo" alt="">
-      <canvas id="espuma"></canvas>
-      <div class="bn-bolhas" id="bolhas"></div>
-      <span class="bn-ferramenta" id="ferramenta" hidden></span>
-    </div>
-    <div class="bn-acoes" id="acoes">
-      <button type="button" class="botao" id="trocar">Mudar</button>
-    </div>
-    <div class="bn-acoes" id="fim" hidden>
-      <p class="festa-titulo" style="width:100%;text-align:center;margin:0">Tá cheirosinha! 💙</p>
+    <div class="bn-placas" id="placas"></div>
+    <div class="bn-fim" id="fim" hidden>
+      <p class="festa-titulo" id="fim-txt" style="margin:0 0 8px">Tá cheirosinha! 💙</p>
       <button type="button" class="botao rosa" id="denovo">Dar banho de novo</button>
       <button type="button" class="botao" id="outra">Outro banho</button>
     </div>
+    <div class="bn-acoes"><button type="button" class="botao" id="trocar">Mudar</button></div>
   </div>
 </div>
 </main>
@@ -89,125 +105,132 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 <script src="sons.js"></script>
 <script>
 // Hora do banho: esfrega (espuma) → estoura as bolhas (ploc!) → enxágua (chuveirinho) → toalha quentinha
+// Sozinho (Joy no balde ou Joy e Jane na banheira) ou 2 jogadores (Joy 💙 × Jane 🩷, corrida ou juntos)
 (() => {
   const $ = (s) => document.getElementById(s);
   const CENAS = [
     { img: "imagens/jogos/banho-balde.jpg", nome: "A Joy no balde", sub: "Episódio 5 · o primeiro banho", fim: "imagens/livrinho/ep5-pag07.jpg" },
     { img: "imagens/jogos/banho-banheira.jpg", nome: "Joy e Jane na banheira", sub: "da musiquinha Hora do Banho", fim: null },
   ];
+  const DUPLA = [
+    { quem: "joy", nome: "Time Joy 💙", img: "imagens/jogos/banho-dupla-joy.jpg", pronta: "A Joy tá cheirosinha!" },
+    { quem: "jane", nome: "Time Jane 🩷", img: "imagens/jogos/banho-dupla-jane.jpg", pronta: "A Jane tá cheirosinha!" },
+  ];
   const META_ESPUMA = 0.32, META_BOLHAS = 15;
-  let cena = 0, passo = 0, cel = null, celFeitas = 0, bolhasFeitas = 0, timerBolha = null, espumaIni = 0, mede = null, somAte = 0;
-  const cv = $("espuma"), ctx = cv.getContext("2d"), area = $("cena"), caixa = $("bolhas"), fer = $("ferramenta");
+  let jogadores = 1, como = "corrida", cenaSolo = 0, placas = [], acabou = false;
 
+  // ---- tela de escolha
   function escolha() {
-    $("escolha").hidden = false; $("partida").hidden = true; parar();
-    $("cenas").innerHTML = CENAS.map((c, i) => `<button type="button" class="bn-op" data-i="${i}"><img src="${c.img}" alt=""><span>${c.nome}</span><small>${c.sub}</small></button>`).join("");
+    placas.forEach((p) => p.parar()); placas = []; acabou = false;
+    $("escolha").hidden = false; $("partida").hidden = true;
+    $("como").hidden = jogadores === 1;
+    $("cenas").innerHTML = jogadores === 1
+      ? CENAS.map((c, i) => `<button type="button" class="bn-op" data-i="${i}"><img src="${c.img}" alt=""><span>${c.nome}</span><small>${c.sub}</small></button>`).join("")
+      : `<button type="button" class="bn-op" data-i="d"><span class="par"><img src="${DUPLA[0].img}" alt=""><img src="${DUPLA[1].img}" alt=""></span><span>Joy × Jane na banheira</span><small>${como === "corrida" ? "quem deixar a sua pug cheirosinha primeiro ganha" : "a festa só vem quando as duas estiverem limpinhas"}</small></button>`;
   }
-  $("cenas").addEventListener("click", (e) => { const b = e.target.closest(".bn-op"); if (b) comecar(+b.dataset.i); });
+  $("quem").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; jogadores = +b.dataset.q; $("quem").querySelectorAll("button").forEach((x) => x.classList.toggle("ativo", x === b)); escolha(); });
+  $("como").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; como = b.dataset.c; $("como").querySelectorAll("button").forEach((x) => x.classList.toggle("ativo", x === b)); escolha(); });
+  $("cenas").addEventListener("click", (e) => { const b = e.target.closest(".bn-op"); if (!b) return; if (b.dataset.i !== "d") cenaSolo = +b.dataset.i; comecar(); });
 
-  function comecar(i) {
-    cena = i; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; $("acoes").hidden = false;
-    area.querySelectorAll(".bn-toalha").forEach((t) => t.remove());
-    const f = $("fundo"); f.onload = () => { medir(); irPara(0); }; f.src = CENAS[i].img; if (f.complete && f.naturalWidth) { medir(); irPara(0); }
+  function comecar() {
+    placas.forEach((p) => p.parar()); placas = []; acabou = false;
+    $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true;
+    const box = $("placas"); box.innerHTML = ""; box.classList.toggle("dupla", jogadores === 2);
+    if (jogadores === 1) placas.push(criarPlaca(box, { quem: "", nome: "", img: CENAS[cenaSolo].img, fim: CENAS[cenaSolo].fim, pronta: "Tá cheirosinha! 💙", fala: true }));
+    else DUPLA.forEach((d) => placas.push(criarPlaca(box, { ...d, fim: null, fala: false })));
+    if (jogadores === 1) PugsSom.falar("Tô sujinha... banho?", "pet-sujinha");
   }
-  function medir() {
-    const r = area.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1);
-    cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d);
-    ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, r.width, r.height);
-    cel = new Uint8Array(16 * 12); celFeitas = 0;
-  }
-  function barra(v) { $("barra").style.width = Math.round(Math.min(1, v) * 100) + "%"; }
-  function texto(t) { $("passo").textContent = t; }
 
-  function irPara(p) {
-    passo = p; parar();
-    if (p === 0) { texto("Esfrega, esfrega! Faz bastante espuma 🧼"); barra(0); bolhasFeitas = 0; PugsSom.falar("Tô sujinha... banho?", "pet-sujinha"); }
-    if (p === 1) { texto("Ploc! Estoura as bolhas de sabão 🫧"); barra(0); timerBolha = setInterval(soltarBolha, 650); soltarBolha(); }
-    if (p === 2) {
-      texto("Agora o chuveirinho! Tira toda a espuma 🚿"); barra(0);
-      espumaIni = quantaEspuma() || 1; mede = setInterval(() => { const resta = quantaEspuma() / espumaIni; barra(1 - resta); if (resta < 0.07) { const r = area.getBoundingClientRect(); ctx.clearRect(0, 0, r.width, r.height); irPara(3); } }, 350);
+  // uma "placa" = um banho completo (no modo dupla são duas, cada uma com o seu dedo)
+  function criarPlaca(box, o) {
+    const lado = document.createElement("div"); lado.className = "bn-lado " + o.quem;
+    lado.innerHTML = `<div class="bn-topo">${o.nome ? `<span class="bn-quem">${o.nome}</span>` : ""}<span class="bn-passo">Esfrega, esfrega! 🧼</span><span class="bn-barra"><i></i></span></div>
+      <div class="bn-cena"><img class="fundo" alt=""><canvas></canvas><div class="bn-bolhas"></div><span class="bn-ferramenta" hidden></span></div>
+      <div class="bn-acoes"></div>`;
+    box.appendChild(lado);
+    const area = lado.querySelector(".bn-cena"), cv = area.querySelector("canvas"), ctx = cv.getContext("2d"), caixa = area.querySelector(".bn-bolhas"), fer = area.querySelector(".bn-ferramenta"), acoes = lado.querySelector(".bn-acoes");
+    const barraEl = lado.querySelector(".bn-barra i"), passoEl = lado.querySelector(".bn-passo");
+    let passo = 0, cel = null, celFeitas = 0, bolhasFeitas = 0, timer = null, mede = null, espumaIni = 1, somAte = 0, dedo = false, pronta = false;
+    const barra = (v) => { barraEl.style.width = Math.round(Math.min(1, v) * 100) + "%"; };
+    const texto = (t) => { passoEl.textContent = t; };
+    function medir() { const r = area.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, r.width, r.height); cel = new Uint8Array(16 * 12); celFeitas = 0; }
+    const fundo = area.querySelector(".fundo"); fundo.onload = () => { medir(); irPara(0); }; fundo.src = o.img;
+    function parar() { clearInterval(timer); clearInterval(mede); timer = mede = null; }
+    function irPara(p) {
+      passo = p; parar();
+      if (p === 0) { texto("Esfrega, esfrega! 🧼"); barra(0); bolhasFeitas = 0; }
+      if (p === 1) { texto("Ploc! Estoura as bolhas 🫧"); barra(0); timer = setInterval(soltarBolha, 650); soltarBolha(); }
+      if (p === 2) {
+        texto("Chuveirinho! Tira a espuma 🚿"); barra(0); espumaIni = quantaEspuma() || 1;
+        mede = setInterval(() => { const resta = quantaEspuma() / espumaIni; barra(1 - resta); if (resta < 0.07) { const r = area.getBoundingClientRect(); ctx.clearRect(0, 0, r.width, r.height); fer.hidden = true; irPara(3); } }, 350);
+      }
+      if (p === 3) {
+        texto("Toalha quentinha! 🧣"); barra(1); PugsSom.acerto();
+        if (o.fala) PugsSom.falar("Cheirosa! Agora seca as dobrinhas!", "pet-cheirosa");
+        acoes.innerHTML = '<button type="button" class="botao rosa" style="font-size:1.3rem">🧣 Enrolar na toalha</button>';
+        acoes.querySelector("button").onclick = toalha;
+      }
     }
-    if (p === 3) {
-      texto("Toalha quentinha! 🧣"); barra(1); PugsSom.acerto();
-      PugsSom.falar("Cheirosa! Agora seca as dobrinhas!", "pet-cheirosa");
-      $("acoes").innerHTML = '<button type="button" class="botao rosa" id="toalha" style="font-size:1.4rem">🧣 Enrolar na toalha</button><button type="button" class="botao" id="trocar">Mudar</button>';
-      $("toalha").onclick = toalha; $("trocar").onclick = escolha;
+    function pos(e) { const r = area.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height }; }
+    function puff(x, y, w) { for (let k = 0; k < 4; k++) { const rr = w * (0.022 + Math.random() * 0.026), ox = (Math.random() - 0.5) * w * 0.06, oy = (Math.random() - 0.5) * w * 0.06; ctx.beginPath(); ctx.arc(x + ox, y + oy, rr, 0, Math.PI * 2); ctx.fillStyle = "rgba(255,255,255,0.93)"; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(150,200,235,0.8)"; ctx.stroke(); } }
+    function respingo(x, y, dx, dy) { const s = document.createElement("span"); s.className = "respingo"; s.style.left = x + "px"; s.style.top = y + "px"; s.style.setProperty("--dx", dx + "px"); s.style.setProperty("--dy", dy + "px"); caixa.appendChild(s); setTimeout(() => s.remove(), 520); }
+    function lavar(x, y, w) { ctx.save(); ctx.globalCompositeOperation = "destination-out"; ctx.beginPath(); ctx.arc(x, y, w * 0.085, 0, Math.PI * 2); ctx.fill(); ctx.restore(); if (Math.random() < 0.5) respingo(x, y, (Math.random() - 0.5) * 60, 20 + Math.random() * 40); }
+    function quantaEspuma() { try { const d = ctx.getImageData(0, 0, cv.width, cv.height).data; let n = 0; for (let i = 3; i < d.length; i += 4 * 9) if (d[i] > 60) n++; return n; } catch (e) { return 0; } }
+    function mexe(e) {
+      if (passo !== 0 && passo !== 2) return;
+      const p = pos(e);
+      if (passo === 2) { fer.hidden = false; fer.textContent = "🚿"; fer.style.left = p.x + "px"; fer.style.top = p.y + "px"; }
+      if (!dedo) return;
+      const agora = Date.now();
+      if (passo === 0) {
+        puff(p.x, p.y, p.w);
+        const cx = Math.max(0, Math.min(15, Math.floor(p.x / p.w * 16))), cy = Math.max(0, Math.min(11, Math.floor(p.y / p.h * 12))), k = cy * 16 + cx;
+        if (!cel[k]) { cel[k] = 1; celFeitas++; barra(celFeitas / (192 * META_ESPUMA)); }
+        if (agora > somAte) { PugsSom.bolhas(); somAte = agora + 900; }
+        if (celFeitas >= 192 * META_ESPUMA) { dedo = false; PugsSom.acerto(); irPara(1); }
+      } else { lavar(p.x, p.y, p.w); if (agora > somAte) { PugsSom.bolhas(); somAte = agora + 1100; } }
     }
-  }
-  function parar() { clearInterval(timerBolha); clearInterval(mede); timerBolha = mede = null; }
-
-  // ---- espuma (passo 0) e chuveirinho (passo 2)
-  let dedo = false;
-  function pos(e) { const r = area.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height }; }
-  function puff(x, y, w) {
-    for (let k = 0; k < 4; k++) {
-      const rr = w * (0.018 + Math.random() * 0.022), ox = (Math.random() - 0.5) * w * 0.05, oy = (Math.random() - 0.5) * w * 0.05;
-      ctx.beginPath(); ctx.arc(x + ox, y + oy, rr, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255,255,255,0.93)"; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(150,200,235,0.8)"; ctx.stroke();
+    area.addEventListener("pointerdown", (e) => { if (e.target.classList.contains("bolha")) return; dedo = true; try { area.setPointerCapture(e.pointerId); } catch (x) {} mexe(e); });
+    area.addEventListener("pointermove", mexe);
+    ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => area.addEventListener(ev, () => { dedo = false; if (passo !== 2) fer.hidden = true; }));
+    function soltarBolha() {
+      if (caixa.querySelectorAll(".bolha").length > 9) return;
+      const r = area.getBoundingClientRect(), t = r.width * (0.1 + Math.random() * 0.09);
+      const b = document.createElement("span"); b.className = "bolha";
+      b.style.width = b.style.height = t + "px"; b.style.left = (Math.random() * (r.width - t)) + "px"; b.style.top = (r.height - t * 0.4) + "px";
+      b.style.setProperty("--sobe", (r.height + t) + "px"); b.style.setProperty("--dx", ((Math.random() - 0.5) * 80) + "px");
+      b.style.animationDuration = (5 + Math.random() * 3) + "s";
+      b.addEventListener("animationend", () => b.remove());
+      b.addEventListener("pointerdown", (e) => { e.stopPropagation(); estourar(b); });
+      caixa.appendChild(b);
     }
-  }
-  function lavar(x, y, w) {
-    ctx.save(); ctx.globalCompositeOperation = "destination-out"; ctx.beginPath(); ctx.arc(x, y, w * 0.075, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-    if (Math.random() < 0.5) { const s = document.createElement("span"); s.className = "respingo"; s.style.left = x + "px"; s.style.top = y + "px"; s.style.setProperty("--dx", (Math.random() - 0.5) * 60 + "px"); s.style.setProperty("--dy", 20 + Math.random() * 40 + "px"); caixa.appendChild(s); setTimeout(() => s.remove(), 520); }
-  }
-  function quantaEspuma() {
-    try { const d = ctx.getImageData(0, 0, cv.width, cv.height).data; let n = 0; for (let i = 3; i < d.length; i += 4 * 9) if (d[i] > 60) n++; return n; } catch (e) { return 0; }
-  }
-  function mexe(e) {
-    if (passo !== 0 && passo !== 2) return;
-    const p = pos(e);
-    if (passo === 2) { fer.hidden = false; fer.textContent = "🚿"; fer.style.left = p.x + "px"; fer.style.top = p.y + "px"; }
-    if (!dedo) return;
-    const agora = Date.now();
-    if (passo === 0) {
-      puff(p.x, p.y, p.w);
-      const cx = Math.min(15, Math.floor(p.x / p.w * 16)), cy = Math.min(11, Math.floor(p.y / p.h * 12)), k = cy * 16 + cx;
-      if (!cel[k]) { cel[k] = 1; celFeitas++; barra(celFeitas / (192 * META_ESPUMA)); }
-      if (agora > somAte) { PugsSom.bolhas(); somAte = agora + 900; }
-      if (celFeitas >= 192 * META_ESPUMA) { dedo = false; PugsSom.acerto(); irPara(1); }
-    } else {
-      lavar(p.x, p.y, p.w);
-      if (agora > somAte) { PugsSom.bolhas(); somAte = agora + 1100; }
+    function estourar(b) {
+      const br = b.getBoundingClientRect(), ar = area.getBoundingClientRect(), x = br.left - ar.left + br.width / 2, y = br.top - ar.top + br.height / 2;
+      b.remove(); PugsSom.pop();
+      const p = document.createElement("span"); p.className = "ploc"; p.textContent = "Ploc!"; p.style.left = x + "px"; p.style.top = y + "px"; caixa.appendChild(p); setTimeout(() => p.remove(), 720);
+      for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; respingo(x, y, Math.cos(a) * 34, Math.sin(a) * 34); }
+      if (passo === 1) { bolhasFeitas++; barra(bolhasFeitas / META_BOLHAS); if (bolhasFeitas >= META_BOLHAS) { PugsSom.acerto(); caixa.querySelectorAll(".bolha").forEach((x) => x.remove()); irPara(2); } }
     }
-  }
-  area.addEventListener("pointerdown", (e) => { if (e.target.classList.contains("bolha")) return; dedo = true; try { area.setPointerCapture(e.pointerId); } catch (x) {} mexe(e); });
-  area.addEventListener("pointermove", mexe);
-  ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => area.addEventListener(ev, () => { dedo = false; if (passo !== 2) fer.hidden = true; }));
-
-  // ---- bolhas de sabão (passo 1 e brincadeira livre no fim)
-  function soltarBolha() {
-    if (caixa.querySelectorAll(".bolha").length > 9) return;
-    const r = area.getBoundingClientRect(), t = r.width * (0.08 + Math.random() * 0.08);
-    const b = document.createElement("span"); b.className = "bolha";
-    b.style.width = b.style.height = t + "px"; b.style.left = (Math.random() * (r.width - t)) + "px"; b.style.top = (r.height - t * 0.4) + "px";
-    b.style.setProperty("--sobe", (r.height + t) + "px"); b.style.setProperty("--dx", ((Math.random() - 0.5) * 80) + "px");
-    b.style.animationDuration = (5 + Math.random() * 3) + "s";
-    b.addEventListener("animationend", () => b.remove());
-    b.addEventListener("pointerdown", (e) => { e.stopPropagation(); estourar(b); });
-    caixa.appendChild(b);
-  }
-  function estourar(b) {
-    const br = b.getBoundingClientRect(), ar = area.getBoundingClientRect(), x = br.left - ar.left + br.width / 2, y = br.top - ar.top + br.height / 2;
-    b.remove(); PugsSom.pop();
-    const p = document.createElement("span"); p.className = "ploc"; p.textContent = "Ploc!"; p.style.left = x + "px"; p.style.top = y + "px"; caixa.appendChild(p); setTimeout(() => p.remove(), 720);
-    for (let k = 0; k < 6; k++) { const s = document.createElement("span"); s.className = "respingo"; s.style.left = x + "px"; s.style.top = y + "px"; const a = k / 6 * Math.PI * 2; s.style.setProperty("--dx", Math.cos(a) * 34 + "px"); s.style.setProperty("--dy", Math.sin(a) * 34 + "px"); caixa.appendChild(s); setTimeout(() => s.remove(), 520); }
-    if (passo === 1) { bolhasFeitas++; barra(bolhasFeitas / META_BOLHAS); if (bolhasFeitas >= META_BOLHAS) { PugsSom.acerto(); caixa.querySelectorAll(".bolha").forEach((x) => x.remove()); irPara(2); } }
+    function toalha() {
+      const t = document.createElement("div"); t.className = "bn-toalha";
+      t.innerHTML = o.fim ? `<img src="${o.fim}" alt="A Joy enrolada na toalha">` : `<span class="pano"></span><span class="bn-selo">${o.pronta}</span>`;
+      area.appendChild(t); acoes.innerHTML = ""; texto(o.pronta); passo = 4; pronta = true; PugsSom.acerto();
+      timer = setInterval(soltarBolha, 900); // bolhas livres para estourar à vontade
+      terminou(placa);
+    }
+    const placa = { parar, get pronta() { return pronta; }, nome: o.nome, quem: o.quem };
+    return placa;
   }
 
-  // ---- toalha e festa
-  function toalha() {
-    const c = CENAS[cena];
-    if (c.fim) { const t = document.createElement("div"); t.className = "bn-toalha"; t.innerHTML = `<img src="${c.fim}" alt="A Joy enrolada na toalha vermelha">`; area.appendChild(t); }
-    $("acoes").hidden = true; texto("Tá cheirosinha! 💙"); passo = 4;
-    setTimeout(() => {
-      PugsSom.festa(); PugsSom.falar("Você é um ótimo cuidador!", "pet-otimo");
-      $("fim").hidden = false; timerBolha = setInterval(soltarBolha, 900); // bolhas livres para estourar à vontade
-    }, 900);
+  function terminou(p) {
+    if (acabou) return;
+    if (jogadores === 1) { acabou = true; return setTimeout(() => { PugsSom.festa(); PugsSom.falar("Você é um ótimo cuidador!", "pet-otimo"); $("fim-txt").textContent = "Tá cheirosinha! 💙"; $("fim").hidden = false; }, 900); }
+    if (como === "corrida") { acabou = true; PugsSom.festa(); PugsSom.latido(p.quem); $("fim-txt").textContent = p.nome + " ganhou! 🎉"; $("fim").hidden = false; return; }
+    if (placas.every((x) => x.pronta)) { acabou = true; PugsSom.festa(); $("fim-txt").textContent = "As duas cheirosinhas! Vocês são ótimos cuidadores! 💙🩷"; $("fim").hidden = false; }
   }
-  $("denovo").onclick = () => { $("acoes").innerHTML = '<button type="button" class="botao" id="trocar">Mudar</button>'; $("trocar").onclick = escolha; comecar(cena); };
-  $("outra").onclick = () => { $("acoes").innerHTML = '<button type="button" class="botao" id="trocar">Mudar</button>'; $("trocar").onclick = escolha; escolha(); };
+  $("denovo").onclick = comecar;
+  $("outra").onclick = escolha;
   $("trocar").onclick = escolha;
-  addEventListener("resize", () => { if (passo === 0 && !celFeitas) medir(); });
 
   // novo: por enquanto só a Joice vê, até ela aprovar
   pugsSoNoClube().then(async (f) => {
