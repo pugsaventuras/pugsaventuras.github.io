@@ -68,6 +68,8 @@
 .cd-medidor.pouco .ic{animation:cd-balanca-ic .8s ease-in-out infinite}
 @keyframes cd-balanca-ic{0%,100%{transform:rotate(0)}50%{transform:rotate(-15deg) scale(1.15)}}
 .cd-acoes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:720px;margin:14px auto}
+.cd-banho{position:fixed;inset:0;z-index:60;background:#d7f0fc;padding-top:env(safe-area-inset-top,0px)}
+.cd-banho iframe{display:block;width:100%;height:100%;border:0}
 .cd-acao{display:flex;flex-direction:column;align-items:center;gap:2px;font:700 1.05rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:20px;padding:10px 4px;cursor:pointer;box-shadow:0 4px 0 var(--marrom)}
 .cd-acao span{font-size:2.2rem;line-height:1.1}
 .cd-acao:active{transform:translateY(3px);box-shadow:0 1px 0 var(--marrom)}
@@ -274,6 +276,21 @@ function filme(nome, sintetico) {
   setTimeout(fim, tempo);
   return base;
 }
+// banho de brincar (Joice, 06/11): o banho abre aqui dentro (espuma, bolhas, chuveirinho, toalha). Por enquanto só a Joice.
+let banhoBrincar = false;
+(typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)).then((a) => { banhoBrincar = !!a; });
+function abrirBanho(p) {
+  ocupado = true; if (PugsSom.pausarMusica) PugsSom.pausarMusica();
+  const o = document.createElement("div"); o.className = "cd-banho";
+  o.innerHTML = `<iframe src="banho.html?modo=cuidar&pug=${pet}" title="Hora do banho"></iframe>`;
+  document.body.appendChild(o);
+  const ouvir = (e) => {
+    if (e.origin !== location.origin || !e.data || !e.data.pugsBanho) return;
+    removeEventListener("message", ouvir); o.remove(); ocupado = false; if (PugsSom.voltarMusica) PugsSom.voltarMusica();
+    ACOES.limpeza(p, e.data.pugsBanho === "pronto" ? "brincou" : "rapido"); pintar(); salvar();
+  };
+  addEventListener("message", ouvir);
+}
 const ACOES = {
   fome(p) {
     if (p.fome > 85) return falar("Já comi! Comida demais faz mal.", "pet-ja-comi"), rosto("esperta");
@@ -290,9 +307,10 @@ const ACOES = {
     if (qual !== "brincando-papai") falar("Eba! Que divertido!", "pet-divertido");
     setTimeout(() => espalhar(3), qual === "brincando-papai" ? 10600 : 5800);
   },
-  limpeza(p) {
+  limpeza(p, jeito) {
     if (p.limpeza > 80 && !p.patinhas) return falar("Já tô limpinha! Banho demais faz mal pra pele.", "pet-ja-limpa"), rosto("esperta");
     const so = p.patinhas && p.limpeza > 60; let qualBanho = "";
+    if (!so && banhoBrincar && !jeito) return abrirBanho(p);
     p.limpeza = 100; p.patinhas = false; efeito(so ? ["🫧", "🐾", "🫧"] : ["🫧", "🫧", "🧼", "🫧", "🫧"]); if (so) { PugsSom.bolhas(); tigela("🛁"); } else qualBanho = filme("banho", () => { PugsSom.bolhas(); tigela("🛁"); }); rosto("feliz", 2500); coracao();
     if (qualBanho !== "banho-balde") setTimeout(() => falar(so ? "Patinhas limpinhas!" : "Cheirosa! Agora seca as dobrinhas!", so ? "pet-patinhas-limpas" : "pet-cheirosa"), 900);
   },
