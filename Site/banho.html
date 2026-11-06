@@ -74,6 +74,8 @@
 .gb-tempo{font:700 clamp(1.4rem,4vw,2rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:2px 18px;font-variant-numeric:tabular-nums}
 .gb-juntos{width:min(520px,90%)}
 .gb-lados{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gb-lados.um{grid-template-columns:1fr;max-width:min(520px,100%);margin:0 auto}
+.bn-pais{max-width:560px;margin:14px auto 0;text-align:center;background:#fff8e6;border:2px dashed var(--marrom);border-radius:16px;padding:10px 14px}
 @media (max-width:700px){.gb-lados{grid-template-columns:1fr}}
 .gb-placar{margin-left:auto;font:700 2rem Fredoka,Arial,sans-serif;color:var(--marrom);font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
 .gb-lados .bn-topo{justify-content:flex-start;padding:0 6px}
@@ -99,6 +101,7 @@
       <p class="festa-titulo" id="fim-txt" style="margin:0 0 8px">Tá cheirosinha! 💙</p>
       <button type="button" class="botao rosa" id="denovo">Dar banho de novo</button>
       <button type="button" class="botao" id="outra">Outro banho</button>
+      <p class="bn-pais" id="pais" hidden><b>Para os pais 💛</b><br>No Clube Pugs Aventuras tem o banho completo, a Joy pra cuidar, livrinhos, desenhos e muito mais. <a href="assinatura.html">Conhecer o Clube</a></p>
     </div>
     <div class="bn-acoes"><button type="button" class="botao" id="trocar">Mudar</button></div>
   </div>
@@ -125,6 +128,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 (() => {
   const $ = (s) => document.getElementById(s);
   const q = new URLSearchParams(location.search), EM_CUIDAR = q.get("modo") === "cuidar", PUG = q.get("pug") === "jane" ? "jane" : "joy";
+  // bolhas.html = amostra grátis (sem cadastro): só as bolhas, sozinho ou em dupla
+  const AMOSTRA = /bolhas\.html$/.test(location.pathname);
   if (EM_CUIDAR) { document.documentElement.classList.add("em-cuidar"); if (PugsSom.calar) PugsSom.calar(true); }
   const CENAS = [
     { img: "imagens/jogos/banho-balde.jpg", nome: "A Joy no balde", sub: "Episódio 5 · o primeiro banho", fim: "imagens/livrinho/ep5-pag07.jpg" },
@@ -135,25 +140,26 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     { quem: "jane", nome: "Time Jane 🩷", img: "imagens/jogos/banho-dupla-jane.jpg" },
   ];
   const META_ESPUMA = 0.32, META_BOLHAS = 15, TEMPO_GUERRA = 30, META_JUNTOS = 40;
-  let jogadores = 1, como = "guerra", cenaSolo = 0, limpar = () => {};
+  let jogadores = 1, como = "guerra", cenaSolo = 0, soBolhas = false, limpar = () => {};
 
   // ---------- tela de escolha
   function escolha() {
     limpar(); limpar = () => {};
     $("escolha").hidden = false; $("partida").hidden = true; $("como").hidden = jogadores === 1;
+    const cardBolhas = `<button type="button" class="bn-op" data-i="b"><img src="${TIMES[0].img}" alt=""><span>🫧 Estourar bolhas</span><small>30 segundos! Quantas você consegue? Recorde: ${recorde()}</small></button>`;
     $("cenas").innerHTML = jogadores === 1
-      ? CENAS.map((c, i) => `<button type="button" class="bn-op" data-i="${i}"><img src="${c.img}" alt=""><span>${c.nome}</span><small>${c.sub}</small></button>`).join("")
+      ? (AMOSTRA ? cardBolhas : CENAS.map((c, i) => `<button type="button" class="bn-op" data-i="${i}"><img src="${c.img}" alt=""><span>${c.nome}</span><small>${c.sub}</small></button>`).join("") + cardBolhas)
       : `<button type="button" class="bn-op" data-i="d"><span class="par"><img src="${TIMES[0].img}" alt=""><img src="${TIMES[1].img}" alt=""></span><span>${como === "guerra" ? "🫧 Guerra de bolhas" : "🤝 Bolhas juntos"}</span><small>${como === "guerra" ? "30 segundos: quem estourar mais bolhas ganha! A dourada vale 3 ✨" : "os dois estouram juntos para encher a barra"}</small></button>`;
   }
   $("quem").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; jogadores = +b.dataset.q; $("quem").querySelectorAll("button").forEach((x) => x.classList.toggle("ativo", x === b)); escolha(); });
   $("como").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; como = b.dataset.c; $("como").querySelectorAll("button").forEach((x) => x.classList.toggle("ativo", x === b)); escolha(); });
-  $("cenas").addEventListener("click", (e) => { const b = e.target.closest(".bn-op"); if (!b) return; if (b.dataset.i !== "d") cenaSolo = +b.dataset.i; comecar(); });
+  $("cenas").addEventListener("click", (e) => { const b = e.target.closest(".bn-op"); if (!b) return; soBolhas = b.dataset.i === "b"; if (b.dataset.i !== "d" && !soBolhas) cenaSolo = +b.dataset.i; comecar(); });
 
   function comecar() {
     limpar(); limpar = () => {};
     $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true;
     const box = $("placas"); box.innerHTML = ""; box.classList.remove("dupla"); box.classList.toggle("guerra", jogadores === 2);
-    if (jogadores === 2) return guerra(box);
+    if (jogadores === 2 || soBolhas) { box.classList.add("guerra"); return guerra(box, jogadores === 2 ? 2 : 1); }
     const c = EM_CUIDAR ? (PUG === "joy" ? CENAS[0] : { img: TIMES[1].img, fim: null }) : CENAS[cenaSolo];
     const pronta = EM_CUIDAR && PUG === "jane" ? "A Jane tá cheirosinha! 🩷" : "Tá cheirosinha! 💙";
     const pl = banho(box, { quem: EM_CUIDAR ? PUG : "", img: c.img, fim: c.fim, pronta, fala: true, voz: PUG === "jane" && EM_CUIDAR ? "jane-" : "" }, () => {
@@ -248,13 +254,15 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   }
 
   // ---------- 2 jogadores: Guerra de bolhas / Juntos
-  function guerra(box) {
-    const juntos = como === "juntos";
+  function recorde() { try { return +(localStorage.getItem("pugs-bolhas-recorde") || 0); } catch (e) { return 0; } }
+  function guerra(box, n) {
+    const juntos = n === 2 && como === "juntos", times = TIMES.slice(0, n);
     box.innerHTML = `<div class="gb-topo"><span class="gb-tempo" id="gb-tempo">${juntos ? "🤝 Juntos!" : "⏱️ " + TEMPO_GUERRA}</span>${juntos ? '<span class="bn-barra gb-juntos"><i id="gb-barra"></i></span>' : ""}</div><div class="gb-lados"></div>`;
     const lados = box.querySelector(".gb-lados"), pontos = [0, 0], areas = [];
-    TIMES.forEach((t, i) => {
+    if (n === 1) lados.classList.add("um");
+    times.forEach((t, i) => {
       const l = document.createElement("div"); l.className = "bn-lado " + t.quem;
-      l.innerHTML = `<div class="bn-topo"><span class="bn-quem">${t.nome}</span><span class="gb-placar">0</span></div><div class="bn-cena gb-cena"><img class="fundo" src="${t.img}" alt=""><div class="bn-bolhas"></div><div class="gb-aviso" hidden></div></div>`;
+      l.innerHTML = `<div class="bn-topo"><span class="bn-quem">${n === 1 ? "🫧 Bolhas" : t.nome}</span><span class="gb-placar">0</span></div><div class="bn-cena gb-cena"><img class="fundo" src="${t.img}" alt=""><div class="bn-bolhas"></div><div class="gb-aviso" hidden></div></div>`;
       lados.appendChild(l); areas.push(l);
     });
     let rodando = false, timer = null, relogio = null, resta = TEMPO_GUERRA, total = 0;
@@ -284,9 +292,10 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       PugsSom.festa();
       let txt;
       if (juntos) txt = "Vocês estouraram " + total + " bolhas juntos! 🎉";
+      else if (n === 1) { const r = recorde(); txt = "Você estourou " + pontos[0] + " bolhas! 🎉" + (pontos[0] > r ? " Recorde novo! 🏆" : " Recorde: " + r); if (pontos[0] > r) { try { localStorage.setItem("pugs-bolhas-recorde", pontos[0]); } catch (e) {} PugsSom.latido("joy"); } }
       else if (pontos[0] === pontos[1]) txt = "Empate! " + pontos[0] + " × " + pontos[1] + " 🤝";
       else { const v = pontos[0] > pontos[1] ? 0 : 1; txt = TIMES[v].nome + " ganhou! " + Math.max(...pontos) + " × " + Math.min(...pontos) + " 🎉"; PugsSom.latido(TIMES[v].quem); areas[v].classList.add("venceu"); }
-      $("fim-txt").textContent = txt; $("denovo").textContent = juntos ? "De novo!" : "Revanche!"; $("fim").hidden = false;
+      $("fim-txt").textContent = txt; $("denovo").textContent = juntos ? "De novo!" : n === 1 ? "Jogar de novo!" : "Revanche!"; $("fim").hidden = false; if (AMOSTRA) $("pais").hidden = false;
     }
     limpar = () => { rodando = false; clearInterval(timer); clearInterval(relogio); };
     setTimeout(() => contagem(3), 500);
@@ -296,6 +305,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   $("outra").onclick = escolha;
   $("trocar").onclick = () => { if (EM_CUIDAR) parent.postMessage({ pugsBanho: "fechar" }, location.origin); else escolha(); };
 
+  if (AMOSTRA) { $("esperando").hidden = true; $("jogo").hidden = false; const v = document.querySelector(".jogo-topo .botao"); if (v) { v.href = "index.html"; v.textContent = "← Episódios"; } const h = document.querySelector(".jogo-titulo"); if (h) h.textContent = "Bolhas de sabão 🫧"; $("outra").textContent = "Escolher outro"; escolha(); return; }
   pugsSoNoClube().then(async (f) => {
     if (!f) return;
     // novo: por enquanto só a Joice vê, até ela aprovar
