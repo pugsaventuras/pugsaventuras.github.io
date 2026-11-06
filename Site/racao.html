@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hora da ração | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<style>
+.rc-topo{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:4px auto 8px}
+.rc-passo{font:700 clamp(1.1rem,3.4vw,1.5rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center}
+.rc-barra{width:min(420px,80%);height:18px;border:3px solid var(--marrom);border-radius:999px;background:#fff;overflow:hidden}
+.rc-barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,#d9a066,#a0683a);transition:width .2s}
+.rc-cena{position:relative;max-width:min(640px,100%);margin:0 auto;aspect-ratio:4/3;border:4px solid var(--marrom);border-radius:26px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;
+  background:linear-gradient(#fdf1dc 0 62%,#e8c79c 62% 100%)}
+.rc-cena::before{content:"";position:absolute;left:0;right:0;top:62%;height:6px;background:#c9a273}
+.rc-pote{position:absolute;left:50%;bottom:6%;width:38%;height:22%;transform:translateX(-50%);pointer-events:none}
+.rc-pote .borda{position:absolute;inset:0;border-radius:0 0 50% 50% / 0 0 80% 80%;border:5px solid var(--marrom);border-top-width:6px;overflow:hidden;background:#fff}
+.rc-pote.joy .borda{background:#5aaee8}.rc-pote.jane .borda{background:#f58dbd}
+.rc-pote .cheio{position:absolute;left:0;right:0;bottom:0;height:0;background:radial-gradient(circle at 20% 30%,#b9783f 0 9%,transparent 10%) 0 0/22px 18px,radial-gradient(circle at 70% 60%,#8f5a2b 0 10%,transparent 11%) 0 0/26px 20px,#c98a4f;transition:height .2s}
+.rc-pote .nome{position:absolute;left:0;right:0;bottom:-2px;text-align:center;font:700 clamp(.9rem,2.6vw,1.2rem) Fredoka,Arial,sans-serif;color:#fff;-webkit-text-stroke:4px var(--marrom);paint-order:stroke fill}
+.rc-saco{position:absolute;left:8%;top:10%;width:24%;aspect-ratio:3/4;cursor:grab;touch-action:none;transform-origin:50% 20%;transition:transform .15s}
+.rc-saco.virado{transform:rotate(-115deg)}
+.rc-saco .corpo{position:absolute;inset:8% 0 0 0;background:#ffcf4a;border:4px solid var(--marrom);border-radius:10px 10px 16px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 clamp(.8rem,2.4vw,1.1rem) Fredoka,Arial,sans-serif;color:var(--marrom)}
+.rc-saco .corpo b{font-size:clamp(1.4rem,5vw,2.4rem);line-height:1}
+.rc-saco .boca{position:absolute;left:8%;right:8%;top:0;height:14%;background:#f3b72c;border:4px solid var(--marrom);border-radius:6px}
+.rc-grao{position:absolute;width:3.2%;aspect-ratio:1.3;border-radius:45%;background:#a0683a;border:2px solid #6b4220;pointer-events:none}
+.rc-dica{position:absolute;left:50%;top:44%;transform:translateX(-50%);font:700 clamp(1rem,3vw,1.3rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:4px 14px;pointer-events:none;white-space:nowrap;animation:rc-pula 1.2s ease-in-out infinite}
+@keyframes rc-pula{50%{transform:translate(-50%,-6px)}}
+.rc-acoes{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:10px auto}
+.em-cuidar header.topo,.em-cuidar footer,.em-cuidar .colinas,.em-cuidar .jogo-topo,.em-cuidar .musica-site{display:none!important}
+@media (prefers-reduced-motion:reduce){.rc-dica{animation:none}}
+</style>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Hora da ração 🥣</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div class="rc-topo"><span class="rc-passo" id="passo">Arrasta o saquinho até o potinho! 🥣</span><span class="rc-barra"><i id="barra"></i></span></div>
+  <div class="rc-cena" id="cena">
+    <div class="rc-pote" id="pote"><div class="borda"><div class="cheio" id="cheio"></div></div><span class="nome" id="nome-pote">JOY</span></div>
+    <div class="rc-saco" id="saco"><div class="boca"></div><div class="corpo"><b>🐾</b>RAÇÃO</div></div>
+    <span class="rc-dica" id="dica">👆 arrasta o saquinho</span>
+  </div>
+  <div class="rc-acoes"><button type="button" class="botao" id="rapido">⚡ Comer rápido</button></div>
+</div>
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Hora da ração: a criança arrasta o saquinho até o potinho, ele vira e os grãozinhos caem. Quando enche, a pug vem comer.
+// racao.html?modo=cuidar&pug=joy|jane: dentro do "Cuidar das pugs" (sem topo; avisa a página de fora no fim)
+(() => {
+  const $ = (s) => document.getElementById(s);
+  const q = new URLSearchParams(location.search), EM_CUIDAR = q.get("modo") === "cuidar", PUG = q.get("pug") === "jane" ? "jane" : "joy";
+  if (EM_CUIDAR) { document.documentElement.classList.add("em-cuidar"); if (PugsSom.calar) PugsSom.calar(true); }
+  const META = 30;
+  const cena = $("cena"), saco = $("saco"), pote = $("pote");
+  let dentro = 0, acabou = false, arrastando = false, ox = 0, oy = 0, timer = null, somAte = 0;
+  pote.classList.add(PUG); $("nome-pote").textContent = PUG === "jane" ? "JANE" : "JOY";
+
+  function caixa(el) { const r = el.getBoundingClientRect(), c = cena.getBoundingClientRect(); return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height, cw: c.width, ch: c.height }; }
+  function emCimaDoPote() { const s = caixa(saco), p = caixa(pote), cx = s.x + s.w / 2; return cx > p.x - p.w * 0.1 && cx < p.x + p.w * 1.1 && s.y + s.h < p.y + p.h * 0.2; }
+  function cair() {
+    if (acabou || !saco.classList.contains("virado")) return;
+    const s = caixa(saco), p = caixa(pote);
+    const x0 = s.x + s.w * (0.4 + Math.random() * 0.2), y0 = s.y + s.h * 0.55;
+    const g = document.createElement("span"); g.className = "rc-grao"; g.style.left = x0 + "px"; g.style.top = y0 + "px"; cena.appendChild(g);
+    const alvoY = p.y + p.h * 0.35 + Math.random() * p.h * 0.2, caiNoPote = x0 > p.x && x0 < p.x + p.w;
+    const fimY = caiNoPote ? alvoY : s.ch * 0.9 + Math.random() * s.ch * 0.05, dx = (Math.random() - 0.5) * 18;
+    const a = g.animate([{ transform: "translate(0,0) rotate(0)" }, { transform: `translate(${dx}px,${fimY - y0}px) rotate(${Math.random() * 360}deg)` }], { duration: 380 + (fimY - y0) * 0.9, easing: "cubic-bezier(.5,0,1,1)", fill: "forwards" });
+    a.onfinish = () => {
+      if (caiNoPote) { g.remove(); dentro++; $("cheio").style.height = Math.min(85, dentro / META * 85) + "%"; $("barra").style.width = Math.min(100, dentro / META * 100) + "%"; if (Date.now() > somAte) { PugsSom.comer ? PugsSom.comer() : PugsSom.pop(); somAte = Date.now() + 700; } if (dentro >= META) cheio(); }
+      else setTimeout(() => g.remove(), 1500); // caiu no chão: some daqui a pouco
+    };
+  }
+  function cheio() {
+    if (acabou) return; acabou = true; clearInterval(timer); saco.classList.remove("virado");
+    $("passo").textContent = "Potinho cheio! Hum, que cheirinho! 😋"; PugsSom.acerto();
+    setTimeout(() => { PugsSom.festa(); if (EM_CUIDAR) setTimeout(() => parent.postMessage({ pugsMini: "pronto" }, location.origin), 1200); else { $("passo").textContent = "Muito bem! A " + (PUG === "jane" ? "Jane" : "Joy") + " vai comer! 💙"; } }, 700);
+  }
+  saco.addEventListener("pointerdown", (e) => {
+    if (acabou) return; arrastando = true; $("dica").hidden = true; try { saco.setPointerCapture(e.pointerId); } catch (x) {}
+    const s = caixa(saco), c = cena.getBoundingClientRect(); ox = e.clientX - c.left - s.x; oy = e.clientY - c.top - s.y; saco.style.cursor = "grabbing";
+  });
+  saco.addEventListener("pointermove", (e) => {
+    if (!arrastando) return; const c = cena.getBoundingClientRect(), s = caixa(saco);
+    const x = Math.max(-s.w * 0.2, Math.min(c.width - s.w * 0.8, e.clientX - c.left - ox)), y = Math.max(-s.h * 0.1, Math.min(c.height * 0.55, e.clientY - c.top - oy));
+    saco.style.left = x + "px"; saco.style.top = y + "px";
+    const vira = emCimaDoPote(); saco.classList.toggle("virado", vira);
+    if (vira && !timer) { timer = setInterval(cair, 70); $("passo").textContent = "Isso! Enche o potinho! 🥣"; }
+    if (!vira && timer) { clearInterval(timer); timer = null; }
+  });
+  const soltar = () => { arrastando = false; saco.style.cursor = "grab"; };
+  saco.addEventListener("pointerup", soltar); saco.addEventListener("pointercancel", soltar);
+  $("rapido").onclick = () => { if (EM_CUIDAR) parent.postMessage({ pugsMini: "fechar" }, location.origin); else location.reload(); };
+
+  pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    // novo: por enquanto só a Joice vê, até ela aprovar
+    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
+    $("esperando").hidden = true; $("jogo").hidden = false;
+    PugsSom.falar("Au au! Tô com fome!", PUG === "jane" ? "jane-pet-fome" : "pet-fome");
+  });
+})();
+</script>
+</body></html>
