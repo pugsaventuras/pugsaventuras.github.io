@@ -139,7 +139,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     { quem: "joy", nome: "Time Joy 💙", img: "imagens/jogos/banho-dupla-joy.jpg" },
     { quem: "jane", nome: "Time Jane 🩷", img: "imagens/jogos/banho-dupla-jane.jpg" },
   ];
-  const META_ESPUMA = 0.32, META_BOLHAS = 15, TEMPO_GUERRA = 30, META_JUNTOS = 40;
+  const META_ESPUMA = 0.2, META_BOLHAS = 15, TEMPO_GUERRA = 30, META_JUNTOS = 40;
   let jogadores = 1, como = "guerra", cenaSolo = 0, soBolhas = false, limpar = () => {};
 
   // ---------- tela de escolha
@@ -223,7 +223,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       }
     }
     function pos(e) { const r = area.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height }; }
-    function puff(x, y, w) { for (let k = 0; k < 4; k++) { const rr = w * (0.022 + Math.random() * 0.026), ox = (Math.random() - 0.5) * w * 0.06, oy = (Math.random() - 0.5) * w * 0.06; ctx.beginPath(); ctx.arc(x + ox, y + oy, rr, 0, Math.PI * 2); ctx.fillStyle = "rgba(255,255,255,0.93)"; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(150,200,235,0.8)"; ctx.stroke(); } }
+    function puff(x, y, w) { for (let k = 0; k < 4; k++) { const rr = w * (0.016 + Math.random() * 0.018), ox = (Math.random() - 0.5) * w * 0.06, oy = (Math.random() - 0.5) * w * 0.06; ctx.beginPath(); ctx.arc(x + ox, y + oy, rr, 0, Math.PI * 2); ctx.fillStyle = "rgba(255,255,255,0.5)"; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = "rgba(150,200,235,0.8)"; ctx.stroke(); } }
     function lavar(x, y, w) { ctx.save(); ctx.globalCompositeOperation = "destination-out"; ctx.beginPath(); ctx.arc(x, y, w * 0.085, 0, Math.PI * 2); ctx.fill(); ctx.restore(); if (Math.random() < 0.5) respingo(caixa, x, y, (Math.random() - 0.5) * 60, 20 + Math.random() * 40); }
     function quantaEspuma() { try { const d = ctx.getImageData(0, 0, cv.width, cv.height).data; let n = 0; for (let i = 3; i < d.length; i += 4 * 9) if (d[i] > 60) n++; return n; } catch (e) { return 0; } }
     function mexe(e) {
