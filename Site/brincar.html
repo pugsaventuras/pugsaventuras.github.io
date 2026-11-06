@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Joga a bolinha | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<style>
+.br-topo{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:4px auto 8px}
+.br-passo{font:700 clamp(1.1rem,3.4vw,1.5rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center}
+.br-conta{display:flex;gap:4px;font-size:clamp(1.2rem,4vw,1.7rem)}
+.bolinha{display:inline-block;width:1em;height:1em;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f4ff9a 0 12%,#d4ef3a 40%,#a9c81c 100%);border:2px solid #6f8a12;position:relative;overflow:hidden;vertical-align:middle}
+.bolinha::after{content:"";position:absolute;left:-30%;top:10%;width:80%;height:80%;border-radius:50%;border:2px solid rgba(255,255,255,.9);border-left-color:transparent;border-bottom-color:transparent;transform:rotate(20deg)}
+.br-conta span{opacity:.25;transition:opacity .2s,transform .2s}.br-conta span.ok{opacity:1;transform:scale(1.15)}
+.br-cena{position:relative;max-width:min(860px,100%);margin:0 auto;aspect-ratio:16/9;border:4px solid var(--marrom);border-radius:26px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer;
+  background:url(imagens/jogos/pet-campo.jpg) left center/106% auto no-repeat #bfe6f7}
+.br-pug{position:absolute;left:8%;bottom:3%;width:15%;pointer-events:none;transform-origin:50% 100%}
+.br-pug img{display:block;width:100%;height:auto}
+.br-pug.jane{width:13%}
+.br-pug.corre img{animation:br-hop .26s ease-in-out infinite alternate}
+@keyframes br-hop{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-12%) rotate(4deg)}}
+.br-pug.feliz img{animation:br-feliz .35s ease-in-out 3 alternate}
+@keyframes br-feliz{to{transform:translateY(-16%)}}
+.br-pug .na-boca{position:absolute;left:50%;top:37%;width:34%;transform:translate(-50%,0);font-size:clamp(1rem,3.2vw,1.9rem);line-height:1;text-align:center}
+.br-pug .na-boca[hidden]{display:none}
+.br-bola{position:absolute;font-size:clamp(1.4rem,4.4vw,2.6rem);line-height:1;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25))}
+.br-bola[hidden]{display:none}
+.br-alvo{position:absolute;width:6%;aspect-ratio:3/1;border-radius:50%;background:rgba(0,0,0,.18);transform:translate(-50%,-50%);pointer-events:none}
+.br-alvo[hidden]{display:none}
+.br-dica{position:absolute;left:50%;top:30%;transform:translateX(-50%);font:700 clamp(1rem,3vw,1.3rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:4px 14px;pointer-events:none;white-space:nowrap;animation:br-pula 1.2s ease-in-out infinite}
+.br-dica[hidden]{display:none}
+@keyframes br-pula{50%{transform:translate(-50%,-6px)}}
+.br-fala{position:absolute;font:700 clamp(.95rem,2.8vw,1.3rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:18px;padding:3px 10px;white-space:nowrap;pointer-events:none;transform:translate(-50%,-100%);animation:br-some 1.6s ease-out forwards}
+@keyframes br-some{0%{opacity:0;transform:translate(-50%,-80%)}15%{opacity:1;transform:translate(-50%,-100%)}80%{opacity:1}100%{opacity:0}}
+.br-acoes{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:10px auto}
+.em-cuidar header.topo,.em-cuidar footer,.em-cuidar .colinas,.em-cuidar .jogo-topo,.em-cuidar .musica-site{display:none!important}
+.em-cuidar main{padding-top:6px}
+@media (prefers-reduced-motion:reduce){.br-dica,.br-pug.corre img,.br-pug.feliz img{animation:none}}
+</style>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Joga a bolinha! 🎾</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div class="br-topo"><span class="br-passo" id="passo">Toca na grama pra jogar a bolinha! 🎾</span><span class="br-conta" id="conta"></span></div>
+  <div class="br-cena" id="cena">
+    <span class="br-alvo" id="alvo" hidden></span>
+    <div class="br-pug" id="pug"><img id="pug-img" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy"><span class="na-boca" id="na-boca" hidden><i class="bolinha"></i></span></div>
+    <span class="br-bola" id="bola"><i class="bolinha"></i></span>
+    <span class="br-dica" id="dica">👆 toca na grama</span>
+  </div>
+  <div class="br-acoes"><button type="button" class="botao" id="rapido">⚡ Brincar rápido</button></div>
+</div>
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Joga a bolinha: a criança toca na grama, a bolinha voa, a pug corre, pega e traz de volta. 5 vezes e pronto.
+// brincar.html?modo=cuidar&pug=joy|jane: dentro do "Cuidar das pugs" (sem topo; avisa a página de fora no fim)
+(() => {
+  const $ = (s) => document.getElementById(s);
+  const q = new URLSearchParams(location.search), EM_CUIDAR = q.get("modo") === "cuidar", PUG = q.get("pug") === "jane" ? "jane" : "joy";
+  const NOME = PUG === "jane" ? "Jane" : "Joy";
+  if (EM_CUIDAR) { document.documentElement.classList.add("em-cuidar"); if (PugsSom.calar) PugsSom.calar(true); }
+  const META = 5;
+  const cena = $("cena"), pug = $("pug"), bola = $("bola"), alvo = $("alvo"), boca = $("na-boca");
+  let estado = "pronta", vezes = 0;
+  if (PUG === "jane") { pug.classList.add("jane"); $("pug-img").src = "imagens/jogos/pet-jane.png"; $("pug-img").alt = "A Jane"; }
+  $("conta").innerHTML = Array.from({ length: META }, () => '<span><i class="bolinha"></i></span>').join("");
+
+  const tam = () => { const r = cena.getBoundingClientRect(); return { w: r.width, h: r.height, l: r.left, t: r.top }; };
+  const casa = () => tam().w * 0.08;
+  function pontoDaBola() { const c = tam(), pl = parseFloat(pug.style.left) || casa(), pw = pug.offsetWidth; return { x: pl + pw * 1.05, y: c.h * 0.9 }; }
+  function porBola(x, y) { bola.style.left = x + "px"; bola.style.top = y + "px"; }
+  function falarAqui(txt) {
+    const f = document.createElement("span"); f.className = "br-fala"; f.textContent = txt;
+    f.style.left = ((parseFloat(pug.style.left) || casa()) + pug.offsetWidth / 2) + "px"; f.style.top = (tam().h - pug.offsetHeight - tam().h * 0.03) + "px";
+    cena.appendChild(f); setTimeout(() => f.remove(), 1700);
+  }
+  function correr(ate, depois) {
+    const de = parseFloat(pug.style.left) || casa(), dist = Math.abs(ate - de), dur = Math.max(450, dist / tam().w * 1500);
+    pug.classList.add("corre"); pug.style.transform = ate < de ? "scaleX(-1)" : "";
+    const a = pug.animate([{ left: de + "px" }, { left: ate + "px" }], { duration: dur, easing: "ease-in-out" });
+    a.onfinish = () => { pug.style.left = ate + "px"; pug.classList.remove("corre"); pug.style.transform = ""; depois(); };
+  }
+  function jogar(tx, ty) {
+    estado = "voando"; $("dica").hidden = true; $("passo").textContent = "Lá vai! Busca, " + NOME + "! 🐾";
+    const ini = pontoDaBola(), c = tam(), altura = c.h * (0.35 + Math.random() * 0.12);
+    alvo.style.left = tx + "px"; alvo.style.top = (ty + c.h * 0.025) + "px"; alvo.hidden = false;
+    const passos = [];
+    for (let i = 0; i <= 14; i++) { const t = i / 14; passos.push({ left: (ini.x + (tx - ini.x) * t) + "px", top: (ini.y + (ty - ini.y) * t - 4 * altura * t * (1 - t)) + "px", transform: `translate(-50%,-50%) rotate(${t * 540}deg)` }); }
+    if (PugsSom.boing) PugsSom.boing();
+    const voo = bola.animate(passos, { duration: 750, easing: "linear" });
+    voo.onfinish = () => {
+      porBola(tx, ty); alvo.hidden = true; estado = "buscando";
+      bola.animate([{ transform: "translate(-50%,-50%)" }, { transform: "translate(-50%,-90%)" }, { transform: "translate(-50%,-50%)" }], { duration: 260 });
+      setTimeout(() => correr(Math.max(0, tx - pug.offsetWidth * 0.5), pegou), 150);
+    };
+  }
+  function pegou() {
+    bola.hidden = true; boca.hidden = false; if (PugsSom.pop) PugsSom.pop(); falarAqui("Peguei! 😄");
+    $("passo").textContent = "A " + NOME + " pegou! Agora ela traz de volta 💙";
+    setTimeout(() => correr(casa(), trouxe), 350);
+  }
+  function trouxe() {
+    boca.hidden = true; const p = pontoDaBola(); porBola(p.x, p.y); bola.hidden = false;
+    vezes++; [...$("conta").children].forEach((s, i) => s.classList.toggle("ok", i < vezes));
+    pug.classList.remove("feliz"); void pug.offsetWidth; pug.classList.add("feliz");
+    if (PugsSom.latido) PugsSom.latido(PUG);
+    if (vezes >= META) return acabou();
+    falarAqui(["De novo! De novo!", "Joga mais!", "Au au! Mais uma!", "Que legal!"][vezes % 4]);
+    $("passo").textContent = "Joga de novo! 🎾 (" + vezes + " de " + META + ")"; estado = "pronta";
+  }
+  function acabou() {
+    estado = "fim"; $("passo").textContent = "Ufa! Que brincadeira gostosa! 🥰"; if (PugsSom.acerto) PugsSom.acerto();
+    setTimeout(() => {
+      PugsSom.falar("Eba! Que divertido!", PUG === "jane" ? "jane-pet-divertido" : "pet-divertido"); if (PugsSom.festa) PugsSom.festa();
+      if (EM_CUIDAR) setTimeout(() => parent.postMessage({ pugsMini: "pronto" }, location.origin), 1800);
+      else { $("passo").textContent = "Muito bem! A " + NOME + " amou brincar com você! 💙"; $("rapido").textContent = "🎾 Brincar de novo"; }
+    }, 600);
+  }
+  cena.addEventListener("pointerdown", (e) => {
+    if (estado !== "pronta") return;
+    const c = tam(), pw = pug.offsetWidth, minX = (parseFloat(pug.style.left) || casa()) + pw * 1.6;
+    const tx = Math.max(minX, Math.min(c.w * 0.94, e.clientX - c.l)), ty = Math.max(c.h * 0.84, Math.min(c.h * 0.94, e.clientY - c.t));
+    jogar(tx, ty);
+  });
+  $("rapido").onclick = () => { if (EM_CUIDAR) parent.postMessage({ pugsMini: "fechar" }, location.origin); else location.reload(); };
+  addEventListener("resize", () => { if (estado === "pronta") { pug.style.left = casa() + "px"; const p = pontoDaBola(); porBola(p.x, p.y); } });
+
+  pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    // novo: por enquanto só a Joice vê, até ela aprovar
+    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
+    $("esperando").hidden = true; $("jogo").hidden = false;
+    requestAnimationFrame(() => { pug.style.left = casa() + "px"; const p = pontoDaBola(); porBola(p.x, p.y); });
+    PugsSom.falar("Vamos brincar?", PUG === "jane" ? "jane-pet-brincar" : "pet-brincar");
+  });
+})();
+</script>
+</body></html>

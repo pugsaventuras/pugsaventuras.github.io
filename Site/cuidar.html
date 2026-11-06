@@ -304,8 +304,9 @@ const ACOES = {
     if (p.sede > 90) return falar("O potinho ainda está cheio!", "pet-potinho-cheio"), rosto("esperta");
     p.sede = 100; if (pet !== "joy") tigela("💧"); filme("bebendo", () => PugsSom.beber()); rosto("feliz"); coracao(); falar("Água fresquinha! Glub glub!", "pet-agua");
   },
-  diversao(p) {
+  diversao(p, jeito) {
     if (p.energia < 20) return falar("Tô muito cansada... vamos dormir?", "pet-cansada"), rosto("triste");
+    if (banhoBrincar && !jeito) return abrirMini("brincar", "diversao", p);
     p.diversao = 100; p.energia = Math.max(0, p.energia - 12); p.limpeza = Math.max(0, p.limpeza - 8);
     animar("pula", 1400); rosto("feliz", 3000); const qual = filme("brincando", () => PugsSom.boing()); efeito(["🎾", "⭐", "🎾"]); coracao();
     if (qual !== "brincando-papai") falar("Eba! Que divertido!", "pet-divertido");
