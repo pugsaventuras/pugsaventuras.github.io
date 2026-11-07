@@ -155,7 +155,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   pugsSoNoClube().then(async (f) => {
     if (!f) return;
     // novo: por enquanto só a Joice vê, até ela aprovar
-    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
+    // liberado para todos do Clube (Joice aprovou em 07/11)
     $("esperando").hidden = true; $("jogo").hidden = false;
     requestAnimationFrame(() => { pug.style.left = casa() + "px"; const p = pontoDaBola(); porBola(p.x, p.y); });
     PugsSom.falar("Vamos brincar?", PUG === "jane" ? "jane-pet-brincar" : "pet-brincar");

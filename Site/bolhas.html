@@ -309,7 +309,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   pugsSoNoClube().then(async (f) => {
     if (!f) return;
     // novo: por enquanto só a Joice vê, até ela aprovar
-    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
+    // liberado para todos do Clube (Joice aprovou em 07/11)
     PugsSom.preparar(["pet-sujinha", "pet-cheirosa", "pet-otimo", "jane-pet-sujinha", "jane-pet-cheirosa"]);
     $("esperando").hidden = true; $("jogo").hidden = false;
     if (EM_CUIDAR) { jogadores = 1; $("trocar").textContent = "⚡ Banho rápido"; comecar(); } else escolha();

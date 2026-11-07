@@ -277,13 +277,12 @@ function filme(nome, sintetico) {
   return base;
 }
 // banho de brincar (Joice, 06/11): o banho abre aqui dentro (espuma, bolhas, chuveirinho, toalha). Por enquanto só a Joice.
-let banhoBrincar = false;
-(typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)).then((a) => { banhoBrincar = !!a; });
+let banhoBrincar = true; // liberado para todos (Joice aprovou em 07/11)
 // as brincadeiras abrem por cima do Cuidar (banho.html, racao.html...) e avisam no fim: "pronto" (brincou) ou "fechar" (quis o rápido)
-function abrirMini(pagina, acao, p) {
+function abrirMini(pagina, acao, p, extra = "") {
   ocupado = true; if (PugsSom.pausarMusica) PugsSom.pausarMusica();
   const o = document.createElement("div"); o.className = "cd-banho";
-  o.innerHTML = `<iframe src="${pagina}.html?modo=cuidar&pug=${pet}" title="Brincadeira"></iframe>`;
+  o.innerHTML = `<iframe src="${pagina}.html?modo=cuidar&pug=${pet}${extra}" title="Brincadeira"></iframe>`;
   document.body.appendChild(o);
   const ouvir = (e) => {
     const r = e.data && (e.data.pugsMini || e.data.pugsBanho);
@@ -300,8 +299,9 @@ const ACOES = {
     if (banhoBrincar && !jeito) return abrirMini("racao", "fome", p);
     p.fome = 100; if (pet !== "joy") tigela("🥣"); filme("comendo", () => PugsSom.comer()); animar("balanca"); rosto("feliz"); coracao(); falar("Hum, que delícia! Obrigada!", "pet-delicia");
   },
-  sede(p) {
+  sede(p, jeito) {
     if (p.sede > 90) return falar("O potinho ainda está cheio!", "pet-potinho-cheio"), rosto("esperta");
+    if (banhoBrincar && !jeito) return abrirMini("racao", "sede", p, "&tipo=agua");
     p.sede = 100; if (pet !== "joy") tigela("💧"); filme("bebendo", () => PugsSom.beber()); rosto("feliz"); coracao(); falar("Água fresquinha! Glub glub!", "pet-agua");
   },
   diversao(p, jeito) {

@@ -25,33 +25,61 @@
 .rc-passo{font:700 clamp(1.1rem,3.4vw,1.5rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center}
 .rc-barra{width:min(420px,80%);height:18px;border:3px solid var(--marrom);border-radius:999px;background:#fff;overflow:hidden}
 .rc-barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,#d9a066,#a0683a);transition:width .2s}
-.rc-cena{position:relative;max-width:min(640px,100%);margin:0 auto;aspect-ratio:4/3;border:4px solid var(--marrom);border-radius:26px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;
-  background:linear-gradient(#fdf1dc 0 62%,#e8c79c 62% 100%)}
-.rc-cena::before{content:"";position:absolute;left:0;right:0;top:62%;height:6px;background:#c9a273}
-.rc-pote{position:absolute;left:50%;bottom:6%;width:38%;height:22%;transform:translateX(-50%);pointer-events:none}
-.rc-pote .borda{position:absolute;inset:0;border-radius:0 0 50% 50% / 0 0 80% 80%;border:5px solid var(--marrom);border-top-width:6px;overflow:hidden;background:#fff}
-.rc-pote.joy .borda{background:#5aaee8}.rc-pote.jane .borda{background:#f58dbd}
-.rc-pote .cheio{position:absolute;left:0;right:0;bottom:0;height:0;background:radial-gradient(circle at 20% 30%,#b9783f 0 9%,transparent 10%) 0 0/22px 18px,radial-gradient(circle at 70% 60%,#8f5a2b 0 10%,transparent 11%) 0 0/26px 20px,#c98a4f;transition:height .2s}
-.rc-pote .nome{position:absolute;left:0;right:0;bottom:-2px;text-align:center;font:700 clamp(.9rem,2.6vw,1.2rem) Fredoka,Arial,sans-serif;color:#fff;-webkit-text-stroke:4px var(--marrom);paint-order:stroke fill}
-.rc-saco{position:absolute;left:8%;top:10%;width:24%;aspect-ratio:3/4;cursor:grab;touch-action:none;transform-origin:50% 20%;transition:transform .15s}
+.agua .rc-barra i{background:linear-gradient(90deg,#9fdcff,#3a9be0)}
+/* a sala da Joy: parede clarinha e chão de tábua, como nos vídeos dela comendo e bebendo */
+.rc-cena{position:relative;max-width:min(680px,100%);margin:0 auto;aspect-ratio:4/3;border:4px solid var(--marrom);border-radius:26px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;
+  background:linear-gradient(#f7ead8 0 50%,#e9cfa9 50% 51.5%,transparent 51.5%),repeating-linear-gradient(90deg,#f4d5a6 0 15%,#c99a63 15% 15.5%,#f0cd98 15.5% 31%,#c99a63 31% 31.5%),#f4d5a6}
+.rc-cena::before{content:"";position:absolute;left:62%;top:9%;width:30%;height:32%;border-radius:40% 40% 10px 10px;background:#fbf4ea;border:3px solid #e8d6bd;box-shadow:inset 0 -14px 0 #f1e3cf}
+.rc-cena::after{content:"";position:absolute;left:4%;top:20%;width:7%;height:31%;border-radius:6px 6px 0 0;background:#e9d3b4;border:3px solid #d9bd97;border-bottom:0}
+.rc-tapete{position:absolute;left:52%;bottom:3%;width:46%;height:16%;border-radius:50%;background:repeating-linear-gradient(90deg,#f5b28e 0 10%,#9fd3c7 10% 20%,#f7d77e 20% 30%);opacity:.55}
+.rc-pote{position:absolute;left:38%;bottom:9%;width:38%;transform:translateX(-50%);pointer-events:none;z-index:2}
+.rc-pote svg{display:block;width:100%;height:auto;overflow:visible}
+.rc-pug{position:absolute;right:5%;bottom:7%;width:17%;pointer-events:none;z-index:2;transition:right .9s ease-in-out}
+.rc-pug img{display:block;width:100%;height:auto}
+.rc-pug.jane{width:14%}
+.rc-pug.espera img{animation:rc-abana 1s ease-in-out infinite alternate;transform-origin:50% 100%}
+@keyframes rc-abana{from{transform:rotate(-3deg)}to{transform:rotate(3deg) translateY(-3%)}}
+.rc-pug.vem{right:24%}
+.rc-pug.vem img{animation:rc-hop .25s ease-in-out 4 alternate}
+@keyframes rc-hop{to{transform:translateY(-10%)}}
+.rc-saco{position:absolute;left:6%;top:6%;width:22%;aspect-ratio:3/4;cursor:grab;touch-action:none;transform-origin:50% 20%;transition:transform .15s;z-index:3}
 .rc-saco.virado{transform:rotate(-115deg)}
 .rc-saco .corpo{position:absolute;inset:8% 0 0 0;background:#ffcf4a;border:4px solid var(--marrom);border-radius:10px 10px 16px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 clamp(.8rem,2.4vw,1.1rem) Fredoka,Arial,sans-serif;color:var(--marrom)}
 .rc-saco .corpo b{font-size:clamp(1.4rem,5vw,2.4rem);line-height:1}
 .rc-saco .boca{position:absolute;left:8%;right:8%;top:0;height:14%;background:#f3b72c;border:4px solid var(--marrom);border-radius:6px}
-.rc-grao{position:absolute;width:3.2%;aspect-ratio:1.3;border-radius:45%;background:#a0683a;border:2px solid #6b4220;pointer-events:none}
-.rc-dica{position:absolute;left:50%;top:44%;transform:translateX(-50%);font:700 clamp(1rem,3vw,1.3rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:4px 14px;pointer-events:none;white-space:nowrap;animation:rc-pula 1.2s ease-in-out infinite}
+/* jarrinha de água */
+.agua .rc-saco .corpo{background:linear-gradient(transparent 0 30%,rgba(90,175,240,.85) 30%),rgba(215,240,255,.9);border-radius:12px 12px 22px 22px;color:#fff;-webkit-text-stroke:3px #2a72ad;paint-order:stroke fill}
+.agua .rc-saco .boca{background:#cfeaff;left:4%;right:30%;border-radius:6px 14px 6px 6px}
+.rc-saco .alca{display:none}
+.agua .rc-saco .alca{display:block;position:absolute;right:-16%;top:24%;width:24%;height:40%;border:5px solid var(--marrom);border-left:0;border-radius:0 40% 40% 0}
+.rc-grao{position:absolute;width:3%;aspect-ratio:1.3;border-radius:45%;background:#a0683a;border:2px solid #6b4220;pointer-events:none;z-index:4}
+.agua .rc-grao{width:2.4%;aspect-ratio:.8;border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;background:#6cc4f5;border:2px solid #2a8fd0}
+.rc-dica{position:absolute;left:50%;top:40%;transform:translateX(-50%);font:700 clamp(1rem,3vw,1.3rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:4px 14px;pointer-events:none;white-space:nowrap;animation:rc-pula 1.2s ease-in-out infinite;z-index:5}
 @keyframes rc-pula{50%{transform:translate(-50%,-6px)}}
 .rc-acoes{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:10px auto}
 .em-cuidar header.topo,.em-cuidar footer,.em-cuidar .colinas,.em-cuidar .jogo-topo,.em-cuidar .musica-site{display:none!important}
-@media (prefers-reduced-motion:reduce){.rc-dica{animation:none}}
+.em-cuidar main{padding-top:6px}
+@media (prefers-reduced-motion:reduce){.rc-dica,.rc-pug.espera img,.rc-pug.vem img{animation:none}}
 </style>
-<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Hora da ração 🥣</h1></div>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo" id="titulo">Hora da ração 🥣</h1></div>
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
   <div class="rc-topo"><span class="rc-passo" id="passo">Arrasta o saquinho até o potinho! 🥣</span><span class="rc-barra"><i id="barra"></i></span></div>
   <div class="rc-cena" id="cena">
-    <div class="rc-pote" id="pote"><div class="borda"><div class="cheio" id="cheio"></div></div><span class="nome" id="nome-pote">JOY</span></div>
-    <div class="rc-saco" id="saco"><div class="boca"></div><div class="corpo"><b>🐾</b>RAÇÃO</div></div>
+    <span class="rc-tapete"></span>
+    <!-- o potinho de verdade da Joy: vermelho para a ração, azul para a água, bem largo em cima -->
+    <div class="rc-pote" id="pote"><svg viewBox="0 0 200 112" aria-hidden="true">
+      <path id="pote-corpo" d="M8 34 L34 100 Q100 112 166 100 L192 34 Z" fill="#e2483d" stroke="#4a2f1c" stroke-width="5" stroke-linejoin="round"/>
+      <path id="pote-brilho" d="M30 48 L46 92" stroke="#f47a6c" stroke-width="8" stroke-linecap="round" fill="none"/>
+      <ellipse id="pote-borda" cx="100" cy="34" rx="92" ry="20" fill="#ef6357" stroke="#4a2f1c" stroke-width="5"/>
+      <ellipse id="pote-fundo" cx="100" cy="36" rx="74" ry="13" fill="#a92f27"/>
+      <clipPath id="dentro"><ellipse cx="100" cy="36" rx="74" ry="13"/></clipPath>
+      <g id="conteudo"></g>
+      <ellipse id="agua" cx="100" cy="40" rx="0" ry="0" fill="#7fcdf5" stroke="#3a9be0" stroke-width="2" clip-path="url(#dentro)"/>
+      <ellipse id="agua-brilho" cx="80" cy="34" rx="0" ry="0" fill="#e6f7ff" opacity=".8" clip-path="url(#dentro)"/>
+    </svg></div>
+    <div class="rc-pug espera" id="pug"><img id="pug-img" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy esperando"></div>
+    <div class="rc-saco" id="saco"><div class="boca"></div><div class="corpo" id="saco-corpo"><b>🐾</b>RAÇÃO</div><span class="alca"></span></div>
     <span class="rc-dica" id="dica">👆 arrasta o saquinho</span>
   </div>
   <div class="rc-acoes"><button type="button" class="botao" id="rapido">⚡ Comer rápido</button></div>
@@ -71,16 +99,43 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 <script src="clube.js"></script>
 <script src="sons.js"></script>
 <script>
-// Hora da ração: a criança arrasta o saquinho até o potinho, ele vira e os grãozinhos caem. Quando enche, a pug vem comer.
-// racao.html?modo=cuidar&pug=joy|jane: dentro do "Cuidar das pugs" (sem topo; avisa a página de fora no fim)
+// Hora da ração / da água: a criança arrasta o saquinho (ou a jarrinha) até o potinho, ele vira e cai a ração (ou a água).
+// O potinho é igual ao dos vídeos da Joy: vermelho para a ração, azul para a água. Quando enche, a pug vem.
+// racao.html?tipo=agua → água. ?modo=cuidar&pug=joy|jane: dentro do "Cuidar das pugs" (sem topo; avisa a página de fora no fim)
 (() => {
   const $ = (s) => document.getElementById(s);
-  const q = new URLSearchParams(location.search), EM_CUIDAR = q.get("modo") === "cuidar", PUG = q.get("pug") === "jane" ? "jane" : "joy";
+  const q = new URLSearchParams(location.search), EM_CUIDAR = q.get("modo") === "cuidar", PUG = q.get("pug") === "jane" ? "jane" : "joy", AGUA = q.get("tipo") === "agua";
+  const NOME = PUG === "jane" ? "Jane" : "Joy";
   if (EM_CUIDAR) { document.documentElement.classList.add("em-cuidar"); if (PugsSom.calar) PugsSom.calar(true); }
   const META = 30;
-  const cena = $("cena"), saco = $("saco"), pote = $("pote");
+  const cena = $("cena"), saco = $("saco"), pote = $("pote"), pug = $("pug");
   let dentro = 0, acabou = false, arrastando = false, ox = 0, oy = 0, timer = null, somAte = 0;
-  pote.classList.add(PUG); $("nome-pote").textContent = PUG === "jane" ? "JANE" : "JOY";
+  if (PUG === "jane") { pug.classList.add("jane"); $("pug-img").src = "imagens/jogos/pet-jane.png"; $("pug-img").alt = "A Jane esperando"; }
+  if (AGUA) {
+    document.documentElement.classList.add("agua"); document.title = "Hora da água | Pugs Aventuras";
+    $("titulo").textContent = "Hora da água 💧"; $("passo").textContent = "Arrasta a jarrinha até o potinho! 💧"; $("dica").textContent = "👆 arrasta a jarrinha";
+    $("saco-corpo").innerHTML = "<b>💧</b>ÁGUA"; $("rapido").textContent = "⚡ Beber rápido";
+    $("pote-corpo").setAttribute("fill", "#3f9be0"); $("pote-brilho").setAttribute("stroke", "#7cc3f3"); $("pote-borda").setAttribute("fill", "#5bb0ec"); $("pote-fundo").setAttribute("fill", "#2a6fa8");
+  }
+  // lugares dos grãozinhos no potinho: primeiro no fundo, depois vira um montinho
+  const SVGNS = "http://www.w3.org/2000/svg", CORES = ["#b9783f", "#8f5a2b", "#c98a4f", "#a0683a"];
+  const LUGARES = Array.from({ length: META }, (_, i) => {
+    const t = i / META, a = Math.random() * Math.PI * 2, r = Math.sqrt(Math.random());
+    return { x: 100 + Math.cos(a) * r * 68 * (1 - 0.5 * t), y: 39 - 13 * t + Math.sin(a) * r * 8 * (1 - 0.4 * t), rot: Math.random() * 180, cor: CORES[i % 4] };
+  });
+  function encher() {
+    const lv = Math.min(1, dentro / META);
+    if (AGUA) {
+      const a = $("agua"); a.setAttribute("cy", 44 - 9 * lv); a.setAttribute("rx", 74 * (0.45 + 0.55 * lv)); a.setAttribute("ry", 13 * (0.45 + 0.55 * lv));
+      const b = $("agua-brilho"); b.setAttribute("cy", 41 - 8 * lv); b.setAttribute("rx", 22 * lv); b.setAttribute("ry", 3 * lv);
+    } else if (dentro <= META) {
+      const L = LUGARES[dentro - 1], e = document.createElementNS(SVGNS, "ellipse");
+      e.setAttribute("cx", L.x); e.setAttribute("cy", L.y); e.setAttribute("rx", 8); e.setAttribute("ry", 6); e.setAttribute("fill", L.cor);
+      e.setAttribute("stroke", "#5a3519"); e.setAttribute("stroke-width", 1.5); e.setAttribute("transform", `rotate(${L.rot} ${L.x} ${L.y})`);
+      $("conteudo").appendChild(e);
+    }
+    $("barra").style.width = lv * 100 + "%";
+  }
 
   function caixa(el) { const r = el.getBoundingClientRect(), c = cena.getBoundingClientRect(); return { x: r.left - c.left, y: r.top - c.top, w: r.width, h: r.height, cw: c.width, ch: c.height }; }
   function emCimaDoPote() { const s = caixa(saco), p = caixa(pote), cx = s.x + s.w / 2; return cx > p.x - p.w * 0.1 && cx < p.x + p.w * 1.1 && s.y + s.h < p.y + p.h * 0.2; }
@@ -89,18 +144,23 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     const s = caixa(saco), p = caixa(pote);
     const x0 = s.x + s.w * (0.4 + Math.random() * 0.2), y0 = s.y + s.h * 0.55;
     const g = document.createElement("span"); g.className = "rc-grao"; g.style.left = x0 + "px"; g.style.top = y0 + "px"; cena.appendChild(g);
-    const alvoY = p.y + p.h * 0.35 + Math.random() * p.h * 0.2, caiNoPote = x0 > p.x && x0 < p.x + p.w;
+    const caiNoPote = x0 > p.x + p.w * 0.08 && x0 < p.x + p.w * 0.92, alvoY = p.y + p.h * (0.2 + Math.random() * 0.12);
     const fimY = caiNoPote ? alvoY : s.ch * 0.9 + Math.random() * s.ch * 0.05, dx = (Math.random() - 0.5) * 18;
     const a = g.animate([{ transform: "translate(0,0) rotate(0)" }, { transform: `translate(${dx}px,${fimY - y0}px) rotate(${Math.random() * 360}deg)` }], { duration: 380 + (fimY - y0) * 0.9, easing: "cubic-bezier(.5,0,1,1)", fill: "forwards" });
     a.onfinish = () => {
-      if (caiNoPote) { g.remove(); dentro++; $("cheio").style.height = Math.min(85, dentro / META * 85) + "%"; $("barra").style.width = Math.min(100, dentro / META * 100) + "%"; if (Date.now() > somAte) { PugsSom.comer ? PugsSom.comer() : PugsSom.pop(); somAte = Date.now() + 700; } if (dentro >= META) cheio(); }
+      if (caiNoPote) { g.remove(); dentro++; encher(); if (Date.now() > somAte) { const som = AGUA ? PugsSom.beber : PugsSom.comer; som ? som() : PugsSom.pop(); somAte = Date.now() + 700; } if (dentro >= META) cheio(); }
       else setTimeout(() => g.remove(), 1500); // caiu no chão: some daqui a pouco
     };
   }
   function cheio() {
     if (acabou) return; acabou = true; clearInterval(timer); saco.classList.remove("virado");
-    $("passo").textContent = "Potinho cheio! Hum, que cheirinho! 😋"; PugsSom.acerto();
-    setTimeout(() => { PugsSom.festa(); if (EM_CUIDAR) setTimeout(() => parent.postMessage({ pugsMini: "pronto" }, location.origin), 1200); else { $("passo").textContent = "Muito bem! A " + (PUG === "jane" ? "Jane" : "Joy") + " vai comer! 💙"; } }, 700);
+    $("passo").textContent = AGUA ? "Potinho cheio de água fresquinha! 💧" : "Potinho cheio! Hum, que cheirinho! 😋"; PugsSom.acerto();
+    pug.classList.remove("espera"); pug.classList.add("vem");
+    setTimeout(() => {
+      PugsSom.festa();
+      if (EM_CUIDAR) setTimeout(() => parent.postMessage({ pugsMini: "pronto" }, location.origin), 1200);
+      else $("passo").textContent = "Muito bem! A " + NOME + (AGUA ? " vai beber água! 💙" : " vai comer! 💙");
+    }, 900);
   }
   saco.addEventListener("pointerdown", (e) => {
     if (acabou) return; arrastando = true; $("dica").hidden = true; try { saco.setPointerCapture(e.pointerId); } catch (x) {}
@@ -108,22 +168,21 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   });
   saco.addEventListener("pointermove", (e) => {
     if (!arrastando) return; const c = cena.getBoundingClientRect(), s = caixa(saco);
-    const x = Math.max(-s.w * 0.2, Math.min(c.width - s.w * 0.8, e.clientX - c.left - ox)), y = Math.max(-s.h * 0.1, Math.min(c.height * 0.55, e.clientY - c.top - oy));
+    const x = Math.max(-s.w * 0.2, Math.min(c.width - s.w * 0.8, e.clientX - c.left - ox)), y = Math.max(-s.h * 0.1, Math.min(c.height * 0.5, e.clientY - c.top - oy));
     saco.style.left = x + "px"; saco.style.top = y + "px";
     const vira = emCimaDoPote(); saco.classList.toggle("virado", vira);
-    if (vira && !timer) { timer = setInterval(cair, 70); $("passo").textContent = "Isso! Enche o potinho! 🥣"; }
+    if (vira && !timer) { timer = setInterval(cair, 70); $("passo").textContent = AGUA ? "Isso! Enche de água! 💧" : "Isso! Enche o potinho! 🥣"; }
     if (!vira && timer) { clearInterval(timer); timer = null; }
   });
   const soltar = () => { arrastando = false; saco.style.cursor = "grab"; };
   saco.addEventListener("pointerup", soltar); saco.addEventListener("pointercancel", soltar);
   $("rapido").onclick = () => { if (EM_CUIDAR) parent.postMessage({ pugsMini: "fechar" }, location.origin); else location.reload(); };
 
-  pugsSoNoClube().then(async (f) => {
+  pugsSoNoClube().then((f) => {
     if (!f) return;
-    // novo: por enquanto só a Joice vê, até ela aprovar
-    if (!(await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)))) { location.href = "clube.html"; return; }
     $("esperando").hidden = true; $("jogo").hidden = false;
-    PugsSom.falar("Au au! Tô com fome!", PUG === "jane" ? "jane-pet-fome" : "pet-fome");
+    if (AGUA) PugsSom.falar("Tô com sede!", PUG === "jane" ? "jane-pet-sede" : "pet-sede");
+    else PugsSom.falar("Au au! Tô com fome!", PUG === "jane" ? "jane-pet-fome" : "pet-fome");
   });
 })();
 </script>
