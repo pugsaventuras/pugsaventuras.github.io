@@ -30,6 +30,22 @@
 <a class="botao rosa" href="assinatura.html#promocao">Ver como participar</a>
 </div>
 <script>{ const p = document.getElementById("promo-pais"); if (Date.now() >= Date.parse(p.dataset.ate)) p.remove(); }</script>
+<section class="cartao gratis" id="gratis" style="text-align:center;background:#eaf6ff;max-width:1000px;margin:0 auto 22px">
+<style>
+.gratis h2{margin:0 0 4px}
+.gr-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:12px}
+.gr-card{display:flex;flex-direction:column;gap:4px;align-items:center;text-decoration:none;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:20px;padding:10px;box-shadow:0 4px 0 var(--marrom);font:700 1.15rem Fredoka,Arial,sans-serif}
+.gr-card small{font:500 .95rem Fredoka,Arial,sans-serif}
+.gr-foto{display:block;width:100%;aspect-ratio:4/3;border-radius:14px;background:#fff center no-repeat}
+.gr-card:active{transform:translateY(3px);box-shadow:0 1px 0 var(--marrom)}
+</style>
+<h2>🎁 Brinque grátis com a Joy e a Jane!</h2>
+<p style="margin:0">Sem cadastro. Joguinhos em português para brincar agora.</p>
+<div class="gr-grade">
+<a class="gr-card" href="bolhas.html"><span class="gr-foto" style="background-image:url('imagens/jogos/banho-dupla-joy.jpg');background-size:cover"></span><b>🫧 Bolhas de sabão</b><small>Sozinho ou em dupla, na Guerra de bolhas!</small></a><a class="gr-card" href="brincar.html?gratis=1"><span class="gr-foto" style="background-image:url('imagens/jogos/pet-brincando-joy.jpg');background-size:cover"></span><b>🎾 Joga a bolinha</b><small>A Joy corre, pega e traz de volta!</small></a><a class="gr-card" href="pintar.html?gratis=1"><span class="gr-foto" style="background-image:url('imagens/colorir-ep5-1-joy-no-balde.png');background-size:contain"></span><b>🎨 Pintar no tablet</b><small>3 desenhos para pintar e imprimir</small></a>
+</div>
+<p style="margin:12px 0 0"><a href="colorir.html">🖍️ Desenhos para imprimir (PDF)</a></p>
+</section>
 <div class="grade" id="episodios">
 <article class="cartao" data-ep="1">
 <div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/xPRLTGgTwU4" title="Pugs Aventuras - Episódio 1: Procura-se uma pug" loading="lazy"
@@ -71,11 +87,6 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 </article>
 </div>
 <div class="patinhas" aria-hidden="true">🐾 🐾 🐾</div>
-<section class="cartao" style="text-align:center;background:#eaf6ff">
-<h2>Brinque grátis com a Joy e a Jane! 🫧</h2>
-<p>Estoure as bolhas de sabão do banho: sozinho, para bater o recorde, ou em dupla, na Guerra de bolhas.</p>
-<a class="botao rosa" href="bolhas.html">Jogar Bolhas de sabão</a>
-</section>
 
 <section class="cartao" style="text-align:center">
 <h2>Quer a aventura longe da tela?</h2>
