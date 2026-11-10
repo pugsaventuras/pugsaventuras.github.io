@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caça-palavras | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<style>
+.cp-modo{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:4px 0 12px}
+.cp-modo button{font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:999px;padding:6px 18px;cursor:pointer}
+.cp-modo button.ativo{background:var(--sol);box-shadow:0 3px 0 var(--marrom)}
+.cp-listas{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;max-width:860px;margin:6px auto}
+.cp-lista{font:700 1.1rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:20px;padding:12px 10px;cursor:pointer;box-shadow:0 4px 0 var(--marrom);display:flex;flex-direction:column;align-items:center;gap:4px}
+.cp-lista .ic{font-size:2.2rem;line-height:1}
+.cp-lista small{font:500 .9rem Fredoka,Arial,sans-serif}
+.cp-lista.nova{border-color:#e8578f;box-shadow:0 4px 0 #e8578f}
+.cp-jogo{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:flex-start}
+.cp-topo{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:0 0 10px;font:700 clamp(1.05rem,3vw,1.4rem) Fredoka,Arial,sans-serif;color:var(--marrom)}
+.cp-vez{padding:3px 14px;border-radius:999px;border:3px solid var(--marrom);background:#fff}
+.cp-vez.joy{background:#d6ecff;border-color:#2a72ad;color:#1f5f94}.cp-vez.jane{background:#ffe0ee;border-color:#d6457f;color:#b03366}
+.cp-grade{display:grid;gap:3px;background:#fff;border:4px solid var(--marrom);border-radius:22px;padding:10px;touch-action:none;user-select:none;-webkit-user-select:none;
+  width:min(94vw,560px,calc(100dvh - 200px));aspect-ratio:1}
+.cp-grade span{display:flex;align-items:center;justify-content:center;border-radius:10px;font:700 clamp(1rem,4.6vw,2rem) Fredoka,Arial,sans-serif;color:var(--marrom);transition:background .15s,transform .15s}
+.cp-grade.peq span{font-size:clamp(1.4rem,7vw,2.8rem)}
+.cp-grade span.sel{background:#ffe48a;transform:scale(1.06)}
+.cp-grade span.ok-joy{background:#8fcbf5;color:#fff;-webkit-text-stroke:1px #1f5f94}
+.cp-grade span.ok-jane{background:#f7a8c9;color:#fff;-webkit-text-stroke:1px #b03366}
+.cp-grade span.dica{animation:cp-pisca .5s ease-in-out 4 alternate}
+@keyframes cp-pisca{to{background:#ffe48a}}
+.cp-lado{min-width:200px;max-width:320px;flex:1}
+.cp-palavras{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.cp-palavras li{display:flex;align-items:center;gap:8px;font:700 1.25rem Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:14px;padding:4px 10px;cursor:pointer}
+.cp-palavras li .ic{font-size:1.5rem}
+.cp-palavras li.achou{text-decoration:line-through;opacity:.75}
+.cp-palavras li.achou.joy{background:#d6ecff}.cp-palavras li.achou.jane{background:#ffe0ee}
+.cp-acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.cp-placar{display:flex;gap:10px;justify-content:center;font:700 1.3rem Fredoka,Arial,sans-serif}
+.cp-placar b{padding:2px 12px;border-radius:999px;border:3px solid}
+.cp-placar .joy{color:#1f5f94;border-color:#2a72ad;background:#d6ecff}.cp-placar .jane{color:#b03366;border-color:#d6457f;background:#ffe0ee}
+.cp-fim{text-align:center;margin:14px auto}
+.cp-fim[hidden],.cp-placar[hidden],.cp-vez[hidden]{display:none}
+.cp-dica-txt{font:500 1rem Fredoka,Arial,sans-serif;color:var(--suave);margin:6px 0 0}
+@media (prefers-reduced-motion:reduce){.cp-grade span.dica{animation:none;background:#ffe48a}}
+</style>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Caça-palavras 🔎</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div id="escolha">
+    <p class="jogo-dica">Ache as palavras escondidas! Arraste o dedo da primeira até a última letra. A Joy fala cada palavra que você achar.</p>
+    <div class="cp-modo" id="tamanho"><button type="button" class="ativo" data-t="peq">🐣 Pequenininho</button><button type="button" data-t="gde">🦒 Grandão</button></div>
+    <div class="cp-modo" id="quem"><button type="button" class="ativo" data-q="1">🙋 Sozinho</button><button type="button" data-q="2">👫 2 jogadores</button></div>
+    <div class="cp-listas" id="listas"></div>
+  </div>
+  <div id="partida" hidden>
+    <div class="cp-topo"><span id="titulo-lista"></span><span class="cp-vez joy" id="vez" hidden>Vez do Time Joy 💙</span></div>
+    <div class="cp-placar" id="placar" hidden><b class="joy">💙 <span id="pj">0</span></b><b class="jane">🩷 <span id="pa">0</span></b></div>
+    <div class="cp-jogo">
+      <div class="cp-grade" id="grade"></div>
+      <div class="cp-lado">
+        <ul class="cp-palavras" id="palavras"></ul>
+        <p class="cp-dica-txt" id="dica-txt">Toque numa palavra da lista para ouvir. 🔊</p>
+        <div class="cp-acoes"><button type="button" class="botao" id="ajuda">💡 Ajuda</button><button type="button" class="botao" id="passar" hidden>➡️ Passar a vez</button><button type="button" class="botao" id="trocar">Mudar</button></div>
+      </div>
+    </div>
+    <div class="cp-fim" id="fim" hidden>
+      <p class="festa-titulo" id="fim-txt" style="margin:0 0 8px">Achou tudo! 🎉</p>
+      <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
+      <button type="button" class="botao" id="outra">Outras palavras</button>
+    </div>
+  </div>
+</div>
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// Caça-palavras da Joy (Joice, 10/11): a criança arrasta o dedo da 1ª à última letra; a palavra acende e a Joy fala.
+// PALAVRINHAS NOVAS TODA SEMANA: acrescente uma lista em LISTAS (com "desde" = estreia do episódio, 22:00Z de quarta).
+// caca-palavras.html?gratis=1 → sem login, só a lista grátis, com o recado para os pais no fim.
+(() => {
+  const $ = (s) => document.getElementById(s);
+  const q = new URLSearchParams(location.search), GRATIS = q.has("gratis");
+  const LIBERA = Date.parse("2026-11-11T22:00:00Z"); // o jogo entra junto com o Ep. 6
+  ["gesturestart", "gesturechange", "gestureend"].forEach((t) => document.addEventListener(t, (e) => e.preventDefault(), { passive: false }));
+  document.addEventListener("touchmove", (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+
+  // [como fala, emoji]  — a grade usa a palavra em MAIÚSCULA e sem acento
+  const LISTAS = [
+    { id: "ep6", nome: "As férias da Joy", ic: "🎒", sub: "Episódio 6", desde: "2026-11-11T22:00:00Z", p: [["férias", "🎒"], ["piscina", "🏊"], ["bolo", "🎂"], ["Vitor", "👦"], ["Rafa", "👦"], ["Tiago", "👦"], ["RanRan", "🦝"], ["cabaninha", "⛺"], ["amigo", "🤝"], ["sala", "🛋️"], ["Joy", "🐶"]] },
+    { id: "ep5", nome: "O banho no balde", ic: "🛁", sub: "Episódio 5", p: [["balde", "🪣"], ["espuma", "🫧"], ["toalha", "🧺"], ["banho", "🛁"], ["sabão", "🧼"], ["água", "💧"], ["bolha", "🫧"], ["secador", "💨"], ["Joy", "🐶"]] },
+    { id: "ep4", nome: "O papai e a Joy", ic: "👨", sub: "Episódio 4", p: [["papai", "👨"], ["amigo", "🤝"], ["porta", "🚪"], ["estrela", "⭐"], ["nariz", "👃"], ["casa", "🏠"], ["RanRan", "🦝"], ["Joy", "🐶"]] },
+    { id: "ep3", nome: "A roupinha de meia", ic: "🧦", sub: "Episódio 3", p: [["meia", "🧦"], ["roupinha", "👕"], ["mamãe", "👩"], ["linda", "💖"], ["vestir", "👗"], ["frio", "🥶"], ["Joy", "🐶"]] },
+    { id: "ep2", nome: "Os chinelos do papai", ic: "🩴", sub: "Episódio 2", p: [["chinelo", "🩴"], ["ploc", "💥"], ["papai", "👨"], ["feira", "🍎"], ["soneca", "😴"], ["RanRan", "🦝"], ["Joy", "🐶"]] },
+    { id: "ep1", nome: "Procura-se uma pug", ic: "🔎", sub: "Episódio 1", p: [["pug", "🐶"], ["lambeijo", "😘"], ["caminha", "🛏️"], ["laço", "🎀"], ["mamãe", "👩"], ["papai", "👨"], ["Joy", "🐶"]] },
+    { id: "joy", nome: "Joy e Jane", ic: "🐾", sub: "Grátis", gratis: true, p: [["Joy", "🐶"], ["Jane", "🐾"], ["pug", "🐶"], ["bola", "⚽"], ["osso", "🦴"], ["pata", "🐾"], ["cama", "🛏️"], ["latido", "🔊"], ["carinho", "💛"], ["amor", "❤️"]] },
+  ];
+  const semAcento = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().replace(/[^A-Z]/g, "");
+  const LETRAS = "AAAABCDEEEEFGHIIIJLMNOOOPRRSSTUUVZ";
+  let tam = "peq", jogadores = 1, lista = null, N = 6, grade = [], pos = [], vez = 0, pontos = [0, 0], ini = null, selec = [];
+
+  function disponiveis() { return LISTAS.filter((l) => (GRATIS ? l.gratis : true) && (!l.desde || Date.now() >= Date.parse(l.desde))); }
+  function escolha() {
+    $("escolha").hidden = false; $("partida").hidden = true;
+    $("listas").innerHTML = disponiveis().map((l, i) => `<button type="button" class="cp-lista${i === 0 && l.desde ? " nova" : ""}" data-id="${l.id}"><span class="ic">${l.ic}</span>${l.nome}<small>${l.sub}${i === 0 && l.desde ? " · novinha! ✨" : ""}</small></button>`).join("");
+  }
+  $("tamanho").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; tam = b.dataset.t; [...$("tamanho").children].forEach((x) => x.classList.toggle("ativo", x === b)); };
+  $("quem").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; jogadores = +b.dataset.q; [...$("quem").children].forEach((x) => x.classList.toggle("ativo", x === b)); };
+  $("listas").onclick = (e) => { const b = e.target.closest(".cp-lista"); if (!b) return; lista = LISTAS.find((l) => l.id === b.dataset.id); comecar(); };
+
+  // monta a grade: pequenininho 6x6, 4 palavras, só deitadas; grandão 10x10, 8 palavras, deitadas e em pé
+  function montar() {
+    N = tam === "peq" ? 6 : 10; const quantas = tam === "peq" ? 4 : 8, emPe = tam !== "peq";
+    for (let tentativa = 0; tentativa < 200; tentativa++) {
+      grade = Array.from({ length: N }, () => Array(N).fill(""));
+      const cand = lista.p.map(([fala, ic]) => ({ fala, ic, g: semAcento(fala) })).filter((w) => w.g.length <= N && w.g.length >= 2).sort(() => Math.random() - 0.5);
+      pos = [];
+      for (const w of cand) {
+        if (pos.length >= quantas) break;
+        if (pos.some((x) => x.g === w.g)) continue;
+        for (let k = 0; k < 80; k++) {
+          const vert = emPe && Math.random() < 0.5, L = w.g.length;
+          const r = Math.floor(Math.random() * (vert ? N - L + 1 : N)), c = Math.floor(Math.random() * (vert ? N : N - L + 1));
+          let cabe = true;
+          for (let i = 0; i < L; i++) { const rr = vert ? r + i : r, cc = vert ? c : c + i; if (grade[rr][cc] && grade[rr][cc] !== w.g[i]) { cabe = false; break; } }
+          if (!cabe) continue;
+          const cel = [];
+          for (let i = 0; i < L; i++) { const rr = vert ? r + i : r, cc = vert ? c : c + i; grade[rr][cc] = w.g[i]; cel.push(rr * N + cc); }
+          pos.push({ ...w, cel, achou: -1 }); break;
+        }
+      }
+      if (pos.length >= Math.min(quantas, cand.length)) break;
+    }
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (!grade[r][c]) grade[r][c] = LETRAS[Math.floor(Math.random() * LETRAS.length)];
+  }
+  function comecar() {
+    montar(); vez = 0; pontos = [0, 0];
+    $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true;
+    $("titulo-lista").textContent = lista.ic + " " + lista.nome;
+    const g = $("grade"); g.className = "cp-grade" + (tam === "peq" ? " peq" : ""); g.style.gridTemplateColumns = `repeat(${N},1fr)`;
+    g.innerHTML = grade.flat().map((L, i) => `<span data-i="${i}">${L}</span>`).join("");
+    $("palavras").innerHTML = pos.map((w, i) => `<li data-i="${i}"><span class="ic">${w.ic}</span>${w.g}</li>`).join("");
+    $("vez").hidden = $("placar").hidden = $("passar").hidden = jogadores === 1; mostrarVez(); placar();
+    PugsSom.falar(jogadores === 2 ? "Vez do time Joy!" : "Vamos achar as palavras!");
+    setTimeout(() => $("grade").scrollIntoView({ behavior: "smooth", block: "center" }), 100);
+  }
+  function mostrarVez() { const v = $("vez"); v.className = "cp-vez " + (vez === 0 ? "joy" : "jane"); v.textContent = vez === 0 ? "Vez do Time Joy 💙" : "Vez do Time Jane 🩷"; }
+  function placar() { $("pj").textContent = pontos[0]; $("pa").textContent = pontos[1]; }
+  function passarVez() { if (jogadores === 2) { vez = 1 - vez; mostrarVez(); PugsSom.falar(vez === 0 ? "Vez do time Joy!" : "Vez do time Jane!"); } }
+  $("passar").onclick = passarVez;
+
+  // arrastar o dedo
+  const celDe = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.parentElement === $("grade") ? +el.dataset.i : null; };
+  function caminho(a, b) {
+    const ra = Math.floor(a / N), ca = a % N, rb = Math.floor(b / N), cb = b % N; const out = [];
+    if (Math.abs(rb - ra) > Math.abs(cb - ca)) { const s = Math.sign(rb - ra) || 1; for (let r = ra; r !== rb + s; r += s) out.push(r * N + ca); }
+    else { const s = Math.sign(cb - ca) || 1; for (let c = ca; c !== cb + s; c += s) out.push(ra * N + c); }
+    return out;
+  }
+  function pintarSel() { [...$("grade").children].forEach((s, i) => s.classList.toggle("sel", selec.includes(i))); }
+  $("grade").addEventListener("pointerdown", (e) => { const i = celDe(e.clientX, e.clientY); if (i == null || !$("fim").hidden) return; e.preventDefault(); ini = i; selec = [i]; pintarSel(); try { $("grade").setPointerCapture(e.pointerId); } catch (x) {} });
+  $("grade").addEventListener("pointermove", (e) => { if (ini == null) return; const i = celDe(e.clientX, e.clientY); if (i == null) return; selec = caminho(ini, i); pintarSel(); });
+  const soltar = () => {
+    if (ini == null) return; const s = selec.slice(); ini = null; selec = []; pintarSel();
+    if (s.length < 2) return;
+    const w = pos.find((p) => p.achou < 0 && p.cel.length === s.length && (p.cel.every((c, k) => c === s[k]) || p.cel.every((c, k) => c === s[s.length - 1 - k])));
+    if (!w) { if (PugsSom.erro) PugsSom.erro(); return; }
+    w.achou = vez; const cor = vez === 0 ? "ok-joy" : "ok-jane";
+    w.cel.forEach((c) => $("grade").children[c].classList.add(cor));
+    const li = $("palavras").children[pos.indexOf(w)]; li.classList.add("achou", vez === 0 ? "joy" : "jane");
+    PugsSom.acerto(); setTimeout(() => PugsSom.falar(w.fala), 250);
+    if (jogadores === 2) { pontos[vez]++; placar(); }
+    if (pos.every((p) => p.achou >= 0)) return setTimeout(fim, 900);
+    if (jogadores === 2) setTimeout(passarVez, 1300);
+  };
+  $("grade").addEventListener("pointerup", soltar); $("grade").addEventListener("pointercancel", soltar);
+  $("palavras").onclick = (e) => { const li = e.target.closest("li"); if (li) PugsSom.falar(pos[+li.dataset.i].fala); };
+  $("ajuda").onclick = () => {
+    const falta = pos.filter((p) => p.achou < 0); if (!falta.length) return;
+    const w = falta[Math.floor(Math.random() * falta.length)], el = $("grade").children[w.cel[0]];
+    el.classList.remove("dica"); void el.offsetWidth; el.classList.add("dica"); PugsSom.falar("Procura a palavra " + w.fala + "! Começa aqui!");
+  };
+  function fim() {
+    let txt = "Você achou todas as palavras! 🎉";
+    if (jogadores === 2) txt = pontos[0] === pontos[1] ? `Empate! ${pontos[0]} × ${pontos[1]} 🤝` : (pontos[0] > pontos[1] ? `Time Joy ganhou! 💙 ${pontos[0]} × ${pontos[1]}` : `Time Jane ganhou! 🩷 ${pontos[1]} × ${pontos[0]}`);
+    $("fim-txt").textContent = txt; $("fim").hidden = false; PugsSom.festa();
+    if (jogadores === 2 && PugsSom.latido && pontos[0] !== pontos[1]) PugsSom.latido(pontos[0] > pontos[1] ? "joy" : "jane");
+    setTimeout(() => PugsSom.falar(jogadores === 2 ? (pontos[0] === pontos[1] ? "Empate! Os dois times foram muito bem!" : pontos[0] > pontos[1] ? "O time Joy ganhou!" : "O time Jane ganhou!") : "Muito bem! Você achou todas as palavras!"), 900);
+    if (GRATIS) { $("pais").hidden = false; }
+    setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+  }
+  $("denovo").onclick = comecar; $("outra").onclick = escolha; $("trocar").onclick = escolha;
+
+  const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; escolha(); };
+  const souAdmin = () => (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false));
+  if (GRATIS) {
+    const v = document.querySelector(".jogo-topo .botao"); if (v) { v.href = "index.html"; v.textContent = "← Episódios"; }
+    $("jogo").insertAdjacentHTML("beforeend", '<p class="cartao" id="pais" hidden style="background:#fff3c4;text-align:center;max-width:760px;margin:18px auto"><b>Para os pais 💛</b><br>Gostou? No Clube Pugs Aventuras tem um caça-palavras novo a cada episódio, com as palavrinhas da semana, e muito mais: cuidar da Joy, labirinto, quebra-cabeça, desenhos para pintar e os livrinhos. <b>1 mês grátis</b> na inauguração.<br><a class="botao rosa" href="assinatura.html" style="margin-top:8px">Conhecer o Clube</a></p>');
+    if (Date.now() >= LIBERA) abrir(); else souAdmin().then((a) => { if (a) abrir(); else location.href = "index.html"; });
+  } else pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    if (Date.now() < LIBERA && !(await souAdmin())) { location.href = "clube.html"; return; } // até quarta, só a Joice vê
+    abrir();
+  });
+})();
+</script>
+</body></html>
