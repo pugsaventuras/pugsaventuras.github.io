@@ -347,7 +347,7 @@ const ACOES = {
     dormindo = true; falar("Boa noite... 💤", "pet-boa-noite", 2000); pintar(); setTimeout(() => PugsSom.ninar(), 900);
     // a Joy: vídeo de verdade dela dormindo (na caminha com o RanRan ou no chinelo). A Jane: na caminha lilás dela
     let dura = 7000;
-    if (pet === "joy") { dura = 9600; const n = Math.random() < 0.5 ? 1 : 2; video("imagens/jogos/pet-dorme-joy-" + n + ".mp4", "imagens/jogos/pet-dorme-joy-" + n + ".jpg").catch(() => {}); }
+    if (pet === "joy") { dura = 9600; const n = Date.now() >= Date.parse("2026-11-11T22:00:00Z") ? 1 + Math.floor(Math.random() * 3) : (Math.random() < 0.5 ? 1 : 2); // 3 = todos dormindo na sala (Ep6) video("imagens/jogos/pet-dorme-joy-" + n + ".mp4", "imagens/jogos/pet-dorme-joy-" + n + ".jpg").catch(() => {}); }
     const r = setTimeout(() => { pararRonco = PugsSom.ronco(pet); }, 3600);
     const zz = setInterval(() => efeito(["💤"], [55, 30]), 1200);
     setTimeout(() => { clearTimeout(r); pararRonco(); clearInterval(zz); tirarVideo(); dormindo = false; p.energia = 100; coracao(); rosto("feliz"); PugsSom.acerto(); falar("Dormi bem! Bom dia!", "pet-bom-dia"); pintar(); salvar(); }, dura);

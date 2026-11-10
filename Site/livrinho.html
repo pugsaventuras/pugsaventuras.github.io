@@ -171,6 +171,28 @@ if (EP5_NO_AR) LIVROS.unshift({ titulo: "A Joy e o banho no balde", ep: 5, audio
     ["15", "Essa sou eu de verdade! No começo eu não queria... mas depois do banho eu gostei muito!"],
     ["16", "Mamãe: “Tchau, tchau, amiguinhos! A Joy deu trabalho no banho!” Papai: “Mas ficou cheirosinha! Semana que vem a gente conta mais uma historinha.” E você? Gosta de tomar banho?"],
   ].map(([n, t]) => ({ n, t })) });
+const EP6_NO_AR = Date.now() >= Date.parse("2026-11-11T22:00:00Z"); // Episódio 6 estreia quarta 11/11, 19h de Brasília
+if (EP6_NO_AR) LIVROS.unshift({ titulo: "A Joy e a colônia de férias", ep: 6, audio: true, capa: "imagens/capa-ep6.jpg", paginas: [
+    ["01", "Oi, amiguinhos! Eu sou a Joy! Hoje eu vou contar das minhas primeiras férias!"],
+    ["02", "Um dia, chegaram três meninos pra passar as férias com a gente! Mamãe: “Chegaram! Entra, gente! Essa é a Joy!” Vitor: “Oi, dindinha!”"],
+    ["03", "Eu fiquei tão feliz que pulei no Tiago! E o Vitor correu pra perto da mamãe. E o Rafa ficou só de olho."],
+    ["04", "Eu comecei a cheirar todos... hum! Cheirinho de amigo novo!"],
+    ["05", "Eu tava tão animada com meus amiguinhos que pulei... e o Vitor levou um sustinho! Vitor: “Ai! Dindinha!”"],
+    ["06", "Mamãe: “Calma, Vitor. Ela não morde, ela só quer brincar!” Vitor: “Verdade, dindinha? Ela não morde?”"],
+    ["07", "Aí eu mostrei o meu RanRan... e viramos amigos! “Joy! Pega o RanRan!” “Olha! Ela trouxe de volta!”"],
+    ["08", "Enquanto isso, no quarto, a gente fez uma cabaninha! “Vem, Joy! Aqui é o nosso esconderijo!”"],
+    ["09", "“Vamos, bora pra piscina!” E eu? Eu ainda era pequenininha... fiquei em casa."],
+    ["10", "O nosso prédio era a colônia de férias deles! A piscina era quentinha!"],
+    ["11", "E eu esperei na porta... Eba! Eles voltaram!"],
+    ["12", "A mamãe fez bolo de chocolate! Mamãe: “Quem quer bolo?” Vitor: “Eu! Eu quero bolo!”"],
+    ["13", "De noite, o papai chegava do trabalho e jogava com eles. Papai: “Agora é a minha vez!” ... “Ah, não! Ganhou de mim de novo!”"],
+    ["14", "Na hora de escovar os dentes: “Escova assim! Agora escova todos os dias, hein!”"],
+    ["15", "Todos nós dormimos na sala... e eu dormia agarradinha no Tiago."],
+    ["16", "A tia Jaki veio buscar o Vitor. Vitor: “Mamãe! Olha a Joy!” Tia Jaki: “Oi, Joy! Ai, que lambeijo gostoso! Vamos, filho? Dá tchau pra Joy!”"],
+    ["17", "Depois que eles foram embora... a casa ficou tão vazia. Mas nas próximas férias eles voltam!"],
+    ["18", "Essa sou eu de verdade, com os meninos! E você? Já recebeu visita nas férias? Essa é a tia Jaki. E esses são meus novos amigos: Vitor, Rafa e Ti."],
+    ["19", "“Tchau, Joy! Adorei brincar de RanRan!” “Tchau, Joy! Foi muito bom brincar e dormir agarradinho!” “Tchau, Joy! O videogame foi demais!” Joy: Au au! Mamãe: “Tchau, tchau, amiguinhos! Semana que vem tem mais historinha!”"],
+  ].map(([n, t]) => ({ n, t })) });
 let livro = null, pag = 0, lerSozinho = true, toque = null;
 const img = (l, p) => `imagens/livrinho/ep${l.ep}-pag${p.n}.jpg`;
 function estante() {
