@@ -1,7 +1,7 @@
 // Guarda o Clube no aparelho para os jogos funcionarem sem internet.
-const CACHE = "pugs-clube-v76";
+const CACHE = "pugs-clube-v78";
 const ARQUIVOS = [
-  "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html", "cuidar.html", "estoura-baloes.html", "ligue-pontos.html", "imagens/jogos/ligue-pontos.jpg", "labirinto.html", "imagens/jogos/labirinto.jpg", "labirinto-dupla.html", "banho.html", "racao.html", "caca-palavras.html", "imagens/jogos/caca-palavras.jpg", "brincar.html", "imagens/jogos/pet-campo.jpg", "bolhas.html", "imagens/jogos/banho.jpg", "imagens/jogos/banho-balde.jpg", "imagens/jogos/banho-banheira.jpg", "imagens/jogos/banho-dupla-joy.jpg", "imagens/jogos/banho-dupla-jane.jpg", "imagens/jogos/labirinto-dupla.jpg", "imagens/jogos/pet-cama-jane.png", "imagens/jogos/pet-cama.png", "imagens/jogos/baloes-numeros.jpg", "imagens/colorir-baloes-numeros.png", "imagens/fig-especial-tchau-lambeijo.jpg",
+  "clube.html", "pintar.html", "quebra-cabeca.html", "jogo-da-memoria.html", "album.html", "entrar.html", "escrever-nome.html", "livrinho.html", "onde-esta-a-joy.html", "cuidar.html", "estoura-baloes.html", "ligue-pontos.html", "imagens/jogos/ligue-pontos.jpg", "labirinto.html", "imagens/jogos/labirinto.jpg", "labirinto-dupla.html", "banho.html", "racao.html", "caca-palavras.html", "imagens/jogos/caca-palavras.jpg", "frutas.html", "imagens/jogos/feira-lucy.jpg", "imagens/jogos/feira-lucy-card.jpg", "imagens/jogos/fruta-mamao.png", "imagens/jogos/pet-joy-feliz.png", ...["oi-feira","oi-desafio","acertou-1","acertou-2","acertou-3","tenta-1","tenta-2","ajuda","fim-1","fim-2"].concat(["banana","morango","laranja","melancia","mamao","abacaxi","uva","pessego"].flatMap((f) => ["fruta-" + f, "pede-" + f])).map((n) => "sons/lucy/" + n + ".mp3"), "brincar.html", "imagens/jogos/pet-campo.jpg", "bolhas.html", "imagens/jogos/banho.jpg", "imagens/jogos/banho-balde.jpg", "imagens/jogos/banho-banheira.jpg", "imagens/jogos/banho-dupla-joy.jpg", "imagens/jogos/banho-dupla-jane.jpg", "imagens/jogos/labirinto-dupla.jpg", "imagens/jogos/pet-cama-jane.png", "imagens/jogos/pet-cama.png", "imagens/jogos/baloes-numeros.jpg", "imagens/colorir-baloes-numeros.png", "imagens/fig-especial-tchau-lambeijo.jpg",
   "imagens/jogos/joy-face.jpg", "imagens/colorir-joy-dancando.png", "imagens/colorir-joy-na-porta.png", "imagens/colorir-pugs-na-estrada.png", ...["pet-joy-feliz","pet-joy-triste","pet-joy-surpresa","pet-joy-esperta","pet-joy-chamando","pet-joy-dormindo","pet-jane","pet-jane-sentada","pet-ranran"].map((n) => "imagens/jogos/" + n + ".png"), "imagens/jogos/ranran-so.jpg",
   ...["quem-ranran","quem-chinelo","quem-papai","quem-mamae","quem-julia","quem-jane","esc-caminha-vermelha","esc-caminha-bege","esc-bolsinha","esc-poltrona","esc-sofa","esc-chinelos-feira"].map((n) => "imagens/jogos/" + n + ".jpg"),
   ...["ep1-1-lambeijo","ep1-2-joy-na-caminha","ep1-3-feirinha","ep1-4-lacinho-rosa","ep2-1-joy-e-ranran","ep2-2-chinelo-ploc","ep2-3-dormindo-com-ranran","ep2-4-feira-das-tirinhas"].map((n) => "imagens/colorir-" + n + ".png"), "imagens/memoria/m02.jpg",
@@ -39,6 +39,19 @@ self.addEventListener("fetch", (e) => {
       const ini = m[1] ? +m[1] : 0, fim = m[2] ? Math.min(+m[2], buf.byteLength - 1) : buf.byteLength - 1;
       return new Response(buf.slice(ini, fim + 1), { status: 206, headers: { "Content-Type": /\.mp4$/.test(u.pathname) ? "video/mp4" : "audio/mpeg", "Content-Range": `bytes ${ini}-${fim}/${buf.byteLength}`, "Content-Length": String(fim - ini + 1), "Accept-Ranges": "bytes" } });
     }).catch(() => fetch(r)));
+    return;
+  }
+  // páginas (.html): sempre a versão nova da internet; sem internet, a guardada
+  if (meu && (r.mode === "navigate" || u.pathname.endsWith(".html") || u.pathname.endsWith("/"))) {
+    e.respondWith(caches.open(CACHE).then(async (c) => {
+      try {
+        const resp = await fetch(r.url, { cache: "no-cache", credentials: "same-origin" });
+        if (resp && resp.ok) c.put(r, resp.clone());
+        return resp;
+      } catch (err) {
+        return (await c.match(r, { ignoreSearch: true })) || Response.error();
+      }
+    }));
     return;
   }
   // mostra o que já está guardado (rápido e funciona sem internet) e atualiza por trás

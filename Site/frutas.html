@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Feirinha da vovó Lucy | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<style>
+.fe-cena{max-width:760px;margin:0 auto 12px;border:4px solid var(--marrom);border-radius:24px;overflow:hidden;box-shadow:0 5px 0 var(--marrom);background:#fff;position:relative}
+.fe-cena img{display:block;width:100%;height:auto}
+.fe-fala{position:absolute;left:10px;right:10px;bottom:10px;background:#fffdf3;border:3px solid var(--marrom);border-radius:18px;padding:6px 12px;font:700 clamp(1rem,3.4vw,1.35rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center;min-height:1.6em}
+.fe-modos{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:6px 0 14px}
+.fe-modos button{font:700 clamp(1.1rem,3.6vw,1.4rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:12px 20px;cursor:pointer;box-shadow:0 4px 0 var(--marrom);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:170px}
+.fe-modos button small{font:500 .9rem Fredoka,Arial,sans-serif}
+.fe-modos button .ic{font-size:2.2rem;line-height:1}
+.fe-barra{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:0 0 10px}
+.fe-feira{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,2vw,16px);max-width:760px;margin:0 auto;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+@media (max-width:520px){.fe-feira{grid-template-columns:repeat(2,1fr)}}
+.fe-fruta{position:relative;border:none;background:none;padding:0;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent}
+.fe-fruta .toldo{display:block;height:22px;border-radius:14px 14px 4px 4px;border:3px solid var(--marrom);border-bottom:none;
+  background:repeating-linear-gradient(90deg,var(--t1) 0 18px,#fff 18px 36px)}
+.fe-fruta .caixa{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:#e9b875;border:3px solid var(--marrom);border-radius:6px 6px 16px 16px;padding:10px 4px 8px;
+  background-image:repeating-linear-gradient(180deg,transparent 0 26px,rgba(120,70,20,.25) 26px 29px);box-shadow:0 4px 0 var(--marrom)}
+.fe-fruta .emo{font-size:clamp(2.6rem,10vw,4.2rem);line-height:1.1;filter:drop-shadow(0 2px 0 rgba(0,0,0,.15));transition:transform .2s}
+.fe-fruta .nome{font:700 clamp(1rem,3.4vw,1.3rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:2px solid var(--marrom);border-radius:999px;padding:0 10px}
+.fe-fruta .emo img,.fe-voa img{width:1.05em;height:1.05em;vertical-align:-.12em}
+.fe-cesta .cesto img{width:2rem;height:2rem}
+.fe-fruta:active .emo,.fe-fruta.pula .emo{transform:scale(1.25) rotate(-6deg)}
+.fe-fruta.erro{animation:fe-nao .4s}
+@keyframes fe-nao{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.fe-fruta.dica .caixa{animation:fe-brilho .45s ease-in-out 6 alternate}
+@keyframes fe-brilho{to{background-color:#ffe48a;box-shadow:0 0 0 6px #ffe48a,0 4px 0 var(--marrom)}}
+.fe-fruta.foi{opacity:.35;pointer-events:none}
+.fe-fruta.foi .emo{transform:scale(.7)}
+.fe-voa{position:fixed;z-index:50;font-size:3.6rem;pointer-events:none;transition:transform .8s cubic-bezier(.4,-.3,.6,1),opacity .8s}
+.fe-cesta{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px auto 0;max-width:760px}
+.fe-cesta .cesto{position:relative;min-width:200px;min-height:64px;background:#d39b55;border:4px solid var(--marrom);border-radius:12px 12px 40px 40px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;padding:4px 10px;font-size:2rem;
+  background-image:repeating-linear-gradient(45deg,transparent 0 8px,rgba(120,70,20,.3) 8px 10px),repeating-linear-gradient(-45deg,transparent 0 8px,rgba(120,70,20,.3) 8px 10px)}
+.fe-cesta .cesto::before{content:"";position:absolute;left:18%;right:18%;top:-30px;height:34px;border:4px solid var(--marrom);border-bottom:none;border-radius:40px 40px 0 0}
+.fe-cesta img{width:clamp(70px,16vw,110px);height:auto}
+.fe-cesta img.abana{animation:fe-abana .18s ease-in-out 8 alternate;transform-origin:50% 90%}
+@keyframes fe-abana{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+.fe-fim{text-align:center;margin:16px auto;max-width:760px}
+</style>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Feirinha da vovó Lucy 🍑</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+  <div class="fe-cena"><img src="imagens/jogos/feira-lucy.jpg" alt="A vovó Lucy, o papai e a Joy na feira, com um pêssego" width="1000" height="558"><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
+  <div id="escolha">
+    <div class="fe-modos">
+      <button type="button" id="b-passear"><span class="ic">🧺</span>Passear na feira<small>Toque na fruta e a vovó fala</small></button>
+      <button type="button" id="b-desafio"><span class="ic">🎯</span>Ajudar a vovó<small>A vovó pede, você acha</small></button>
+    </div>
+  </div>
+  <div id="partida" hidden>
+    <div class="fe-barra"><button type="button" class="botao" id="repetir" hidden>🔊 Ouvir de novo</button><button type="button" class="botao" id="ajuda" hidden>💡 Ajuda</button><button type="button" class="botao" id="voltar">Mudar</button></div>
+    <div class="fe-feira" id="feira"></div>
+    <div class="fe-cesta" id="cesta-box" hidden><div class="cesto" id="cesto" aria-label="Cestinha da vovó"></div><img id="joy" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy"></div>
+    <div class="fe-fim" id="fim" hidden>
+      <p class="festa-titulo" style="margin:0 0 8px">A cestinha ficou cheinha! 🧺🎉</p>
+      <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
+      <button type="button" class="botao" id="passear2">Passear na feira</button>
+    </div>
+  </div>
+</div>
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// 🍑 Feirinha da vovó Lucy (Ep. 7) — com a voz de verdade da vovó Lucy (ElevenLabs), em sons/lucy/.
+// Entra junto com o Ep. 7 (qua 18/11, 19h de Brasília = 22:00Z). Antes disso, só a Joice (pugsSouAdmin).
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const LIBERA = Date.parse("2026-11-18T22:00:00Z");
+  const FRUTAS = [
+    { id: "banana", nome: "Banana", emo: "🍌", cor: "#f6c945" },
+    { id: "morango", nome: "Morango", emo: "🍓", cor: "#e8505b" },
+    { id: "laranja", nome: "Laranja", emo: "🍊", cor: "#f39a2b" },
+    { id: "melancia", nome: "Melancia", emo: "🍉", cor: "#5cb85c" },
+    { id: "mamao", nome: "Mamão", emo: "🧡", img: "imagens/jogos/fruta-mamao.png", cor: "#f2884b" },
+    { id: "abacaxi", nome: "Abacaxi", emo: "🍍", cor: "#e3b23c" },
+    { id: "uva", nome: "Uva", emo: "🍇", cor: "#8e5bb5" },
+    { id: "pessego", nome: "Pêssego", emo: "🍑", cor: "#f4a28c" },
+  ];
+  const TEXTO = {
+    "oi-feira": "Oi, meu amor! Vem passear na feirinha com a vovó!", "oi-desafio": "Vamos encher a cestinha da vovó?",
+    "fruta-banana": "Banana! Amarelinha e docinha.", "fruta-morango": "Morango! Vermelhinho, olha que lindo.", "fruta-laranja": "Laranja! Pra fazer um suquinho gostoso.",
+    "fruta-melancia": "Melancia! Grandona e fresquinha.", "fruta-mamao": "Mamão! Bem molinho e docinho.", "fruta-abacaxi": "Abacaxi! Com uma coroinha na cabeça.",
+    "fruta-uva": "Uva! Um cachinho cheio de bolinhas.", "fruta-pessego": "Olha o pêssego! É a fruta preferida da vovó. 🍑",
+    "acertou-1": "Isso mesmo!", "acertou-2": "Muito bem, meu amorzinho!", "acertou-3": "Que lindo! Vai pra cestinha.",
+    "tenta-1": "Hum, essa não… Tenta de novo, meu amor.", "tenta-2": "Quase! Olha com calminha.", "ajuda": "Olha bem… tá aqui pertinho!",
+    "fim-1": "Muito bem! A vovó tá orgulhosa de você! 💛", "fim-2": "A cestinha ficou cheinha! Obrigada, meu amorzinho. Um beijo da vovó! 💛",
+  };
+  FRUTAS.forEach((f) => { TEXTO["pede-" + f.id] = (f.id === "pessego" ? "Agora pega o " : "Pega " + (["banana", "laranja", "melancia", "uva"].includes(f.id) ? "a " : "o ")) + f.nome.toLowerCase() + " pra vovó?"; });
+
+  // ---- voz da vovó: toca pelo Web Audio (o iPad libera no primeiro toque e depois toca sempre) ----
+  let ctx = null, fonte = null; const buf = {};
+  const audio = () => { if (!ctx) { const C = window.AudioContext || window.webkitAudioContext; if (C) ctx = new C(); } if (ctx && ctx.state === "suspended") ctx.resume(); return ctx; };
+  const carregar = (k) => { const c = audio(); if (!c) return Promise.reject(); if (!buf[k]) buf[k] = fetch("sons/lucy/" + k + ".mp3").then((r) => r.arrayBuffer()).then((b) => new Promise((ok, e) => c.decodeAudioData(b, ok, e))); return buf[k]; };
+  const somLigado = () => !(window.PugsSom && PugsSom.ligado === false);
+  let fila = 0;
+  function vovo(k) { // fala e avisa quando terminou
+    const minha = ++fila; $("fala").textContent = TEXTO[k] || "";
+    if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
+    return new Promise((ok) => {
+      let feito = false; const fim = () => { if (!feito) { feito = true; ok(minha === fila); } };
+      if (!somLigado()) return setTimeout(fim, 900);
+      setTimeout(fim, 8000);
+      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(), g = c.createGain(); g.gain.value = 1.1; s.buffer = b; s.connect(g).connect(c.destination); s.onended = fim; s.start(); fonte = s; }).catch(fim);
+    });
+  }
+  const prep = (ks) => ks.forEach((k) => carregar(k).catch(() => {}));
+  const sorteia = (a) => a[Math.floor(Math.random() * a.length)];
+  const embaralha = (a) => a.map((v) => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map((x) => x[1]);
+  const efeito = (n) => { try { if (window.PugsSom && PugsSom[n]) PugsSom[n](); } catch (e) {} };
+  const latir = (q) => { try { if (window.PugsSom && PugsSom.latido) PugsSom.latido(q); } catch (e) {} };
+
+  // ---- feira ----
+  let modo = "passear", ordem = [], alvo = null, ocupado = false, erros = 0;
+  function montarFeira() {
+    $("feira").innerHTML = embaralha(FRUTAS.slice()).map((f) => `<button type="button" class="fe-fruta" data-id="${f.id}" style="--t1:${f.cor}" aria-label="${f.nome}"><span class="toldo"></span><span class="caixa"><span class="emo">${f.img ? `<img src="${f.img}" alt="">` : f.emo}</span><span class="nome">${f.nome}</span></span></button>`).join("");
+  }
+  const botao = (id) => $("feira").querySelector(`[data-id="${id}"]`);
+  function comecar(m) {
+    audio(); modo = m; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; montarFeira();
+    const des = m === "desafio";
+    $("repetir").hidden = $("ajuda").hidden = !des; $("cesta-box").hidden = !des; $("cesto").innerHTML = "";
+    if (des) {
+      ordem = embaralha(FRUTAS.filter((f) => f.id !== "pessego")).slice(0, 7).concat(FRUTAS.find((f) => f.id === "pessego")); // o pêssego (a preferida da vovó) fica por último
+      prep(["oi-desafio", "acertou-1", "acertou-2", "acertou-3", "tenta-1", "tenta-2", "ajuda", "fim-1", "fim-2"].concat(ordem.map((f) => "pede-" + f.id)));
+      ocupado = true; vovo("oi-desafio").then(() => setTimeout(proxima, 300));
+    } else { prep(FRUTAS.map((f) => "fruta-" + f.id)); vovo("oi-feira"); }
+  }
+  function proxima() {
+    ocupado = false; erros = 0;
+    if (!ordem.length) return terminar();
+    alvo = ordem.shift(); vovo("pede-" + alvo.id);
+  }
+  function voar(el, emo) {
+    const r = el.getBoundingClientRect(), c = $("cesto").getBoundingClientRect(), v = document.createElement("span");
+    v.className = "fe-voa"; v.innerHTML = emo; v.style.left = r.left + r.width / 2 - 28 + "px"; v.style.top = r.top + r.height / 2 - 36 + "px"; document.body.appendChild(v);
+    requestAnimationFrame(() => { v.style.transform = `translate(${c.left + c.width / 2 - (r.left + r.width / 2)}px,${c.top + c.height / 2 - (r.top + r.height / 2)}px) scale(.6)`; });
+    setTimeout(() => { v.remove(); $("cesto").insertAdjacentHTML("beforeend", emo); }, 820);
+  }
+  function abanar() { const j = $("joy"); j.classList.remove("abana"); void j.offsetWidth; j.classList.add("abana"); }
+  $("feira").addEventListener("click", (e) => {
+    const b = e.target.closest(".fe-fruta"); if (!b) return; audio();
+    const f = FRUTAS.find((x) => x.id === b.dataset.id);
+    b.classList.remove("pula"); void b.offsetWidth; b.classList.add("pula"); setTimeout(() => b.classList.remove("pula"), 350);
+    if (modo === "passear") { efeito("pop"); vovo("fruta-" + f.id); return; }
+    if (ocupado || !alvo) return;
+    if (f.id === alvo.id) {
+      ocupado = true; efeito("acerto"); b.classList.add("foi"); b.classList.remove("dica"); voar(b, f.img ? `<img src="${f.img}" alt="">` : f.emo); abanar();
+      if (f.id === "pessego" || Math.random() < 0.35) setTimeout(() => latir("joy"), 500);
+      const fala = f.id === "pessego" ? "fruta-pessego" : sorteia(["acertou-1", "acertou-2", "acertou-3"]);
+      vovo(fala).then((ok) => { if (ok) setTimeout(proxima, 350); });
+    } else {
+      erros++; efeito("erro"); b.classList.remove("erro"); void b.offsetWidth; b.classList.add("erro");
+      ocupado = true; vovo(sorteia(["tenta-1", "tenta-2"])).then((ok) => { if (!ok) return; ocupado = false; if (erros >= 2) dica(); });
+    }
+  });
+  function dica() { if (!alvo) return; const b = botao(alvo.id); b.classList.remove("dica"); void b.offsetWidth; b.classList.add("dica"); }
+  $("ajuda").onclick = () => { if (!alvo || ocupado) return; dica(); ocupado = true; vovo("ajuda").then((ok) => { if (ok) { ocupado = false; } }); };
+  $("repetir").onclick = () => { if (alvo && !ocupado) vovo("pede-" + alvo.id); };
+  function terminar() {
+    alvo = null; ocupado = true; $("fim").hidden = false; efeito("festa"); setTimeout(() => latir("joy"), 700); setTimeout(() => latir("jane"), 1300); abanar();
+    setTimeout(() => vovo(sorteia(["fim-1", "fim-2"])), 900);
+    setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+  }
+  $("b-passear").onclick = () => comecar("passear");
+  $("b-desafio").onclick = () => comecar("desafio");
+  $("passear2").onclick = () => comecar("passear");
+  $("denovo").onclick = () => comecar("desafio");
+  $("voltar").onclick = () => { ++fila; if (fonte) { try { fonte.stop(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
+  try { if (window.PugsSom && PugsSom.carregarSons) PugsSom.carregarSons(["latido-joy", "latido-jane"]); } catch (e) {}
+
+  const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; };
+  const souAdmin = () => (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false));
+  pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    if (Date.now() < LIBERA && !(await souAdmin())) { location.href = "clube.html"; return; } // até quarta 18/11, só a Joice vê
+    abrir();
+  });
+})();
+</script>
+
+</body></html>
