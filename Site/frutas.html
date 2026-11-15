@@ -60,7 +60,7 @@
 /* v2 (15/11): tudo cabe numa tela só, e dá para tocar nas frutas da própria cena */
 .fe-palco{display:grid;grid-template-columns:1fr;gap:12px;max-width:1150px;margin:0 auto}
 .fe-esq,.fe-dir{min-width:0}
-.fe-cena{max-width:min(100%,calc(40dvh * 1.79));margin:0 auto 8px}
+.fe-cena{max-width:min(100%,calc(40dvh * 1.778));margin:0 auto 8px}
 .fe-fala{top:8px;bottom:auto}
 .fe-alvos{position:absolute;inset:0}
 .fe-alvo{position:absolute;border:0;background:transparent;border-radius:30%;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent}
@@ -79,7 +79,7 @@
 .fe-fruta .nome{font-size:clamp(.9rem,min(2.8vw,2.4dvh),1.2rem)}
 @media (min-aspect-ratio:5/4){
   .fe-palco{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:start}
-  .fe-cena{max-width:min(100%,calc((100dvh - 230px) * 1.79))}
+  .fe-cena{max-width:min(100%,calc((100dvh - 230px) * 1.778))}
   .fe-feira{grid-template-columns:repeat(2,1fr)}
   .fe-fruta .emo{font-size:clamp(1.8rem,6.5dvh,3.2rem)}
   .fe-modos{flex-direction:column;align-items:stretch;margin-top:0}
@@ -90,7 +90,7 @@
 <div id="jogo" hidden>
  <div class="fe-palco">
   <div class="fe-esq">
-   <div class="fe-cena" id="cena"><img src="imagens/jogos/feira-lucy.jpg" alt="A vovó Lucy, o papai e a Joy na feira, com um pêssego" width="1000" height="558"><div class="fe-alvos" id="alvos"></div><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
+   <div class="fe-cena" id="cena"><img src="imagens/jogos/feira-lucy.jpg" alt="A vovó Lucy na feira com a Joy e a Jane, no meio das barracas de frutas" width="1280" height="720"><div class="fe-alvos" id="alvos"></div><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
    <div class="fe-barra" id="barra" hidden><button type="button" class="botao" id="repetir" hidden>🔊 Ouvir de novo</button><button type="button" class="botao" id="ajuda" hidden>💡 Ajuda</button><button type="button" class="botao" id="voltar">Mudar</button></div>
    <div class="fe-cesta" id="cesta-box" hidden><div class="cesto" id="cesto" aria-label="Cestinha da vovó"></div><img id="joy" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy"></div>
   </div>
@@ -175,12 +175,13 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 
 
   // frutas que aparecem na própria cena (em % da imagem): dá para tocar direto nelas
-  const ALVOS = [
-    { id: "pessego", x: 0, y: 42, w: 29, h: 55 }, { id: "banana", x: 75, y: 36, w: 17, h: 10 }, { id: "laranja", x: 85, y: 46, w: 15, h: 12 },
-    { id: "melancia", x: 68, y: 58, w: 8, h: 14 }, { id: "mamao", x: 76, y: 65, w: 10, h: 16 }, { id: "abacaxi", x: 86.5, y: 69, w: 13.5, h: 22 },
+  const ALVOS = [ // cena da musiquinha das frutas (todas as 8 frutas na feira)
+    { id: "banana", x: 0, y: 43, w: 8.5, h: 16 }, { id: "banana", x: 75, y: 37, w: 9, h: 18 }, { id: "morango", x: 8.5, y: 44, w: 14, h: 12 }, { id: "morango", x: 7.5, y: 69.5, w: 13.5, h: 8.5 },
+    { id: "laranja", x: 15, y: 64, w: 13, h: 5.5 }, { id: "laranja", x: 84, y: 45, w: 16, h: 13 }, { id: "pessego", x: 0, y: 84, w: 9, h: 13 }, { id: "uva", x: 5, y: 78, w: 8.5, h: 10 },
+    { id: "melancia", x: 68, y: 58, w: 8.5, h: 14 }, { id: "mamao", x: 76.5, y: 67, w: 9.5, h: 11 }, { id: "mamao", x: 93, y: 35, w: 7, h: 9 }, { id: "abacaxi", x: 87, y: 69, w: 13, h: 17 },
   ];
   $("alvos").innerHTML = ALVOS.map((a) => `<button type="button" class="fe-alvo" data-id="${a.id}" aria-label="${a.id}" style="left:${a.x}%;top:${a.y}%;width:${a.w}%;height:${a.h}%"></button>`).join("");
-  const alvoCena = (id) => $("alvos").querySelector(`[data-id="${id}"]`);
+  const alvosCena = (id) => [...$("alvos").querySelectorAll(`[data-id="${id}"]`)];
   // ---- feira ----
   let modo = "passear", ordem = [], alvo = null, ocupado = false, erros = 0;
   function montarFeira() {
@@ -225,7 +226,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     if (modo === "passear") { efeito("pop"); vovo("fruta-" + f.id); return; }
     if (ocupado || !alvo) return;
     if (f.id === alvo.id) {
-      ocupado = true; efeito("acerto"); b.classList.add("foi"); b.classList.remove("dica"); const ac = alvoCena(f.id); if (ac) ac.classList.add("foi"); voar(origem, f.img ? `<img src="${f.img}" alt="">` : f.emo); abanar();
+      ocupado = true; efeito("acerto"); b.classList.add("foi"); b.classList.remove("dica"); alvosCena(f.id).forEach((a) => a.classList.add("foi")); voar(origem, f.img ? `<img src="${f.img}" alt="">` : f.emo); abanar();
       if (f.id === "pessego" || Math.random() < 0.35) setTimeout(() => latir("joy"), 500);
       const fala = f.id === "pessego" ? "fruta-pessego" : sorteia(["acertou-1", "acertou-2", "acertou-3"]);
       vovo(fala).then((ok) => { if (ok) setTimeout(proxima, 350); });
@@ -234,7 +235,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       ocupado = true; vovo(sorteia(["tenta-1", "tenta-2"])).then((ok) => { if (!ok) return; ocupado = false; if (erros >= 2) dica(); });
     }
   }
-  function dica() { if (!alvo) return; [botao(alvo.id), alvoCena(alvo.id)].forEach((b) => { if (!b) return; b.classList.remove("dica"); void b.offsetWidth; b.classList.add("dica"); }); }
+  function dica() { if (!alvo) return; [botao(alvo.id), ...alvosCena(alvo.id)].forEach((b) => { if (!b) return; b.classList.remove("dica"); void b.offsetWidth; b.classList.add("dica"); }); }
   $("ajuda").onclick = () => { if (!alvo || ocupado) return; dica(); ocupado = true; vovo("ajuda").then((ok) => { if (ok) { ocupado = false; } }); };
   $("repetir").onclick = () => { if (alvo && !ocupado) vovo("pede-" + alvo.id); };
   function terminar() {
