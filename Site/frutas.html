@@ -56,27 +56,59 @@
 .fe-cesta img.abana{animation:fe-abana .18s ease-in-out 8 alternate;transform-origin:50% 90%}
 @keyframes fe-abana{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
 .fe-fim{text-align:center;margin:16px auto;max-width:760px}
+
+/* v2 (15/11): tudo cabe numa tela só, e dá para tocar nas frutas da própria cena */
+.fe-palco{display:grid;grid-template-columns:1fr;gap:12px;max-width:1150px;margin:0 auto}
+.fe-esq,.fe-dir{min-width:0}
+.fe-cena{max-width:min(100%,calc(40dvh * 1.79));margin:0 auto 8px}
+.fe-fala{top:8px;bottom:auto}
+.fe-alvos{position:absolute;inset:0}
+.fe-alvo{position:absolute;border:0;background:transparent;border-radius:30%;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent}
+.fe-alvo.toque{animation:fe-anel .5s}
+@keyframes fe-anel{from{box-shadow:inset 0 0 0 0 rgba(255,228,138,.9)}50%{box-shadow:inset 0 0 0 999px rgba(255,228,138,.35)}to{box-shadow:inset 0 0 0 0 rgba(255,228,138,0)}}
+.fe-alvo.dica{animation:fe-anel .9s ease-in-out 3}
+.fe-alvo.foi{pointer-events:none}
+.fe-barra{margin:0 0 6px}
+.fe-cesta{margin:4px auto 0}
+.fe-cesta .cesto{min-height:54px;min-width:180px;font-size:1.7rem}
+.fe-cesta img{width:clamp(60px,10dvh,96px)}
+.fe-feira{gap:clamp(6px,1.2vw,12px)}
+.fe-fruta .toldo{height:14px}
+.fe-fruta .caixa{padding:4px 2px 6px}
+.fe-fruta .emo{font-size:clamp(2rem,min(8vw,7dvh),3.4rem)}
+.fe-fruta .nome{font-size:clamp(.9rem,min(2.8vw,2.4dvh),1.2rem)}
+@media (min-aspect-ratio:5/4){
+  .fe-palco{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:start}
+  .fe-cena{max-width:min(100%,calc((100dvh - 230px) * 1.79))}
+  .fe-feira{grid-template-columns:repeat(2,1fr)}
+  .fe-fruta .emo{font-size:clamp(1.8rem,6.5dvh,3.2rem)}
+  .fe-modos{flex-direction:column;align-items:stretch;margin-top:0}
+}
 </style>
 <div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Feirinha da vovó Lucy 🍑</h1></div>
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
-  <div class="fe-cena"><img src="imagens/jogos/feira-lucy.jpg" alt="A vovó Lucy, o papai e a Joy na feira, com um pêssego" width="1000" height="558"><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
-  <div id="escolha">
+ <div class="fe-palco">
+  <div class="fe-esq">
+   <div class="fe-cena" id="cena"><img src="imagens/jogos/feira-lucy.jpg" alt="A vovó Lucy, o papai e a Joy na feira, com um pêssego" width="1000" height="558"><div class="fe-alvos" id="alvos"></div><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
+   <div class="fe-barra" id="barra" hidden><button type="button" class="botao" id="repetir" hidden>🔊 Ouvir de novo</button><button type="button" class="botao" id="ajuda" hidden>💡 Ajuda</button><button type="button" class="botao" id="voltar">Mudar</button></div>
+   <div class="fe-cesta" id="cesta-box" hidden><div class="cesto" id="cesto" aria-label="Cestinha da vovó"></div><img id="joy" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy"></div>
+  </div>
+  <div class="fe-dir">
+   <div id="escolha">
     <div class="fe-modos">
-      <button type="button" id="b-passear"><span class="ic">🧺</span>Passear na feira<small>Toque na fruta e a vovó fala</small></button>
-      <button type="button" id="b-desafio"><span class="ic">🎯</span>Ajudar a vovó<small>A vovó pede, você acha</small></button>
+     <button type="button" id="b-passear"><span class="ic">🧺</span>Passear na feira<small>Toque na fruta e a vovó fala</small></button>
+     <button type="button" id="b-desafio"><span class="ic">🎯</span>Ajudar a vovó<small>A vovó pede, você acha</small></button>
     </div>
+   </div>
+   <div id="partida" hidden><div class="fe-feira" id="feira"></div></div>
   </div>
-  <div id="partida" hidden>
-    <div class="fe-barra"><button type="button" class="botao" id="repetir" hidden>🔊 Ouvir de novo</button><button type="button" class="botao" id="ajuda" hidden>💡 Ajuda</button><button type="button" class="botao" id="voltar">Mudar</button></div>
-    <div class="fe-feira" id="feira"></div>
-    <div class="fe-cesta" id="cesta-box" hidden><div class="cesto" id="cesto" aria-label="Cestinha da vovó"></div><img id="joy" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy"></div>
-    <div class="fe-fim" id="fim" hidden>
-      <p class="festa-titulo" style="margin:0 0 8px">A cestinha ficou cheinha! 🧺🎉</p>
-      <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
-      <button type="button" class="botao" id="passear2">Passear na feira</button>
-    </div>
-  </div>
+ </div>
+ <div class="fe-fim" id="fim" hidden>
+  <p class="festa-titulo" style="margin:0 0 8px">A cestinha ficou cheinha! 🧺🎉</p>
+  <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
+  <button type="button" class="botao" id="passear2">Passear na feira</button>
+ </div>
 </div>
 </main>
 <div class="colinas" aria-hidden="true"></div>
@@ -132,7 +164,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       let feito = false; const fim = () => { if (!feito) { feito = true; ok(minha === fila); } };
       if (!somLigado()) return setTimeout(fim, 900);
       setTimeout(fim, 8000);
-      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(), g = c.createGain(); g.gain.value = 1.1; s.buffer = b; s.connect(g).connect(c.destination); s.onended = fim; s.start(); fonte = s; }).catch(fim);
+      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(), g = c.createGain(); g.gain.value = 1; s.buffer = b; s.connect(g).connect(c.destination); s.onended = fim; s.start(); fonte = s; }).catch(fim);
     });
   }
   const prep = (ks) => ks.forEach((k) => carregar(k).catch(() => {}));
@@ -141,6 +173,14 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const efeito = (n) => { try { if (window.PugsSom && PugsSom[n]) PugsSom[n](); } catch (e) {} };
   const latir = (q) => { try { if (window.PugsSom && PugsSom.latido) PugsSom.latido(q); } catch (e) {} };
 
+
+  // frutas que aparecem na própria cena (em % da imagem): dá para tocar direto nelas
+  const ALVOS = [
+    { id: "pessego", x: 0, y: 42, w: 29, h: 55 }, { id: "banana", x: 75, y: 36, w: 17, h: 10 }, { id: "laranja", x: 85, y: 46, w: 15, h: 12 },
+    { id: "melancia", x: 68, y: 58, w: 8, h: 14 }, { id: "mamao", x: 76, y: 65, w: 10, h: 16 }, { id: "abacaxi", x: 86.5, y: 69, w: 13.5, h: 22 },
+  ];
+  $("alvos").innerHTML = ALVOS.map((a) => `<button type="button" class="fe-alvo" data-id="${a.id}" aria-label="${a.id}" style="left:${a.x}%;top:${a.y}%;width:${a.w}%;height:${a.h}%"></button>`).join("");
+  const alvoCena = (id) => $("alvos").querySelector(`[data-id="${id}"]`);
   // ---- feira ----
   let modo = "passear", ordem = [], alvo = null, ocupado = false, erros = 0;
   function montarFeira() {
@@ -150,7 +190,9 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   function comecar(m) {
     audio(); modo = m; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; montarFeira();
     const des = m === "desafio";
-    $("repetir").hidden = $("ajuda").hidden = !des; $("cesta-box").hidden = !des; $("cesto").innerHTML = "";
+    $("repetir").hidden = $("ajuda").hidden = !des; $("cesta-box").hidden = !des; $("cesto").innerHTML = ""; $("barra").hidden = false;
+    $("alvos").querySelectorAll(".fe-alvo").forEach((a) => a.classList.remove("foi", "dica"));
+    setTimeout(() => $("jogo").scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     if (des) {
       ordem = embaralha(FRUTAS.filter((f) => f.id !== "pessego")).slice(0, 7).concat(FRUTAS.find((f) => f.id === "pessego")); // o pêssego (a preferida da vovó) fica por último
       prep(["oi-desafio", "acertou-1", "acertou-2", "acertou-3", "tenta-1", "tenta-2", "ajuda", "fim-1", "fim-2"].concat(ordem.map((f) => "pede-" + f.id)));
@@ -169,14 +211,21 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     setTimeout(() => { v.remove(); $("cesto").insertAdjacentHTML("beforeend", emo); }, 820);
   }
   function abanar() { const j = $("joy"); j.classList.remove("abana"); void j.offsetWidth; j.classList.add("abana"); }
-  $("feira").addEventListener("click", (e) => {
-    const b = e.target.closest(".fe-fruta"); if (!b) return; audio();
+  $("alvos").addEventListener("click", (e) => {
+    const a = e.target.closest(".fe-alvo"); if (!a) return;
+    if ($("partida").hidden) comecar("passear");
+    a.classList.remove("toque"); void a.offsetWidth; a.classList.add("toque");
+    const b = botao(a.dataset.id); if (b) tocar(b, a);
+  });
+  $("feira").addEventListener("click", (e) => { const b = e.target.closest(".fe-fruta"); if (b) tocar(b, b); });
+  function tocar(b, origem) {
+    audio();
     const f = FRUTAS.find((x) => x.id === b.dataset.id);
     b.classList.remove("pula"); void b.offsetWidth; b.classList.add("pula"); setTimeout(() => b.classList.remove("pula"), 350);
     if (modo === "passear") { efeito("pop"); vovo("fruta-" + f.id); return; }
     if (ocupado || !alvo) return;
     if (f.id === alvo.id) {
-      ocupado = true; efeito("acerto"); b.classList.add("foi"); b.classList.remove("dica"); voar(b, f.img ? `<img src="${f.img}" alt="">` : f.emo); abanar();
+      ocupado = true; efeito("acerto"); b.classList.add("foi"); b.classList.remove("dica"); const ac = alvoCena(f.id); if (ac) ac.classList.add("foi"); voar(origem, f.img ? `<img src="${f.img}" alt="">` : f.emo); abanar();
       if (f.id === "pessego" || Math.random() < 0.35) setTimeout(() => latir("joy"), 500);
       const fala = f.id === "pessego" ? "fruta-pessego" : sorteia(["acertou-1", "acertou-2", "acertou-3"]);
       vovo(fala).then((ok) => { if (ok) setTimeout(proxima, 350); });
@@ -184,8 +233,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       erros++; efeito("erro"); b.classList.remove("erro"); void b.offsetWidth; b.classList.add("erro");
       ocupado = true; vovo(sorteia(["tenta-1", "tenta-2"])).then((ok) => { if (!ok) return; ocupado = false; if (erros >= 2) dica(); });
     }
-  });
-  function dica() { if (!alvo) return; const b = botao(alvo.id); b.classList.remove("dica"); void b.offsetWidth; b.classList.add("dica"); }
+  }
+  function dica() { if (!alvo) return; [botao(alvo.id), alvoCena(alvo.id)].forEach((b) => { if (!b) return; b.classList.remove("dica"); void b.offsetWidth; b.classList.add("dica"); }); }
   $("ajuda").onclick = () => { if (!alvo || ocupado) return; dica(); ocupado = true; vovo("ajuda").then((ok) => { if (ok) { ocupado = false; } }); };
   $("repetir").onclick = () => { if (alvo && !ocupado) vovo("pede-" + alvo.id); };
   function terminar() {
@@ -197,7 +246,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   $("b-desafio").onclick = () => comecar("desafio");
   $("passear2").onclick = () => comecar("passear");
   $("denovo").onclick = () => comecar("desafio");
-  $("voltar").onclick = () => { ++fila; if (fonte) { try { fonte.stop(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
+  $("voltar").onclick = () => { ++fila; if (fonte) { try { fonte.stop(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("cesta-box").hidden = true; $("fim").hidden = true; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
   try { if (window.PugsSom && PugsSom.carregarSons) PugsSom.carregarSons(["latido-joy", "latido-jane"]); } catch (e) {}
 
   const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; };

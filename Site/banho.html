@@ -217,7 +217,9 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     const barra = (v) => { barraEl.style.width = Math.round(Math.min(1, v) * 100) + "%"; };
     const texto = (t) => { passoEl.textContent = t; };
     function medir() { const r = area.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1); cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, r.width, r.height); cel = new Uint8Array(16 * 12); celFeitas = 0; }
-    const fundo = area.querySelector(".fundo"); fundo.onload = () => { medir(); irPara(0); }; fundo.src = o.img;
+    const fundo = area.querySelector(".fundo"); fundo.onload = () => { encaixar(); medir(); irPara(0); };
+    // a cena cabe inteira na tela, com os botões de baixo à vista (a tela fica travada durante o jogo)
+    function encaixar() { const rz = (fundo.naturalWidth || 1) / (fundo.naturalHeight || 1); lado.style.width = "100%"; lado.style.maxWidth = `min(100%, calc((100dvh - ${document.documentElement.classList.contains("em-cuidar") || document.body.classList.contains("em-cuidar") ? 170 : 240}px) * ${rz.toFixed(3)}))`; lado.style.marginInline = "auto"; } fundo.src = o.img;
     function parar() { clearInterval(timer); clearInterval(mede); timer = mede = null; }
     function soltar() { if (caixa.querySelectorAll(".bolha").length > 9) return; novaBolha(caixa, area, sorteio(0), () => { if (passo !== 1) return; bolhasFeitas++; barra(bolhasFeitas / META_BOLHAS); if (bolhasFeitas >= META_BOLHAS) { PugsSom.acerto(); caixa.querySelectorAll(".bolha").forEach((x) => x.remove()); irPara(2); } }); }
     function irPara(p) {

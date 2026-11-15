@@ -97,7 +97,7 @@ function comecar() {
     $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
     colocadas = 0; selecionada = null;
     const tab = $("tabuleiro"), band = $("bandeja");
-    tab.style.aspectRatio = prop; tab.style.gridTemplateColumns = `repeat(${c},1fr)`; tab.style.gridTemplateRows = `repeat(${l},1fr)`;
+    tab.style.aspectRatio = prop; tab.style.maxWidth = `min(760px, calc((100dvh - 330px) * ${prop.toFixed(3)}))`; // o tabuleiro não esconde a bandeja de peças tab.style.gridTemplateColumns = `repeat(${c},1fr)`; tab.style.gridTemplateRows = `repeat(${l},1fr)`;
     tab.style.setProperty("--fundo", `url("${src}")`);
     $("modelo").src = src;
     tab.classList.toggle("sem-ajuda", c * l > 6);
@@ -132,6 +132,7 @@ function colocar(p, vaga) {
   }
   p.style.width = ""; p.classList.add("certa"); p.classList.remove("escolhida"); vaga.appendChild(p);
   colocadas++; PugsSom.pop();
+  const band = document.getElementById("bandeja"), r = band.getBoundingClientRect(); if (band.children.length && (r.top > innerHeight - 40 || r.bottom < 0)) band.scrollIntoView({ behavior: "smooth", block: "end" });
   if (colocadas === nivel.c * nivel.l) setTimeout(festa, 400);
   return true;
 }
