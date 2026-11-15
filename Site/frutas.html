@@ -204,7 +204,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const souAdmin = () => (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false));
   pugsSoNoClube().then(async (f) => {
     if (!f) return;
-    if (Date.now() < LIBERA && !(await souAdmin())) { location.href = "clube.html"; return; } // até quarta 18/11, só a Joice vê
+    if (Date.now() < LIBERA && !(await souAdmin()) && !(await souAdmin())) { location.href = "clube.html"; return; } // até quarta 18/11, só a Joice vê
     abrir();
   });
 })();
