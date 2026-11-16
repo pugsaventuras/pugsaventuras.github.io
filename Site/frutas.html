@@ -85,6 +85,8 @@
   .fe-modos{flex-direction:column;align-items:stretch;margin-top:0}
 }
 
+.fe-cena .fe-mexe{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.fe-cena .fe-mexe[hidden]{display:none}
 .fe-cena .fe-falando{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .fe-cena .fe-falando[hidden]{display:none}
 .fe-alvos{z-index:2}.fe-fala{z-index:3}
@@ -97,7 +99,7 @@
 <div id="jogo" hidden>
  <div class="fe-palco">
   <div class="fe-esq">
-   <div class="fe-cena" id="cena"><video src="imagens/jogos/feira-lucy.mp4" poster="imagens/jogos/feira-lucy.jpg" autoplay muted loop playsinline disablepictureinpicture aria-label="A vovó Lucy na feira com a Joy e a Jane, no meio das barracas de frutas" width="1280" height="720"></video><video class="fe-falando" id="falando" playsinline preload="auto" hidden></video><div class="fe-alvos" id="alvos"></div><button type="button" class="fe-oi" id="oi">👋 Toque para a vovó Lucy falar</button><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
+   <div class="fe-cena" id="cena"><img src="imagens/jogos/feira-lucy.jpg" alt="A vovó Lucy na feira com a Joy e a Jane, no meio das barracas de frutas" width="1280" height="720"><video class="fe-mexe" id="mexe" src="imagens/jogos/feira-lucy.mp4" muted loop playsinline preload="auto" disablepictureinpicture hidden></video><video class="fe-falando" id="falando" playsinline preload="auto" hidden></video><div class="fe-alvos" id="alvos"></div><button type="button" class="fe-oi" id="oi">👋 Toque para a vovó Lucy falar</button><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
    <div class="fe-barra" id="barra" hidden><button type="button" class="botao" id="repetir" hidden>🔊 Ouvir de novo</button><button type="button" class="botao" id="ajuda" hidden>💡 Ajuda</button><button type="button" class="botao" id="voltar">Mudar</button></div>
    <div class="fe-cesta" id="cesta-box" hidden><div class="cesto" id="cesto" aria-label="Cestinha da vovó"></div><img id="joy" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy"></div>
   </div>
@@ -160,7 +162,9 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 
   // ---- voz da vovó: toca pelo Web Audio (o iPad libera no primeiro toque e depois toca sempre) ----
   let ctx = null, fonte = null; const buf = {};
-  const filme = () => { const v = document.querySelector(".fe-cena video"); if (v && v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } };
+  const filme = () => { const v = $("mexe"); if (!v) return; const p = v.play(); if (p && p.then) p.then(() => { if (v.hidden) v.pause(); }).catch(() => {}); };
+  // a vovó só se mexe enquanto está falando; esperando a criança, a cena fica paradinha
+  function mexer(on) { const v = $("mexe"); if (!v) return; if (on) { v.hidden = false; const p = v.play(); if (p && p.catch) p.catch(() => { v.hidden = true; }); } else { v.pause(); v.hidden = true; } }
   document.addEventListener("pointerdown", filme, { once: true });
   const audio = () => { if (!ctx) { const C = window.AudioContext || window.webkitAudioContext; if (C) ctx = new C(); } if (ctx && ctx.state === "suspended") ctx.resume(); return ctx; };
   const carregar = (k) => { const c = audio(); if (!c) return Promise.reject(); if (!buf[k]) buf[k] = fetch("sons/lucy/" + k + ".mp3").then((r) => r.arrayBuffer()).then((b) => new Promise((ok, e) => c.decodeAudioData(b, ok, e))); return buf[k]; };
@@ -171,10 +175,10 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     const minha = ++fila; $("fala").textContent = TEXTO[k] || "";
     if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
     return new Promise((ok) => {
-      let feito = false; const fim = () => { if (!feito) { feito = true; ok(minha === fila); } };
+      let feito = false; const fim = () => { if (!feito) { feito = true; if (minha === fila) mexer(false); ok(minha === fila); } };
       if (!somLigado()) return setTimeout(fim, 900);
       setTimeout(fim, 8000);
-      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(), g = c.createGain(); g.gain.value = 1; s.buffer = b; s.connect(g).connect(c.destination); s.onended = fim; s.start(); fonte = s; }).catch(fim);
+      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(), g = c.createGain(); g.gain.value = 1; s.buffer = b; s.connect(g).connect(c.destination); s.onended = fim; s.start(); fonte = s; mexer(true); }).catch(fim);
     });
   }
   const prep = (ks) => ks.forEach((k) => carregar(k).catch(() => {}));
@@ -202,7 +206,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
     return new Promise((ok) => {
       let feito = false; const fim = () => { if (feito) return; feito = true; v.hidden = true; try { v.pause(); } catch (e) {} ok(minha === fila); };
-      v.src = CLIPES[k]; v.muted = false; v.currentTime = 0; v.hidden = false; v.onended = fim; setTimeout(fim, 9000);
+      mexer(false); v.src = CLIPES[k]; v.muted = false; v.currentTime = 0; v.hidden = false; v.onended = fim; setTimeout(fim, 9000);
       const p = v.play(); if (p && p.catch) p.catch(() => { v.hidden = true; vovo(k).then(fim); });
     });
   }
@@ -223,7 +227,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     if (des) {
       ordem = embaralha(FRUTAS.filter((f) => f.id !== "pessego")).slice(0, 7).concat(FRUTAS.find((f) => f.id === "pessego")); // o pêssego (a preferida da vovó) fica por último
       prep(["oi-desafio", "acertou-1", "acertou-2", "acertou-3", "tenta-1", "tenta-2", "ajuda", "fim-1", "fim-2"].concat(ordem.map((f) => "pede-" + f.id)));
-      ocupado = true; vovo("oi-desafio").then(() => setTimeout(proxima, 300));
+      ocupado = true; vovo("oi-desafio").then(() => setTimeout(proxima, 700));
     } else { prep(FRUTAS.map((f) => "fruta-" + f.id)); if (!jaDisseOi) dizerOi(); }
   }
   function proxima() {
@@ -255,7 +259,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       ocupado = true; efeito("acerto"); b.classList.add("foi"); b.classList.remove("dica"); alvosCena(f.id).forEach((a) => a.classList.add("foi")); voar(origem, f.img ? `<img src="${f.img}" alt="">` : f.emo); abanar();
       if (f.id === "pessego" || Math.random() < 0.35) setTimeout(() => latir("joy"), 500);
       const fala = f.id === "pessego" ? "fruta-pessego" : sorteia(["acertou-1", "acertou-2", "acertou-3"]);
-      (f.id === "pessego" ? vovoFilme : vovo)(fala).then((ok) => { if (ok) setTimeout(proxima, 350); });
+      (f.id === "pessego" ? vovoFilme : vovo)(fala).then((ok) => { if (ok) setTimeout(proxima, 1200); });
     } else {
       erros++; efeito("erro"); b.classList.remove("erro"); void b.offsetWidth; b.classList.add("erro");
       ocupado = true; vovo(sorteia(["tenta-1", "tenta-2"])).then((ok) => { if (!ok) return; ocupado = false; if (erros >= 2) dica(); });
@@ -273,7 +277,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   $("b-desafio").onclick = () => comecar("desafio");
   $("passear2").onclick = () => comecar("passear");
   $("denovo").onclick = () => comecar("desafio");
-  $("voltar").onclick = () => { ++fila; if (fonte) { try { fonte.stop(); } catch (e) {} } { const v = $("falando"); v.hidden = true; try { v.pause(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("cesta-box").hidden = true; $("fim").hidden = true; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
+  $("voltar").onclick = () => { ++fila; mexer(false); if (fonte) { try { fonte.stop(); } catch (e) {} } { const v = $("falando"); v.hidden = true; try { v.pause(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("cesta-box").hidden = true; $("fim").hidden = true; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
   try { if (window.PugsSom && PugsSom.carregarSons) PugsSom.carregarSons(["latido-joy", "latido-jane"]); } catch (e) {}
 
   const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; };
