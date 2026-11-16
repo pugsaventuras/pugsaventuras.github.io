@@ -29,8 +29,8 @@
 .fe-modos button small{font:500 .9rem Fredoka,Arial,sans-serif}
 .fe-modos button .ic{font-size:2.2rem;line-height:1}
 .fe-barra{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:0 0 10px}
-.fe-feira{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,2vw,16px);max-width:760px;margin:0 auto;user-select:none;-webkit-user-select:none;touch-action:manipulation}
-@media (max-width:520px){.fe-feira{grid-template-columns:repeat(2,1fr)}}
+.fe-feira{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,2vw,16px);max-width:760px;margin:0 auto;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+@media (max-width:520px){.fe-feira{grid-template-columns:repeat(3,1fr)}}
 .fe-fruta{position:relative;border:none;background:none;padding:0;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent}
 .fe-fruta .toldo{display:block;height:22px;border-radius:14px 14px 4px 4px;border:3px solid var(--marrom);border-bottom:none;
   background:repeating-linear-gradient(90deg,var(--t1) 0 18px,#fff 18px 36px)}
@@ -79,7 +79,7 @@
 @media (min-aspect-ratio:5/4){
   .fe-palco{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:start}
   .fe-cena{max-width:min(100%,calc((100dvh - 230px) * 1.778))}
-  .fe-feira{grid-template-columns:repeat(2,1fr)}
+  .fe-feira{grid-template-columns:repeat(3,1fr)}
   .fe-fruta .emo{font-size:clamp(1.8rem,6.5dvh,3.2rem)}
   .fe-modos{flex-direction:column;align-items:stretch;margin-top:0}
 }
@@ -162,29 +162,30 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     { id: "abacaxi", nome: "Abacaxi", emo: "🍍", cor: "#e3b23c" },
     { id: "uva", nome: "Uva", emo: "🍇", cor: "#8e5bb5" },
     { id: "pessego", nome: "Pêssego", emo: "🍑", cor: "#f4a28c" },
+    { id: "maca", nome: "Maçã", emo: "🍎", cor: "#d9443b" },
   ];
   const TEXTO = {
     "oi-feira": "Oi, meu amor! Vem passear na feirinha com a vovó!", "oi-desafio": "Vamos encher a cestinha da vovó?",
     "fruta-banana": "Banana! Amarelinha e docinha.", "fruta-morango": "Morango! Vermelhinho, olha que lindo.", "fruta-laranja": "Laranja! Pra fazer um suquinho gostoso.",
     "fruta-melancia": "Melancia! Grandona e fresquinha.", "fruta-mamao": "Mamão! Bem molinho e docinho.", "fruta-abacaxi": "Abacaxi! Com uma coroinha na cabeça.",
-    "fruta-uva": "Uva! Um cachinho cheio de bolinhas.", "fruta-pessego": "Olha o pêssego! É a fruta preferida da vovó. 🍑",
+    "fruta-uva": "Uva! Um cachinho cheio de bolinhas.", "fruta-maca": "Maçã! Vermelhinha e crocante. 🍎", "fruta-pessego": "Olha o pêssego! É a fruta preferida da vovó. 🍑",
     "acertou-1": "Isso mesmo!", "acertou-2": "Muito bem, meu amorzinho!", "acertou-3": "Que lindo! Vai pra cestinha.",
     "tenta-1": "Hum, essa não… Tenta de novo, meu amor.", "tenta-2": "Quase! Olha com calminha.", "ajuda": "Olha bem… tá aqui pertinho!",
     "fim-1": "Muito bem! A vovó tá orgulhosa de você! 💛", "fim-2": "A cestinha ficou cheinha! Obrigada, meu amorzinho. Um beijo da vovó! 💛",
   };
-  const LISTA_MAX = { banana: 3, morango: 3, laranja: 3, pessego: 3, mamao: 2, abacaxi: 2, uva: 2, melancia: 1 };
+  const LISTA_MAX = { banana: 3, morango: 3, laranja: 3, pessego: 3, mamao: 2, abacaxi: 2, uva: 2, melancia: 1, maca: 3 };
   Object.assign(TEXTO, {
     "lista-oi": "Olha a listinha da feira da vovó! Vamos pegar tudo? 📝", "lista-pronto": "Isso! Esse já tá certinho na listinha! ✅",
     "lista-chega": "Opa, já tem o suficiente! Vamos pegar a próxima?", "lista-fim": "Pegamos tudo da listinha! Muito obrigada, meu amorzinho! 💛",
     "conta-1": "Um! ☝️", "conta-2": "Dois! ✌️", "conta-3": "Três! 🤟",
   });
-  const NUM = ["", "um", "dois", "três"], NUMF = ["", "uma", "duas", "três"], FEM = ["banana", "laranja", "melancia"];
-  const PLURAL = { banana: "bananas", morango: "morangos", laranja: "laranjas", pessego: "pêssegos", mamao: "mamões", abacaxi: "abacaxis", melancia: "melancias" };
+  const NUM = ["", "um", "dois", "três"], NUMF = ["", "uma", "duas", "três"], FEM = ["banana", "laranja", "melancia", "maca"];
+  const PLURAL = { banana: "bananas", morango: "morangos", laranja: "laranjas", pessego: "pêssegos", mamao: "mamões", abacaxi: "abacaxis", melancia: "melancias", maca: "maçãs" };
   Object.keys(LISTA_MAX).forEach((id) => { for (let n = 1; n <= LISTA_MAX[id]; n++) {
     const nome = id === "uva" ? (n === 1 ? "um cachinho de uva" : "dois cachinhos de uva") : (FEM.includes(id) ? NUMF[n] : NUM[n]) + " " + (n === 1 ? FRUTAS.find((f) => f.id === id).nome.toLowerCase() : PLURAL[id]);
     TEXTO[`lista-${id}-${n}`] = "Pega " + nome + " pra vovó?" + (id === "melancia" ? " É pesada, hein!" : "");
   } });
-  FRUTAS.forEach((f) => { TEXTO["pede-" + f.id] = (f.id === "pessego" ? "Agora pega o " : "Pega " + (["banana", "laranja", "melancia", "uva"].includes(f.id) ? "a " : "o ")) + f.nome.toLowerCase() + " pra vovó?"; });
+  FRUTAS.forEach((f) => { TEXTO["pede-" + f.id] = (f.id === "pessego" ? "Agora pega o " : "Pega " + (["banana", "laranja", "melancia", "uva", "maca"].includes(f.id) ? "a " : "o ")) + f.nome.toLowerCase() + " pra vovó?"; });
 
   // ---- voz da vovó: toca pelo Web Audio (o iPad libera no primeiro toque e depois toca sempre) ----
   let ctx = null, fonte = null; const buf = {};
@@ -221,7 +222,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     { id: "laranja", x: 14, y: 62, w: 15, h: 8 }, { id: "morango", x: 6, y: 69, w: 17, h: 10 },
     { id: "pessego", x: 0, y: 79, w: 10, h: 21 }, { id: "uva", x: 4, y: 76, w: 10, h: 11 },
     { id: "melancia", x: 67, y: 56, w: 10, h: 17 }, { id: "mamao", x: 92, y: 33, w: 8, h: 11 }, { id: "mamao", x: 76, y: 65, w: 11, h: 15 },
-    { id: "abacaxi", x: 86, y: 67, w: 14, h: 24 },
+    { id: "abacaxi", x: 86, y: 67, w: 14, h: 24 }, { id: "maca", x: 60, y: 56, w: 8.5, h: 17 }, // a maçã está na cestinha da vovó
   ];
   $("alvos").innerHTML = ALVOS.map((a) => `<button type="button" class="fe-alvo" data-id="${a.id}" aria-label="${a.id}" style="left:${a.x}%;top:${a.y}%;width:${a.w}%;height:${a.h}%"></button>`).join("");
   const alvosCena = (id) => [...$("alvos").querySelectorAll(`[data-id="${id}"]`)];
@@ -254,7 +255,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     $("alvos").querySelectorAll(".fe-alvo").forEach((a) => a.classList.remove("foi", "dica"));
     setTimeout(() => $("jogo").scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     if (des) {
-      ordem = embaralha(FRUTAS.filter((f) => f.id !== "pessego")).slice(0, 7).concat(FRUTAS.find((f) => f.id === "pessego")); // o pêssego (a preferida da vovó) fica por último
+      ordem = embaralha(FRUTAS.filter((f) => f.id !== "pessego")).concat(FRUTAS.find((f) => f.id === "pessego")); // o pêssego (a preferida da vovó) fica por último
       prep(["oi-desafio", "acertou-1", "acertou-2", "acertou-3", "tenta-1", "tenta-2", "ajuda", "fim-1", "fim-2"].concat(ordem.map((f) => "pede-" + f.id)));
       ocupado = true; vovo("oi-desafio").then(() => setTimeout(proxima, 700));
     } else if (lis) {
