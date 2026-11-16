@@ -84,13 +84,20 @@
   .fe-fruta .emo{font-size:clamp(1.8rem,6.5dvh,3.2rem)}
   .fe-modos{flex-direction:column;align-items:stretch;margin-top:0}
 }
+
+.fe-cena .fe-falando{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.fe-cena .fe-falando[hidden]{display:none}
+.fe-alvos{z-index:2}.fe-fala{z-index:3}
+.fe-oi{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);z-index:4;font:700 clamp(1.1rem,3.4vw,1.6rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:var(--sol);border:4px solid var(--marrom);border-radius:999px;padding:10px 22px;box-shadow:0 5px 0 var(--marrom);cursor:pointer;animation:fe-pulsa 1.2s ease-in-out infinite alternate;white-space:nowrap}
+.fe-oi[hidden]{display:none}
+@keyframes fe-pulsa{to{transform:translateX(-50%) scale(1.07)}}
 </style>
 <div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Feirinha da vovó Lucy 🍑</h1></div>
 <div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
 <div id="jogo" hidden>
  <div class="fe-palco">
   <div class="fe-esq">
-   <div class="fe-cena" id="cena"><video src="imagens/jogos/feira-lucy.mp4" poster="imagens/jogos/feira-lucy.jpg" autoplay muted loop playsinline disablepictureinpicture aria-label="A vovó Lucy na feira com a Joy e a Jane, no meio das barracas de frutas" width="1280" height="720"></video><div class="fe-alvos" id="alvos"></div><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
+   <div class="fe-cena" id="cena"><video src="imagens/jogos/feira-lucy.mp4" poster="imagens/jogos/feira-lucy.jpg" autoplay muted loop playsinline disablepictureinpicture aria-label="A vovó Lucy na feira com a Joy e a Jane, no meio das barracas de frutas" width="1280" height="720"></video><video class="fe-falando" id="falando" playsinline preload="auto" hidden></video><div class="fe-alvos" id="alvos"></div><button type="button" class="fe-oi" id="oi">👋 Toque para a vovó Lucy falar</button><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
    <div class="fe-barra" id="barra" hidden><button type="button" class="botao" id="repetir" hidden>🔊 Ouvir de novo</button><button type="button" class="botao" id="ajuda" hidden>💡 Ajuda</button><button type="button" class="botao" id="voltar">Mudar</button></div>
    <div class="fe-cesta" id="cesta-box" hidden><div class="cesto" id="cesto" aria-label="Cestinha da vovó"></div><img id="joy" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy"></div>
   </div>
@@ -160,6 +167,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const somLigado = () => !(window.PugsSom && PugsSom.ligado === false);
   let fila = 0;
   function vovo(k) { // fala e avisa quando terminou
+    { const v = document.getElementById("falando"); if (v && !v.hidden) { v.onended = null; try { v.pause(); } catch (e) {} v.hidden = true; } }
     const minha = ++fila; $("fala").textContent = TEXTO[k] || "";
     if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
     return new Promise((ok) => {
@@ -184,6 +192,22 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   ];
   $("alvos").innerHTML = ALVOS.map((a) => `<button type="button" class="fe-alvo" data-id="${a.id}" aria-label="${a.id}" style="left:${a.x}%;top:${a.y}%;width:${a.w}%;height:${a.h}%"></button>`).join("");
   const alvosCena = (id) => [...$("alvos").querySelectorAll(`[data-id="${id}"]`)];
+
+  // vídeos da musiquinha com a vovó Lucy falando de verdade (boca mexendo): a abertura e o pêssego
+  const CLIPES = { "oi-feira": "imagens/jogos/feira-lucy-oi.mp4", "fruta-pessego": "imagens/jogos/feira-lucy-pessego.mp4" };
+  let jaDisseOi = false;
+  function vovoFilme(k) { // toca o clipe com som e avisa quando terminou (chamar dentro do toque, por causa do iPad)
+    const v = $("falando"); if (!CLIPES[k] || !somLigado()) return vovo(k);
+    const minha = ++fila; $("fala").textContent = TEXTO[k] || "";
+    if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
+    return new Promise((ok) => {
+      let feito = false; const fim = () => { if (feito) return; feito = true; v.hidden = true; try { v.pause(); } catch (e) {} ok(minha === fila); };
+      v.src = CLIPES[k]; v.muted = false; v.currentTime = 0; v.hidden = false; v.onended = fim; setTimeout(fim, 9000);
+      const p = v.play(); if (p && p.catch) p.catch(() => { v.hidden = true; vovo(k).then(fim); });
+    });
+  }
+  function dizerOi() { $("oi").hidden = true; jaDisseOi = true; return vovoFilme("oi-feira"); }
+  $("oi").onclick = (e) => { e.stopPropagation(); audio(); dizerOi(); };
   // ---- feira ----
   let modo = "passear", ordem = [], alvo = null, ocupado = false, erros = 0;
   function montarFeira() {
@@ -192,7 +216,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const botao = (id) => $("feira").querySelector(`[data-id="${id}"]`);
   function comecar(m) {
     audio(); modo = m; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; montarFeira();
-    const des = m === "desafio";
+    const des = m === "desafio"; $("oi").hidden = true;
     $("repetir").hidden = $("ajuda").hidden = !des; $("cesta-box").hidden = !des; $("cesto").innerHTML = ""; $("barra").hidden = false;
     $("alvos").querySelectorAll(".fe-alvo").forEach((a) => a.classList.remove("foi", "dica"));
     setTimeout(() => $("jogo").scrollIntoView({ behavior: "smooth", block: "start" }), 50);
@@ -200,7 +224,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       ordem = embaralha(FRUTAS.filter((f) => f.id !== "pessego")).slice(0, 7).concat(FRUTAS.find((f) => f.id === "pessego")); // o pêssego (a preferida da vovó) fica por último
       prep(["oi-desafio", "acertou-1", "acertou-2", "acertou-3", "tenta-1", "tenta-2", "ajuda", "fim-1", "fim-2"].concat(ordem.map((f) => "pede-" + f.id)));
       ocupado = true; vovo("oi-desafio").then(() => setTimeout(proxima, 300));
-    } else { prep(FRUTAS.map((f) => "fruta-" + f.id)); vovo("oi-feira"); }
+    } else { prep(FRUTAS.map((f) => "fruta-" + f.id)); if (!jaDisseOi) dizerOi(); }
   }
   function proxima() {
     ocupado = false; erros = 0;
@@ -225,13 +249,13 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     audio();
     const f = FRUTAS.find((x) => x.id === b.dataset.id);
     b.classList.remove("pula"); void b.offsetWidth; b.classList.add("pula"); setTimeout(() => b.classList.remove("pula"), 350);
-    if (modo === "passear") { efeito("pop"); vovo("fruta-" + f.id); return; }
+    if (modo === "passear") { efeito("pop"); (f.id === "pessego" ? vovoFilme : vovo)("fruta-" + f.id); return; }
     if (ocupado || !alvo) return;
     if (f.id === alvo.id) {
       ocupado = true; efeito("acerto"); b.classList.add("foi"); b.classList.remove("dica"); alvosCena(f.id).forEach((a) => a.classList.add("foi")); voar(origem, f.img ? `<img src="${f.img}" alt="">` : f.emo); abanar();
       if (f.id === "pessego" || Math.random() < 0.35) setTimeout(() => latir("joy"), 500);
       const fala = f.id === "pessego" ? "fruta-pessego" : sorteia(["acertou-1", "acertou-2", "acertou-3"]);
-      vovo(fala).then((ok) => { if (ok) setTimeout(proxima, 350); });
+      (f.id === "pessego" ? vovoFilme : vovo)(fala).then((ok) => { if (ok) setTimeout(proxima, 350); });
     } else {
       erros++; efeito("erro"); b.classList.remove("erro"); void b.offsetWidth; b.classList.add("erro");
       ocupado = true; vovo(sorteia(["tenta-1", "tenta-2"])).then((ok) => { if (!ok) return; ocupado = false; if (erros >= 2) dica(); });
@@ -249,7 +273,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   $("b-desafio").onclick = () => comecar("desafio");
   $("passear2").onclick = () => comecar("passear");
   $("denovo").onclick = () => comecar("desafio");
-  $("voltar").onclick = () => { ++fila; if (fonte) { try { fonte.stop(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("cesta-box").hidden = true; $("fim").hidden = true; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
+  $("voltar").onclick = () => { ++fila; if (fonte) { try { fonte.stop(); } catch (e) {} } { const v = $("falando"); v.hidden = true; try { v.pause(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("cesta-box").hidden = true; $("fim").hidden = true; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
   try { if (window.PugsSom && PugsSom.carregarSons) PugsSom.carregarSons(["latido-joy", "latido-jane"]); } catch (e) {}
 
   const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; };
