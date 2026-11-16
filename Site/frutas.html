@@ -45,7 +45,7 @@
 @keyframes fe-nao{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .fe-fruta.dica .caixa{animation:fe-brilho .45s ease-in-out 6 alternate}
 @keyframes fe-brilho{to{background-color:#ffe48a;box-shadow:0 0 0 6px #ffe48a,0 4px 0 var(--marrom)}}
-.fe-fruta.foi{opacity:.35;pointer-events:none}
+.fe-fruta.foi{opacity:.35}
 .fe-fruta.foi .emo{transform:scale(.7)}
 .fe-voa{position:fixed;z-index:50;font-size:3.6rem;pointer-events:none;transition:transform .8s cubic-bezier(.4,-.3,.6,1),opacity .8s}
 .fe-cesta{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px auto 0;max-width:760px}
@@ -67,7 +67,6 @@
 .fe-alvo.toque{animation:fe-anel .5s}
 @keyframes fe-anel{from{box-shadow:inset 0 0 0 0 rgba(255,228,138,.9)}50%{box-shadow:inset 0 0 0 999px rgba(255,228,138,.35)}to{box-shadow:inset 0 0 0 0 rgba(255,228,138,0)}}
 .fe-alvo.dica{animation:fe-anel .9s ease-in-out 3}
-.fe-alvo.foi{pointer-events:none}
 .fe-barra{margin:0 0 6px}
 .fe-cesta{margin:4px auto 0}
 .fe-cesta .cesto{min-height:54px;min-width:180px;font-size:1.7rem}
@@ -101,7 +100,7 @@
   <div class="fe-esq">
    <div class="fe-cena" id="cena"><img src="imagens/jogos/feira-lucy.jpg" alt="A vovó Lucy na feira com a Joy e a Jane, no meio das barracas de frutas" width="1280" height="720"><video class="fe-mexe" id="mexe" src="imagens/jogos/feira-lucy.mp4" muted loop playsinline preload="auto" disablepictureinpicture hidden></video><video class="fe-falando" id="falando" playsinline preload="auto" hidden></video><div class="fe-alvos" id="alvos"></div><button type="button" class="fe-oi" id="oi">👋 Toque para a vovó Lucy falar</button><div class="fe-fala" id="fala">Vem passear na feirinha com a vovó! 🧺</div></div>
    <div class="fe-barra" id="barra" hidden><button type="button" class="botao" id="repetir" hidden>🔊 Ouvir de novo</button><button type="button" class="botao" id="ajuda" hidden>💡 Ajuda</button><button type="button" class="botao" id="voltar">Mudar</button></div>
-   <div class="fe-cesta" id="cesta-box" hidden><div class="cesto" id="cesto" aria-label="Cestinha da vovó"></div><img id="joy" src="imagens/jogos/pet-joy-feliz.png" alt="A Joy"></div>
+   <div class="fe-cesta" id="cesta-box" hidden><div class="cesto" id="cesto" aria-label="Cestinha da vovó"></div></div>
   </div>
   <div class="fe-dir">
    <div id="escolha">
@@ -189,10 +188,13 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 
 
   // frutas que aparecem na própria cena (em % da imagem): dá para tocar direto nelas
-  const ALVOS = [ // cena da musiquinha das frutas (todas as 8 frutas na feira)
-    { id: "banana", x: 0, y: 43, w: 8.5, h: 16 }, { id: "banana", x: 75, y: 37, w: 9, h: 18 }, { id: "morango", x: 8.5, y: 44, w: 14, h: 12 }, { id: "morango", x: 7.5, y: 69.5, w: 13.5, h: 8.5 },
-    { id: "laranja", x: 15, y: 64, w: 13, h: 5.5 }, { id: "laranja", x: 84, y: 45, w: 16, h: 13 }, { id: "pessego", x: 0, y: 84, w: 9, h: 13 }, { id: "uva", x: 5, y: 78, w: 8.5, h: 10 },
-    { id: "melancia", x: 68, y: 58, w: 8.5, h: 14 }, { id: "mamao", x: 76.5, y: 67, w: 9.5, h: 11 }, { id: "mamao", x: 93, y: 35, w: 7, h: 9 }, { id: "abacaxi", x: 87, y: 69, w: 13, h: 17 },
+  const ALVOS = [ // cena da musiquinha das frutas (todas as 8 frutas na feira); a ordem importa: a de baixo ganha onde se cruzam
+    { id: "banana", x: 0, y: 41, w: 9, h: 19 }, { id: "morango", x: 8, y: 42, w: 16, h: 15 },
+    { id: "banana", x: 73, y: 35, w: 13, h: 21 }, { id: "laranja", x: 84, y: 43, w: 16, h: 17 },
+    { id: "laranja", x: 14, y: 62, w: 15, h: 8 }, { id: "morango", x: 6, y: 69, w: 17, h: 10 },
+    { id: "pessego", x: 0, y: 79, w: 10, h: 21 }, { id: "uva", x: 4, y: 76, w: 10, h: 11 },
+    { id: "melancia", x: 67, y: 56, w: 10, h: 17 }, { id: "mamao", x: 92, y: 33, w: 8, h: 11 }, { id: "mamao", x: 76, y: 65, w: 11, h: 15 },
+    { id: "abacaxi", x: 86, y: 67, w: 14, h: 24 },
   ];
   $("alvos").innerHTML = ALVOS.map((a) => `<button type="button" class="fe-alvo" data-id="${a.id}" aria-label="${a.id}" style="left:${a.x}%;top:${a.y}%;width:${a.w}%;height:${a.h}%"></button>`).join("");
   const alvosCena = (id) => [...$("alvos").querySelectorAll(`[data-id="${id}"]`)];
@@ -241,7 +243,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     requestAnimationFrame(() => { v.style.transform = `translate(${c.left + c.width / 2 - (r.left + r.width / 2)}px,${c.top + c.height / 2 - (r.top + r.height / 2)}px) scale(.6)`; });
     setTimeout(() => { v.remove(); $("cesto").insertAdjacentHTML("beforeend", emo); }, 820);
   }
-  function abanar() { const j = $("joy"); j.classList.remove("abana"); void j.offsetWidth; j.classList.add("abana"); }
+  function abanar() {}
   $("alvos").addEventListener("click", (e) => {
     const a = e.target.closest(".fe-alvo"); if (!a) return;
     if ($("partida").hidden) comecar("passear");
@@ -262,7 +264,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       (f.id === "pessego" ? vovoFilme : vovo)(fala).then((ok) => { if (ok) setTimeout(proxima, 1200); });
     } else {
       erros++; efeito("erro"); b.classList.remove("erro"); void b.offsetWidth; b.classList.add("erro");
-      ocupado = true; vovo(sorteia(["tenta-1", "tenta-2"])).then((ok) => { if (!ok) return; ocupado = false; if (erros >= 2) dica(); });
+      if (erros >= 2) dica();
+      vovo(sorteia(["tenta-1", "tenta-2"]));
     }
   }
   function dica() { if (!alvo) return; [botao(alvo.id), ...alvosCena(alvo.id)].forEach((b) => { if (!b) return; b.classList.remove("dica"); void b.offsetWidth; b.classList.add("dica"); }); }
