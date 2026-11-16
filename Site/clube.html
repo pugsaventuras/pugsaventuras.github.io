@@ -26,6 +26,8 @@
 <h1 class="titulo">Oi, <span id="nome-crianca"></span>!<span class="l2">Bem-vindo ao Clube</span></h1>
 <p class="intro">A Joy e a Jane prepararam coisas para ler, pintar e brincar em casa. <span id="ola-adulto"></span></p>
 <div id="status" class="aviso ok"></div>
+<div id="niver-hoje" class="cartao" hidden style="text-align:center;background:#fff3c4;border-color:#e8578f"></div>
+<div id="niver-pede" class="cartao" hidden style="background:#fff7e0;border-style:dashed"></div>
 
 <div id="liberado">
 <h2 class="brincar-titulo">Hora de brincar! 🐾</h2>
@@ -171,6 +173,27 @@ async function abrir() {
   $("#niver-texto").textContent = comData.length
     ? comData.map((x) => { const [, m, dd] = x.nascimento.split("-"); const i = pugsIdade(x.nascimento); return x.nome + " (" + i + (i === 1 ? " aninho" : " anos") + "): dia " + dd + "/" + m; }).join(" · ") + ". A Joy e a Jane já anotaram! 🎉"
     : "Coloque a data de nascimento em \"Meus dados\" (aqui embaixo) e a Joy e a Jane mandam um recadinho especial no aniversário! 🎉";
+  // 🎂 presente de aniversário (Joice, 13/11): no mês do aniversário, 1 mês grátis; no dia, festa com a Joy e a Jane
+  $("#niver-texto").textContent += " No mês do aniversário, a Joy dá de presente 1 mês grátis no Clube! 🎁";
+  const hojeMD = new Date().toISOString().slice(5, 10);
+  const festeiros = comData.filter((x) => x.nascimento.slice(5, 10) === hojeMD);
+  if (festeiros.length) {
+    const nomes = festeiros.map((x) => x.nome).join(" e ");
+    $("#niver-hoje").innerHTML = `<h2 style="margin:0">🎉 Feliz aniversário, ${nomes.replace(/[<>&]/g, "")}! 🎂</h2><p style="margin:6px 0 0">A Joy e a Jane mandaram um lambeijo bem grande! E no mês do aniversário o Clube é presente delas: 1 mês grátis! 🎁</p>`;
+    $("#niver-hoje").hidden = false;
+    let ja = false; try { ja = localStorage.getItem("pugs-niver-festa") === hojeMD; localStorage.setItem("pugs-niver-festa", hojeMD); } catch (e) {}
+    if (!ja) {
+      const festa = () => { try { PugsSom.festa(); PugsSom.latido("joy"); setTimeout(() => PugsSom.latido("jane"), 600); } catch (e) {}
+        for (let i = 0; i < 28; i++) { const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🎂", "🎉", "🐾", "💛", "🎁", "🎈"][i % 6]; s.style.left = Math.random() * 100 + "vw"; s.style.animationDelay = Math.random() * 0.9 + "s"; document.body.appendChild(s); setTimeout(() => s.remove(), 4000); } };
+      festa(); document.addEventListener("pointerdown", () => { try { PugsSom.festa(); } catch (e) {} }, { once: true }); // o som só sai depois do primeiro toque no iPad
+    }
+  }
+  const semData = filhos.filter((x) => !x.nascimento && x.nome);
+  if (semData.length) {
+    $("#niver-pede").innerHTML = `<h2 style="margin:0 0 4px">🎂 Quando é o aniversário ${semData.length > 1 ? "dos pequenos" : "de " + semData[0].nome.replace(/[<>&]/g, "")}?</h2><p style="margin:0 0 8px">A Joy quer mandar um presente: no mês do aniversário, <b>1 mês grátis no Clube</b>! 🎁</p><button type="button" class="botao rosa" id="niver-ir">Colocar a data 🎂</button>`;
+    $("#niver-pede").hidden = false;
+    $("#niver-ir").onclick = () => { const d = $("#meus-dados"); d.open = true; const n = d.querySelector(".f-nasc:not([value]), .f-nasc[value='']") || d.querySelector(".f-nasc"); (n || d).scrollIntoView({ behavior: "smooth", block: "center" }); if (n) setTimeout(() => n.focus(), 500); };
+  }
   desenharFilhos(filhos);
   prepararVozes(filhos);
   const f = $("#form-dados");

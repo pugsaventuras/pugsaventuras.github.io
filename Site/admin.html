@@ -33,6 +33,7 @@
 <div class="cartao"><b id="c-fim">0</b><span>teste acabou</span></div>
 </div>
 <p><input id="busca" class="busca" type="search" placeholder="Procurar por nome, criança, e-mail ou telefone"></p>
+<div id="niver-mes"></div>
 <div id="lista"></div>
 <p style="margin-top:18px"><a class="botao" href="clube.html">Ver o Clube</a> <button class="botao" type="button" onclick="carregar()">Atualizar lista</button></p>
 <details style="margin-top:16px"><summary>Como funciona</summary>
@@ -76,6 +77,7 @@ function desenhar() {
   const cont = { teste: 0, pago: 0, fim: 0 };
   familias.forEach((f) => cont[situacao(f)[0]]++);
   $("#c-total").textContent = familias.length; $("#c-teste").textContent = cont.teste; $("#c-pagos").textContent = cont.pago; $("#c-fim").textContent = cont.fim;
+  desenharNiver();
   $("#lista").innerHTML = lista.length ? lista.map((f) => {
     const [tipo, txt] = situacao(f);
     const tel = (f.telefone || "").replace(/\D/g, "");
@@ -94,6 +96,16 @@ function desenhar() {
         <button class="botao off-ativo" onclick="if(confirmar(this))liberar('${f.id}','cancelada',null)">Cancelar</button>
       </div></article>`;
   }).join("") : '<p class="cartao">Nenhuma família encontrada.</p>';
+}
+// 🎂 aniversariantes do mês e do mês que vem (presente: 1 mês grátis, 1 vez por ano)
+const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+function desenharNiver() {
+  const h = new Date(), m1 = h.getMonth() + 1, m2 = (m1 % 12) + 1;
+  const kids = []; familias.forEach((f) => (f.criancas || []).forEach((c) => { if (c.nascimento) kids.push({ f, c, m: +c.nascimento.slice(5, 7), d: +c.nascimento.slice(8, 10) }); }));
+  const semData = familias.filter((f) => (f.criancas || []).some((c) => !c.nascimento)).length;
+  const bloco = (m, titulo) => { const l = kids.filter((k) => k.m === m).sort((a, b) => a.d - b.d);
+    return `<h3 style="margin:10px 0 4px">${titulo} — ${MESES[m - 1]} (${l.length})</h3>` + (l.length ? l.map((k) => { const [tipo, txt] = situacao(k.f); return `<p style="margin:4px 0">🎂 <b>dia ${String(k.d).padStart(2, "0")}</b> · <b>${esc(k.c.nome)}</b> (faz ${pugsIdade(k.c.nascimento) + (m === m1 && k.d > h.getDate() || m !== m1 ? 1 : 0)}) · ${esc(k.f.nome_responsavel)} · ${esc(k.f.email)} · <span class="etiqueta ${tipo}">${txt}</span> <button class="botao" onclick="liberar('${k.f.id}','cortesia',somar(achar('${k.f.id}'),1))">🎁 Presente: 1 mês</button></p>`; }).join("") : "<p style='margin:4px 0'><i>Ninguém este mês.</i></p>"); };
+  $("#niver-mes").innerHTML = `<article class="cartao" style="background:#fff3c4"><h2 style="margin:0">🎂 Aniversariantes</h2><p style="margin:2px 0 0"><small>Presente da Joy: 1 mês grátis no mês do aniversário (1 vez por ano). No dia, a criança vê a festa no Clube.${semData ? ` · ${semData} família(s) ainda sem a data (o Clube pede sozinho).` : ""}</small></p>${bloco(m1, "Este mês")}${bloco(m2, "Mês que vem")}</article>`;
 }
 function achar(id) { return familias.find((f) => f.id === id); }
 function confirmar(b) { if (b.dataset.ok) return true; b.dataset.ok = 1; b.textContent = "Clique de novo para cancelar"; setTimeout(() => { delete b.dataset.ok; b.textContent = "Cancelar"; }, 4000); return false; }
