@@ -122,6 +122,7 @@
      <button type="button" id="b-passear"><span class="ic">🧺</span>Passear na feira<small>Toque na fruta e a vovó fala</small></button>
      <button type="button" id="b-desafio"><span class="ic">🎯</span>Ajudar a vovó<small>A vovó pede, você acha</small></button>
      <button type="button" id="b-lista"><span class="ic">📝</span>Listinha da vovó<small>Conte e pegue as frutas da lista</small></button>
+     <button type="button" id="b-memoria"><span class="ic">🧠</span>Listinha de memória<small>A vovó fala, a lista some, você lembra!</small></button>
     </div>
    </div>
    <div id="partida" hidden><div class="fe-feira" id="feira"></div></div>
@@ -177,6 +178,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   Object.assign(TEXTO, {
     "lista-oi": "Olha a listinha da feira da vovó! Vamos pegar tudo? 📝", "lista-pronto": "Isso! Esse já tá certinho na listinha! ✅",
     "lista-chega": "Opa, já tem o suficiente! Vamos pegar a próxima?", "lista-fim": "Pegamos tudo da listinha! Muito obrigada, meu amorzinho! 💛",
+    "mem-oi": "Presta atenção na listinha da vovó! 👀", "mem-agora": "Agora é de memória! Lembra o que a vovó pediu? 🤫", "mem-proxima": "Que memória boa! Vamos pra próxima listinha? 🧠",
     "conta-1": "Um! ☝️", "conta-2": "Dois! ✌️", "conta-3": "Três! 🤟",
   });
   const NUM = ["", "um", "dois", "três"], NUMF = ["", "uma", "duas", "três"], FEM = ["banana", "laranja", "melancia", "maca"];
@@ -243,14 +245,14 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   function dizerOi() { $("oi").hidden = true; jaDisseOi = true; return vovoFilme("oi-feira"); }
   $("oi").onclick = (e) => { e.stopPropagation(); audio(); dizerOi(); };
   // ---- feira ----
-  let modo = "passear", ordem = [], alvo = null, ocupado = false, erros = 0, lista = [], item = null;
+  let modo = "passear", ordem = [], alvo = null, ocupado = false, erros = 0, lista = [], item = null, fase = 1, escondida = false;
   function montarFeira() {
     $("feira").innerHTML = embaralha(FRUTAS.slice()).map((f) => `<button type="button" class="fe-fruta" data-id="${f.id}" style="--t1:${f.cor}" aria-label="${f.nome}"><span class="toldo"></span><span class="caixa"><span class="emo">${f.img ? `<img src="${f.img}" alt="">` : f.emo}</span><span class="nome">${f.nome}</span></span></button>`).join("");
   }
   const botao = (id) => $("feira").querySelector(`[data-id="${id}"]`);
   function comecar(m) {
     audio(); modo = m; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; montarFeira();
-    const des = m === "desafio", lis = m === "lista"; $("oi").hidden = true;
+    const des = m === "desafio", mem = m === "memoria", lis = m === "lista" || mem; $("oi").hidden = true;
     $("repetir").hidden = $("ajuda").hidden = !(des || lis); $("cesta-box").hidden = !(des || lis); $("lista").hidden = !lis; item = null; alvo = null; $("cesto").innerHTML = ""; $("barra").hidden = false;
     $("alvos").querySelectorAll(".fe-alvo").forEach((a) => a.classList.remove("foi", "dica"));
     setTimeout(() => $("jogo").scrollIntoView({ behavior: "smooth", block: "start" }), 50);
@@ -258,6 +260,10 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       ordem = embaralha(FRUTAS.filter((f) => f.id !== "pessego")).concat(FRUTAS.find((f) => f.id === "pessego")); // o pêssego (a preferida da vovó) fica por último
       prep(["oi-desafio", "acertou-1", "acertou-2", "acertou-3", "tenta-1", "tenta-2", "ajuda", "fim-1", "fim-2"].concat(ordem.map((f) => "pede-" + f.id)));
       ocupado = true; vovo("oi-desafio").then(() => setTimeout(proxima, 700));
+    } else if (mem) {
+      fase = 1; erros = 0;
+      prep(["mem-oi", "mem-agora", "mem-proxima", "lista-chega", "lista-fim", "conta-1", "conta-2", "conta-3", "tenta-1", "tenta-2"]);
+      ocupado = true; setTimeout(comecarFase, 300);
     } else if (lis) {
       montarLista();
       prep(["lista-oi", "lista-pronto", "lista-chega", "lista-fim", "conta-1", "conta-2", "conta-3", "tenta-1", "tenta-2", "ajuda"].concat(lista.map((it) => `lista-${it.f.id}-${it.n}`)));
@@ -273,6 +279,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     desenharLista();
   }
   function desenharLista() {
+    if (escondida) { $("lista").innerHTML = `<h3>🧠 Listinha de memória · fase ${fase} de 3</h3><div class="fe-item" style="font-size:1.3rem;justify-content:center">🤫 Agora é de memória! (💡 espia)</div>` + lista.map((it) => `<div class="fe-item${it.tem >= it.n ? " feito" : ""}" style="justify-content:center">${"❓".repeat(1)}${it.tem ? " " + Array.from({ length: it.tem }, () => desenho(it.f)).join("") : ""}<span class="ok">✅</span></div>`).join(""); return; }
     $("lista").innerHTML = '<h3>📝 Listinha da vovó</h3>' + lista.map((it) => `<div class="fe-item${it === item ? " agora" : ""}${it.tem >= it.n ? " feito" : ""}"><span class="q">${it.n}</span>${Array.from({ length: it.n }, (_, k) => `<span class="f${k < it.tem ? " tem" : ""}">${desenho(it.f)}</span>`).join("")}<span class="ok">✅</span></div>`).join("");
   }
   function proximaLista() {
@@ -286,10 +293,34 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       item.tem++; efeito("acerto"); voar(origem, desenho(f)); b.classList.remove("dica"); alvosCena(f.id).forEach((a) => a.classList.remove("dica")); desenharLista();
       if (item.tem >= item.n) {
         ocupado = true; if (Math.random() < 0.5) setTimeout(() => latir("joy"), 400);
-        vovo("conta-" + item.tem).then((ok) => { if (!ok) return; vovo("lista-pronto").then((ok2) => { if (ok2) setTimeout(proximaLista, 900); }); });
+        vovo("conta-" + item.tem).then((ok) => { if (!ok) return; if (Math.random() < 0.3) vovo("lista-pronto").then((ok2) => { if (ok2) setTimeout(proximaLista, 900); }); else { efeito("festa"); setTimeout(proximaLista, 1300); } });
       } else vovo("conta-" + item.tem);
     } else if (lista.some((it) => it.f.id === f.id && it.tem >= it.n)) { vovo("lista-chega"); }
     else { erros++; efeito("erro"); b.classList.remove("erro"); void b.offsetWidth; b.classList.add("erro"); if (erros >= 2) dica(); vovo(sorteia(["tenta-1", "tenta-2"])); }
+  }
+  // ---- 🧠 Listinha de memória (Joice, 16/11): a vovó lê a lista, a lista some e a criança lembra. Fase 1: 1 fruta, fase 2: 2, fase 3: 3 ----
+  function lerLista() { // a vovó lê item por item; para se for interrompida
+    return lista.reduce((p, it) => p.then((ok) => (ok ? vovo(`lista-${it.f.id}-${it.n}`).then((r) => new Promise((ok2) => setTimeout(() => ok2(r), 350))) : false)), Promise.resolve(true));
+  }
+  function comecarFase() {
+    escondida = false; item = null; erros = 0; ocupado = true; alvo = { id: "" };
+    lista = embaralha(FRUTAS.slice()).slice(0, fase).map((f) => ({ f, n: 1 + Math.floor(Math.random() * Math.min(fase === 1 ? 3 : 2, LISTA_MAX[f.id])), tem: 0 }));
+    prep(lista.map((it) => `lista-${it.f.id}-${it.n}`)); desenharLista();
+    vovo("mem-oi").then(() => lerLista()).then((ok) => { if (!ok) return; setTimeout(esconder, 1200); });
+  }
+  function esconder() { if (modo !== "memoria") return; escondida = true; desenharLista(); ocupado = false; vovo("mem-agora"); }
+  function tocarMemoria(b, origem, f) {
+    if (ocupado || !escondida) return;
+    const it = lista.find((x) => x.f.id === f.id);
+    if (!it) { erros++; efeito("erro"); b.classList.remove("erro"); void b.offsetWidth; b.classList.add("erro"); vovo(sorteia(["tenta-1", "tenta-2"])); return; }
+    if (it.tem >= it.n) { vovo("lista-chega"); return; }
+    it.tem++; efeito("acerto"); voar(origem, desenho(f)); desenharLista();
+    if (lista.every((x) => x.tem >= x.n)) {
+      ocupado = true; escondida = false; desenharLista(); setTimeout(() => latir("joy"), 400);
+      vovo("conta-" + it.tem).then((ok) => { if (!ok) return;
+        if (fase >= 3) { alvo = null; return terminar(); }
+        vovo("mem-proxima").then((ok2) => { if (!ok2) return; fase++; $("cesto").innerHTML = ""; setTimeout(comecarFase, 700); }); });
+    } else vovo("conta-" + it.tem);
   }
   function proxima() {
     ocupado = false; erros = 0;
@@ -316,6 +347,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     b.classList.remove("pula"); void b.offsetWidth; b.classList.add("pula"); setTimeout(() => b.classList.remove("pula"), 350);
     if (modo === "passear") { efeito("pop"); (f.id === "pessego" ? vovoFilme : vovo)("fruta-" + f.id); return; }
     if (modo === "lista") return tocarLista(b, origem, f);
+    if (modo === "memoria") return tocarMemoria(b, origem, f);
     if (ocupado || !alvo) return;
     if (f.id === alvo.id) {
       ocupado = true; efeito("acerto"); b.classList.add("foi"); b.classList.remove("dica"); alvosCena(f.id).forEach((a) => a.classList.add("foi")); voar(origem, f.img ? `<img src="${f.img}" alt="">` : f.emo); abanar();
@@ -329,17 +361,20 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     }
   }
   function dica() { if (!alvo) return; [botao(alvo.id), ...alvosCena(alvo.id)].forEach((b) => { if (!b) return; b.classList.remove("dica"); void b.offsetWidth; b.classList.add("dica"); }); }
-  $("ajuda").onclick = () => { if (!alvo || ocupado) return; dica(); ocupado = true; vovo("ajuda").then((ok) => { if (ok) { ocupado = false; } }); };
-  $("repetir").onclick = () => { if (!alvo || ocupado) return; if (modo === "lista" && item) vovo(`lista-${item.f.id}-${item.n}`); else vovo("pede-" + alvo.id); };
+  $("ajuda").onclick = () => { if (modo === "memoria") { if (ocupado || !escondida) return; escondida = false; desenharLista(); setTimeout(() => { if (modo === "memoria" && !ocupado) { escondida = true; desenharLista(); } }, 2500); return; }
+    if (!alvo || ocupado) return; dica(); ocupado = true; vovo("ajuda").then((ok) => { if (ok) { ocupado = false; } }); };
+  $("repetir").onclick = () => { if (modo === "memoria") { if (ocupado || !escondida) return; ocupado = true; lerLista().then(() => { ocupado = false; }); return; }
+    if (!alvo || ocupado) return; if (modo === "lista" && item) vovo(`lista-${item.f.id}-${item.n}`); else vovo("pede-" + alvo.id); };
   function terminar() {
     alvo = null; ocupado = true; $("fim").hidden = false; efeito("festa"); setTimeout(() => latir("joy"), 700); setTimeout(() => latir("jane"), 1300); abanar();
-    setTimeout(() => vovo(modo === "lista" ? "lista-fim" : sorteia(["fim-1", "fim-2"])), 900);
+    setTimeout(() => vovo(modo === "lista" || modo === "memoria" ? "lista-fim" : sorteia(["fim-1", "fim-2"])), 900);
     setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
   }
   $("b-passear").onclick = () => comecar("passear");
   $("b-desafio").onclick = () => comecar("desafio");
   $("passear2").onclick = () => comecar("passear");
-  $("denovo").onclick = () => comecar(modo === "lista" ? "lista" : "desafio");
+  $("denovo").onclick = () => comecar(["lista", "memoria"].includes(modo) ? modo : "desafio");
+  $("b-memoria").onclick = () => comecar("memoria");
   $("b-lista").onclick = () => comecar("lista");
   $("voltar").onclick = () => { ++fila; mexer(false); if (fonte) { try { fonte.stop(); } catch (e) {} } { const v = $("falando"); v.hidden = true; try { v.pause(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("cesta-box").hidden = true; $("lista").hidden = true; $("fim").hidden = true; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
   try { if (window.PugsSom && PugsSom.carregarSons) PugsSom.carregarSons(["latido-joy", "latido-jane"]); } catch (e) {}
