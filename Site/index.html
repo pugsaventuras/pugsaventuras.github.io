@@ -50,7 +50,7 @@
 </section>
 <div class="grade" id="episodios">
 <article class="cartao" data-ep="1">
-<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/xPRLTGgTwU4" title="Pugs Aventuras - Episódio 1: Procura-se uma pug" loading="lazy"
+<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/xPRLTGgTwU4?list=PLUAlFwJRFEh0" title="Pugs Aventuras - Episódio 1: Procura-se uma pug" loading="lazy"
 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 <h2>Episódio 1 · Procura-se uma pug</h2>
 <p class="quando">No ar desde 07/10</p>
@@ -58,7 +58,7 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p class="licao"><b>Lição:</b> quem chega na família é recebido com carinho, uma caminha quentinha e um nome bem bonito.</p>
 </article>
 <article class="cartao" data-ep="2">
-<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/LefTp1EOWZ0" title="Pugs Aventuras - Episódio 2: A Joy e os chinelos do papai" loading="lazy"
+<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/LefTp1EOWZ0?list=PLUAlFwJRFEh0" title="Pugs Aventuras - Episódio 2: A Joy e os chinelos do papai" loading="lazy"
 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 <h2>Episódio 2 · A Joy e os chinelos do papai</h2>
 <p class="quando">No ar desde 14/10</p>
@@ -66,7 +66,7 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p class="licao"><b>Lição:</b> a Joy não fazia por mal. Ela só queria ficar pertinho de quem ela ama.</p>
 </article>
 <article class="cartao" data-ep="3">
-<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/eY9A0SQG6yc" title="Pugs Aventuras - Episódio 3: A roupinha de meia" loading="lazy"
+<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/eY9A0SQG6yc?list=PLUAlFwJRFEh0" title="Pugs Aventuras - Episódio 3: A roupinha de meia" loading="lazy"
 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 <h2>Episódio 3 · A roupinha de meia</h2>
 <p class="quando">No ar desde 21/10</p>
@@ -74,7 +74,7 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p class="licao"><b>Lição:</b> uma coisa velhinha pode virar uma coisa nova, e o carinho da família esquenta o coração.</p>
 </article>
 <article class="cartao" data-ep="4">
-<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/f56vT2lhwPA" title="Pugs Aventuras - Episódio 4: O papai que não queria cachorro" loading="lazy"
+<div class="foto "><iframe src="https://www.youtube-nocookie.com/embed/f56vT2lhwPA?list=PLUAlFwJRFEh0" title="Pugs Aventuras - Episódio 4: O papai que não queria cachorro" loading="lazy"
 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 <h2>Episódio 4 · O papai que não queria cachorro</h2>
 <p class="quando">No ar desde 28/10</p>
@@ -93,6 +93,13 @@ allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; pic
 <p class="quando">Estreia quarta, 11/11, às 19h (Brasília)</p>
 <p>Três meninos chegaram para passar as férias com a Joy: teve susto, cabaninha, piscina, bolo de chocolate e todo mundo dormindo na sala!</p>
 <p class="licao"><b>Lição:</b> um susto passa, brincar junto é muito mais gostoso e a gente sente saudade de quem a gente ama.</p>
+</article>
+<article class="cartao" data-ep="7">
+<div class="foto "><img src="imagens/capa-ep7.jpg" alt="Capa do Episódio 7: A Joy e a vacina" loading="lazy"></div>
+<h2>Episódio 7 · A Joy e a vacina</h2>
+<p class="quando">Estreia quarta, 18/11, às 19h (Brasília)</p>
+<p>A Joy tomou a vacina, ganhou um curativo de estrelinha e fez o seu primeiro passeio: conheceu a rua, visitou a vovó Lucy e foi na feira cheirar as frutinhas!</p>
+<p class="licao"><b>Lição:</b> a vacina dói só um pouquinho, mas protege a gente!</p>
 </article>
 </div>
 <div class="patinhas" aria-hidden="true">🐾 🐾 🐾</div>
@@ -133,7 +140,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       }
       const foto = card.querySelector(".foto");
       if (!foto.querySelector("iframe")) {
-        foto.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}" title="Pugs Aventuras - Episódio ${v.ep}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        foto.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?list=PLUAlFwJRFEh0" title="Pugs Aventuras - Episódio ${v.ep}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         const q = card.querySelector(".quando"); if (q) q.textContent = v.visto_em === hoje ? "Novinho! Acabou de sair 🎉" : "Já está no ar! 🎉";
         card.querySelectorAll('a[href*="youtube.com/@"]').forEach((a) => a.closest("p")?.remove());
       }
