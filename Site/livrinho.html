@@ -193,6 +193,25 @@ if (EP6_NO_AR) LIVROS.unshift({ titulo: "A Joy e a colônia de férias", ep: 6, 
     ["18", "Essa sou eu de verdade, com os meninos! E você? Já recebeu visita nas férias? Essa é a tia Jaki. E esses são meus novos amigos: Vitor, Rafa e Ti."],
     ["19", "“Tchau, Joy! Adorei brincar de RanRan!” “Tchau, Joy! Foi muito bom brincar e dormir agarradinho!” “Tchau, Joy! O videogame foi demais!” Joy: Au au! Mamãe: “Tchau, tchau, amiguinhos! Semana que vem tem mais historinha!”"],
   ].map(([n, t]) => ({ n, t })) });
+const EP7_NO_AR = Date.now() >= Date.parse("2026-11-18T22:00:00Z"); // Episódio 7 estreia quarta 18/11, 19h de Brasília
+if (EP7_NO_AR) LIVROS.unshift({ titulo: "A Joy e a vacina", ep: 7, audio: true, capa: "imagens/capa-ep7.jpg", paginas: [
+    ["01", "Oi, amiguinhos! Eu sou a Joy! Hoje eu vou contar quando eu tomei vacina e fiz o meu primeiro passeio!"],
+    ["02", "Antes de passear, eu precisei tomar vacina. “Segura firme, Joy... já vai passar!” O papai me segurou bem forte... e a mamãe quase chorou!"],
+    ["03", "A vacina dói só um pouquinho, mas protege a gente. Agora eu posso passear! “Agora pronto!” “Vamos, Joy, passear?”"],
+    ["04", "Uau! A rua é tão grande! Eu queria cheirar tudo! “Calma, Joy!”"],
+    ["05", "E a gente foi visitar a vovó Lucy! Papai: “Oi, mãe! Tudo bem? Olha quem veio te conhecer!” Vovó Lucy: “Oi, Joy! Que coisinha mais linda!”"],
+    ["06", "Eu subi no sofá limpinho da vovó... e dei um montão de lambeijos no papai!"],
+    ["07", "Vovó Lucy: “Ai, Gegê, eu adoro feira, filho! Olha que coisa mais linda essas frutinhas. Olha, pêssego! Ai, eu amo pêssego...”"],
+    ["08", "Vovó Lucy: “Pega uns pra mãe, pega, bem maduradinhos. Olha, Joy, isso aqui é morango! Cheira, cheira... que cheirinho bom, né, filhinha?”"],
+    ["09", "Vovó Lucy: “E aqui tem bananinha, laranjinha, uvinha... Vamos levar um pouquinho de tudo pra casa! Ai, que dia gostoso. Tô tão feliz de passear com vocês.”"],
+    ["10", "Vovó Lucy: “Toma, Joice, a minha maquininha de costura. Pode usar à vontade, viu? É sua agora.” Mamãe: “Obrigada, Lucy! Vou fazer umas coisas bonitinhas pra Joy!”"],
+    ["11", "A mamãe costurou uma caminha pra mim com a camisa velha do papai!"],
+    ["12", "E com as mangas que sobraram, ela fez um vestidinho rosa! Mamãe: “Ficou linda, filha!”"],
+    ["13", "Que caminha macia... tem cheirinho do papai!"],
+    ["14", "Mamãe: “Olha, Joy! Enrolando, vira uma malinha!” Mala?! A gente vai viajar?!"],
+    ["15", "Essa sou eu de verdade, no meu primeiro passeio! E essa é a vovó Lucy! A vacina dói só um pouquinho, mas protege a gente! Aí eu pude passear, conhecer a vovó Lucy e ir na feira!"],
+    ["16", "Vovó Lucy: “Tchau, amiguinhos! Foi nesse dia que eu conheci a Joy! Eu amei conhecer essa coisinha linda. Gegê, Joice... cuidem bem dela, viu? Amo vocês, de todo o coração.”"],
+  ].map(([n, t]) => ({ n, t })) });
 let livro = null, pag = 0, lerSozinho = true, toque = null;
 const img = (l, p) => `imagens/livrinho/ep${l.ep}-pag${p.n}.jpg`;
 function estante() {
