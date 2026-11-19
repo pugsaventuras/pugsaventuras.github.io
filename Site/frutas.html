@@ -199,12 +199,16 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const carregar = (k) => { const c = audio(); if (!c) return Promise.reject(); if (!buf[k]) buf[k] = fetch("sons/lucy/" + k + ".mp3").then((r) => r.arrayBuffer()).then((b) => new Promise((ok, e) => c.decodeAudioData(b, ok, e))); return buf[k]; };
   const somLigado = () => !(window.PugsSom && PugsSom.ligado === false);
   let fila = 0;
+  // 🎵 musiquinha da feira de fundo (Joice 19/11): baixinha no menu e no Passear; para quando a vovó fala; nos desafios fica quietinha
+  const fundo = (on) => { try { if (typeof PugsSom !== "undefined" && PugsSom.calar) PugsSom.calar(!on); } catch (e) {} };
+  const fundoLivre = () => { const em = $("partida"); return !em || em.hidden || modo === "passear" || !$("fim").hidden; };
   function vovo(k) { // fala e avisa quando terminou
     { const v = document.getElementById("falando"); if (v && !v.hidden) { v.onended = null; try { v.pause(); } catch (e) {} v.hidden = true; } }
     const minha = ++fila; $("fala").textContent = TEXTO[k] || "";
     if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
     return new Promise((ok) => {
-      let feito = false; const fim = () => { if (!feito) { feito = true; if (minha === fila) mexer(false); ok(minha === fila); } };
+      fundo(false);
+      let feito = false; const fim = () => { if (!feito) { feito = true; if (minha === fila) { mexer(false); if (fundoLivre()) fundo(true); } ok(minha === fila); } };
       if (!somLigado()) return setTimeout(fim, 900);
       setTimeout(fim, 8000);
       carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(), g = c.createGain(); g.gain.value = 1; s.buffer = b; s.connect(g).connect(c.destination); s.onended = fim; s.start(); fonte = s; mexer(true); }).catch(fim);
@@ -221,10 +225,10 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const ALVOS = [ // cena da musiquinha das frutas (todas as 8 frutas na feira); a ordem importa: a de baixo ganha onde se cruzam
     { id: "banana", x: 0, y: 41, w: 9, h: 19 }, { id: "morango", x: 8, y: 42, w: 16, h: 15 },
     { id: "banana", x: 73, y: 35, w: 13, h: 21 }, { id: "laranja", x: 84, y: 43, w: 16, h: 17 },
-    { id: "laranja", x: 14, y: 62, w: 15, h: 8 }, { id: "morango", x: 6, y: 69, w: 17, h: 10 },
+    { id: "maca", x: 14.5, y: 59, w: 15.5, h: 13 }, { id: "morango", x: 6, y: 69, w: 17, h: 10 }, // caixa de maçãs (era laranja; Joice 19/11: igual à musiquinha)
     { id: "pessego", x: 0, y: 79, w: 10, h: 21 }, { id: "uva", x: 4, y: 76, w: 10, h: 11 },
     { id: "melancia", x: 67, y: 56, w: 10, h: 17 }, { id: "mamao", x: 92, y: 33, w: 8, h: 11 }, { id: "mamao", x: 76, y: 65, w: 11, h: 15 },
-    { id: "abacaxi", x: 86, y: 67, w: 14, h: 24 }, { id: "maca", x: 60, y: 56, w: 8.5, h: 17 }, // a maçã está na cestinha da vovó
+    { id: "abacaxi", x: 86, y: 67, w: 14, h: 24 }, { id: "maca", x: 60, y: 56, w: 8.5, h: 17 }, // e uma na cestinha da vovó
   ];
   $("alvos").innerHTML = ALVOS.map((a) => `<button type="button" class="fe-alvo" data-id="${a.id}" aria-label="${a.id}" style="left:${a.x}%;top:${a.y}%;width:${a.w}%;height:${a.h}%"></button>`).join("");
   const alvosCena = (id) => [...$("alvos").querySelectorAll(`[data-id="${id}"]`)];
@@ -237,7 +241,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     const minha = ++fila; $("fala").textContent = TEXTO[k] || "";
     if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
     return new Promise((ok) => {
-      let feito = false; const fim = () => { if (feito) return; feito = true; v.hidden = true; try { v.pause(); } catch (e) {} ok(minha === fila); };
+      fundo(false);
+      let feito = false; const fim = () => { if (feito) return; feito = true; v.hidden = true; try { v.pause(); } catch (e) {} if (minha === fila && fundoLivre()) fundo(true); ok(minha === fila); };
       mexer(false); v.src = CLIPES[k]; v.muted = false; v.currentTime = 0; v.hidden = false; v.onended = fim; setTimeout(fim, 9000);
       const p = v.play(); if (p && p.catch) p.catch(() => { v.hidden = true; vovo(k).then(fim); });
     });
@@ -251,7 +256,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   }
   const botao = (id) => $("feira").querySelector(`[data-id="${id}"]`);
   function comecar(m) {
-    audio(); modo = m; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; montarFeira();
+    audio(); modo = m; fundo(m === "passear"); $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; montarFeira();
     const des = m === "desafio", mem = m === "memoria", lis = m === "lista" || mem; $("oi").hidden = true;
     $("repetir").hidden = $("ajuda").hidden = !(des || lis); $("cesta-box").hidden = !(des || lis); $("lista").hidden = !lis; item = null; alvo = null; $("cesto").innerHTML = ""; $("barra").hidden = false;
     $("alvos").querySelectorAll(".fe-alvo").forEach((a) => a.classList.remove("foi", "dica"));
@@ -366,7 +371,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   $("repetir").onclick = () => { if (modo === "memoria") { if (ocupado || !escondida) return; ocupado = true; lerLista().then(() => { ocupado = false; }); return; }
     if (!alvo || ocupado) return; if (modo === "lista" && item) vovo(`lista-${item.f.id}-${item.n}`); else vovo("pede-" + alvo.id); };
   function terminar() {
-    alvo = null; ocupado = true; $("fim").hidden = false; efeito("festa"); setTimeout(() => latir("joy"), 700); setTimeout(() => latir("jane"), 1300); abanar();
+    alvo = null; ocupado = true; $("fim").hidden = false; fundo(true); efeito("festa"); setTimeout(() => latir("joy"), 700); setTimeout(() => latir("jane"), 1300); abanar();
     setTimeout(() => vovo(modo === "lista" || modo === "memoria" ? "lista-fim" : sorteia(["fim-1", "fim-2"])), 900);
     setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
   }
@@ -376,7 +381,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   $("denovo").onclick = () => comecar(["lista", "memoria"].includes(modo) ? modo : "desafio");
   $("b-memoria").onclick = () => comecar("memoria");
   $("b-lista").onclick = () => comecar("lista");
-  $("voltar").onclick = () => { ++fila; mexer(false); if (fonte) { try { fonte.stop(); } catch (e) {} } { const v = $("falando"); v.hidden = true; try { v.pause(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("cesta-box").hidden = true; $("lista").hidden = true; $("fim").hidden = true; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
+  $("voltar").onclick = () => { ++fila; mexer(false); fundo(true); if (fonte) { try { fonte.stop(); } catch (e) {} } { const v = $("falando"); v.hidden = true; try { v.pause(); } catch (e) {} } alvo = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("cesta-box").hidden = true; $("lista").hidden = true; $("fim").hidden = true; $("fala").textContent = "Vem passear na feirinha com a vovó! 🧺"; };
   try { if (window.PugsSom && PugsSom.carregarSons) PugsSom.carregarSons(["latido-joy", "latido-jane"]); } catch (e) {}
 
   const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; };
