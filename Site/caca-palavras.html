@@ -120,6 +120,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     { id: "ep1", nome: "Procura-se uma pug", ic: "🔎", sub: "Episódio 1", p: [["pug", "🐶"], ["lambeijo", "😘"], ["caminha", "🛏️"], ["laço", "🎀"], ["mamãe", "👩"], ["papai", "👨"], ["Joy", "🐶"]] },
     { id: "joy", nome: "Joy e Jane", ic: "🐾", sub: "Grátis", gratis: true, p: [["Joy", "🐶"], ["Jane", "🐾"], ["pug", "🐶"], ["bola", "⚽"], ["osso", "🦴"], ["pata", "🐾"], ["cama", "🛏️"], ["latido", "🔊"], ["carinho", "💛"], ["amor", "❤️"]] },
   ];
+  // vozes gravadas pela Joice (19/11): sons/voz/palavra-<sem acento>.mp3; palavra sem gravação usa a voz do aparelho
+  const voz = (f) => "palavra-" + semAcento(f).toLowerCase();
   const semAcento = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().replace(/[^A-Z]/g, "");
   const LETRAS = "AAAABCDEEEEFGHIIIJLMNOOOPRRSSTUUVZ";
   let tam = "peq", jogadores = 1, lista = null, N = 6, grade = [], pos = [], vez = 0, pontos = [0, 0], ini = null, selec = [];
@@ -193,24 +195,26 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     w.achou = vez; const cor = vez === 0 ? "ok-joy" : "ok-jane";
     w.cel.forEach((c) => $("grade").children[c].classList.add(cor));
     const li = $("palavras").children[pos.indexOf(w)]; li.classList.add("achou", vez === 0 ? "joy" : "jane");
-    PugsSom.acerto(); setTimeout(() => PugsSom.falar(w.fala), 250);
+    PugsSom.acerto(); setTimeout(() => PugsSom.falar(w.fala, voz(w.fala)), 250);
     if (jogadores === 2) { pontos[vez]++; placar(); }
     if (pos.every((p) => p.achou >= 0)) return setTimeout(fim, 900);
     if (jogadores === 2) setTimeout(passarVez, 1300);
   };
   $("grade").addEventListener("pointerup", soltar); $("grade").addEventListener("pointercancel", soltar);
-  $("palavras").onclick = (e) => { const li = e.target.closest("li"); if (li) PugsSom.falar(pos[+li.dataset.i].fala); };
+  $("palavras").onclick = (e) => { const li = e.target.closest("li"); if (li) { const f = pos[+li.dataset.i].fala; PugsSom.falar(f, voz(f)); } };
   $("ajuda").onclick = () => {
     const falta = pos.filter((p) => p.achou < 0); if (!falta.length) return;
     const w = falta[Math.floor(Math.random() * falta.length)], el = $("grade").children[w.cel[0]];
-    el.classList.remove("dica"); void el.offsetWidth; el.classList.add("dica"); PugsSom.falar("Procura a palavra " + w.fala + "! Começa aqui!");
+    el.classList.remove("dica"); void el.offsetWidth; el.classList.add("dica");
+    if (PugsSom.temVoz && PugsSom.temVoz(voz(w.fala)) && PugsSom.temVoz("cp-ajuda")) { PugsSom.falar(w.fala, voz(w.fala)); setTimeout(() => PugsSom.falar("Procura essa palavra! Começa aqui!", "cp-ajuda"), 1300); }
+    else PugsSom.falar("Procura a palavra " + w.fala + "! Começa aqui!");
   };
   function fim() {
     let txt = "Você achou todas as palavras! 🎉";
     if (jogadores === 2) txt = pontos[0] === pontos[1] ? `Empate! ${pontos[0]} × ${pontos[1]} 🤝` : (pontos[0] > pontos[1] ? `Time Joy ganhou! 💙 ${pontos[0]} × ${pontos[1]}` : `Time Jane ganhou! 🩷 ${pontos[1]} × ${pontos[0]}`);
     $("fim-txt").textContent = txt; $("fim").hidden = false; PugsSom.festa();
     if (jogadores === 2 && PugsSom.latido && pontos[0] !== pontos[1]) PugsSom.latido(pontos[0] > pontos[1] ? "joy" : "jane");
-    setTimeout(() => PugsSom.falar(jogadores === 2 ? (pontos[0] === pontos[1] ? "Empate! Os dois times foram muito bem!" : pontos[0] > pontos[1] ? "O time Joy ganhou!" : "O time Jane ganhou!") : "Muito bem! Você achou todas as palavras!"), 900);
+    setTimeout(() => { if (jogadores === 2) { if (pontos[0] === pontos[1]) PugsSom.falar("Empate! Os dois times foram muito bem!", "cp-empate"); else if (pontos[0] > pontos[1]) PugsSom.falar("O time Joy ganhou!", "cp-time-joy"); else PugsSom.falar("O time Jane ganhou!", "cp-time-jane"); } else PugsSom.falar("Muito bem! Você achou todas as palavras!", "cp-fim"); }, 900);
     if (GRATIS) { $("pais").hidden = false; }
     setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
   }
