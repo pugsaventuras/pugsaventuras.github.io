@@ -37,6 +37,7 @@
   width:min(94vw,560px,calc(100dvh - 200px));aspect-ratio:1}
 .cp-grade span{display:flex;align-items:center;justify-content:center;border-radius:10px;font:700 clamp(1rem,4.6vw,2rem) Fredoka,Arial,sans-serif;color:var(--marrom);transition:background .15s,transform .15s}
 .cp-grade.peq span{font-size:clamp(1.4rem,7vw,2.8rem)}
+.cp-grade.med span{font-size:clamp(1.2rem,5.6vw,2.3rem)}
 .cp-grade span.sel{background:#ffe48a;transform:scale(1.06)}
 .cp-grade span.ok-joy{background:#8fcbf5;color:#fff;-webkit-text-stroke:1px #1f5f94}
 .cp-grade span.ok-jane{background:#f7a8c9;color:#fff;-webkit-text-stroke:1px #b03366}
@@ -62,7 +63,7 @@
 <div id="jogo" hidden>
   <div id="escolha">
     <p class="jogo-dica">Ache as palavras escondidas! Arraste o dedo da primeira até a última letra. A Joy fala cada palavra que você achar.</p>
-    <div class="cp-modo" id="tamanho"><button type="button" class="ativo" data-t="peq">🐣 Pequenininho</button><button type="button" data-t="gde">🦒 Grandão</button></div>
+    <div class="cp-modo" id="tamanho"><button type="button" class="ativo" data-t="peq">🐣 Pequenininho</button><button type="button" data-t="med">🐶 Médio</button><button type="button" data-t="gde">🦒 Grandão</button></div>
     <div class="cp-modo" id="quem"><button type="button" class="ativo" data-q="1">🙋 Sozinho</button><button type="button" data-q="2">👫 2 jogadores</button></div>
     <div class="cp-listas" id="listas"></div>
   </div>
@@ -79,6 +80,7 @@
     </div>
     <div class="cp-fim" id="fim" hidden>
       <p class="festa-titulo" id="fim-txt" style="margin:0 0 8px">Achou tudo! 🎉</p>
+      <button type="button" class="botao rosa" id="subir" hidden>Subir de nível ⬆️</button>
       <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
       <button type="button" class="botao" id="outra">Outras palavras</button>
     </div>
@@ -135,9 +137,10 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   $("quem").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; jogadores = +b.dataset.q; [...$("quem").children].forEach((x) => x.classList.toggle("ativo", x === b)); };
   $("listas").onclick = (e) => { const b = e.target.closest(".cp-lista"); if (!b) return; lista = LISTAS.find((l) => l.id === b.dataset.id); comecar(); };
 
-  // monta a grade: pequenininho 6x6, 4 palavras, só deitadas; grandão 10x10, 8 palavras, deitadas e em pé
+  // 3 níveis (Joice 19/11): 🐣 pequenininho 6x6, 4 palavras, só deitadas · 🐶 médio 8x8, 6 palavras, deitadas e em pé · 🦒 grandão 10x10, 8 palavras, deitadas, em pé e na diagonal. Sempre lendo para a frente, nunca de trás pra frente
   function montar() {
-    N = tam === "peq" ? 6 : 10; const quantas = tam === "peq" ? 4 : 8, emPe = tam !== "peq";
+    const NIV = { peq: [6, 4, [[0, 1]]], med: [8, 6, [[0, 1], [1, 0]]], gde: [10, 8, [[0, 1], [1, 0], [1, 1]]] }[tam] || [6, 4, [[0, 1]]];
+    N = NIV[0]; const quantas = NIV[1], dirs = NIV[2];
     for (let tentativa = 0; tentativa < 200; tentativa++) {
       grade = Array.from({ length: N }, () => Array(N).fill(""));
       const cand = lista.p.map(([fala, ic]) => ({ fala, ic, g: semAcento(fala) })).filter((w) => w.g.length <= N && w.g.length >= 2).sort(() => Math.random() - 0.5);
@@ -146,13 +149,13 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
         if (pos.length >= quantas) break;
         if (pos.some((x) => x.g === w.g)) continue;
         for (let k = 0; k < 80; k++) {
-          const vert = emPe && Math.random() < 0.5, L = w.g.length;
-          const r = Math.floor(Math.random() * (vert ? N - L + 1 : N)), c = Math.floor(Math.random() * (vert ? N : N - L + 1));
+          const [dr, dc] = dirs[Math.floor(Math.random() * dirs.length)], L = w.g.length;
+          const r = Math.floor(Math.random() * (dr ? N - L + 1 : N)), c = Math.floor(Math.random() * (dc ? N - L + 1 : N));
           let cabe = true;
-          for (let i = 0; i < L; i++) { const rr = vert ? r + i : r, cc = vert ? c : c + i; if (grade[rr][cc] && grade[rr][cc] !== w.g[i]) { cabe = false; break; } }
+          for (let i = 0; i < L; i++) { const rr = r + dr * i, cc = c + dc * i; if (grade[rr][cc] && grade[rr][cc] !== w.g[i]) { cabe = false; break; } }
           if (!cabe) continue;
           const cel = [];
-          for (let i = 0; i < L; i++) { const rr = vert ? r + i : r, cc = vert ? c : c + i; grade[rr][cc] = w.g[i]; cel.push(rr * N + cc); }
+          for (let i = 0; i < L; i++) { const rr = r + dr * i, cc = c + dc * i; grade[rr][cc] = w.g[i]; cel.push(rr * N + cc); }
           pos.push({ ...w, cel, achou: -1 }); break;
         }
       }
@@ -164,22 +167,24 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     montar(); vez = 0; pontos = [0, 0];
     $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true;
     $("titulo-lista").textContent = lista.ic + " " + lista.nome;
-    const g = $("grade"); g.className = "cp-grade" + (tam === "peq" ? " peq" : ""); g.style.gridTemplateColumns = `repeat(${N},1fr)`;
+    const g = $("grade"); g.className = "cp-grade" + (tam === "peq" ? " peq" : tam === "med" ? " med" : ""); g.style.gridTemplateColumns = `repeat(${N},1fr)`;
     g.innerHTML = grade.flat().map((L, i) => `<span data-i="${i}">${L}</span>`).join("");
     $("palavras").innerHTML = pos.map((w, i) => `<li data-i="${i}"><span class="ic">${w.ic}</span>${w.g}</li>`).join("");
     $("vez").hidden = $("placar").hidden = $("passar").hidden = jogadores === 1; mostrarVez(); placar();
-    PugsSom.falar(jogadores === 2 ? "Vez do time Joy!" : "Vamos achar as palavras!");
+    (jogadores === 2 ? PugsSom.falar("Vez do time Joy!", "cp-vez-joy") : PugsSom.falar("Vamos achar as palavras!", "cp-vamos"));
     setTimeout(() => $("grade").scrollIntoView({ behavior: "smooth", block: "center" }), 100);
   }
   function mostrarVez() { const v = $("vez"); v.className = "cp-vez " + (vez === 0 ? "joy" : "jane"); v.textContent = vez === 0 ? "Vez do Time Joy 💙" : "Vez do Time Jane 🩷"; }
   function placar() { $("pj").textContent = pontos[0]; $("pa").textContent = pontos[1]; }
-  function passarVez() { if (jogadores === 2) { vez = 1 - vez; mostrarVez(); PugsSom.falar(vez === 0 ? "Vez do time Joy!" : "Vez do time Jane!"); } }
+  function passarVez() { if (jogadores === 2) { vez = 1 - vez; mostrarVez(); (vez === 0 ? PugsSom.falar("Vez do time Joy!", "cp-vez-joy") : PugsSom.falar("Vez do time Jane!", "cp-vez-jane")); } }
   $("passar").onclick = passarVez;
 
   // arrastar o dedo
   const celDe = (x, y) => { const el = document.elementFromPoint(x, y); return el && el.parentElement === $("grade") ? +el.dataset.i : null; };
   function caminho(a, b) {
     const ra = Math.floor(a / N), ca = a % N, rb = Math.floor(b / N), cb = b % N; const out = [];
+    const dr = rb - ra, dc = cb - ca, ar = Math.abs(dr), ad = Math.abs(dc);
+    if (ar && ad && Math.min(ar, ad) / Math.max(ar, ad) >= 0.5) { const n = Math.min(ar, ad), sr = Math.sign(dr), sc = Math.sign(dc); for (let k = 0; k <= n; k++) out.push((ra + sr * k) * N + ca + sc * k); return out; } // diagonal
     if (Math.abs(rb - ra) > Math.abs(cb - ca)) { const s = Math.sign(rb - ra) || 1; for (let r = ra; r !== rb + s; r += s) out.push(r * N + ca); }
     else { const s = Math.sign(cb - ca) || 1; for (let c = ca; c !== cb + s; c += s) out.push(ra * N + c); }
     return out;
@@ -212,12 +217,15 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   function fim() {
     let txt = "Você achou todas as palavras! 🎉";
     if (jogadores === 2) txt = pontos[0] === pontos[1] ? `Empate! ${pontos[0]} × ${pontos[1]} 🤝` : (pontos[0] > pontos[1] ? `Time Joy ganhou! 💙 ${pontos[0]} × ${pontos[1]}` : `Time Jane ganhou! 🩷 ${pontos[1]} × ${pontos[0]}`);
-    $("fim-txt").textContent = txt; $("fim").hidden = false; PugsSom.festa();
+    $("fim-txt").textContent = txt; $("fim").hidden = false; $("subir").hidden = !PROX[tam]; PugsSom.festa();
     if (jogadores === 2 && PugsSom.latido && pontos[0] !== pontos[1]) PugsSom.latido(pontos[0] > pontos[1] ? "joy" : "jane");
     setTimeout(() => { if (jogadores === 2) { if (pontos[0] === pontos[1]) PugsSom.falar("Empate! Os dois times foram muito bem!", "cp-empate"); else if (pontos[0] > pontos[1]) PugsSom.falar("O time Joy ganhou!", "cp-time-joy"); else PugsSom.falar("O time Jane ganhou!", "cp-time-jane"); } else PugsSom.falar("Muito bem! Você achou todas as palavras!", "cp-fim"); }, 900);
     if (GRATIS) { $("pais").hidden = false; }
     setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
   }
+  // subir de nível no fim (igual ao Labirinto)
+  const PROX = { peq: "med", med: "gde" };
+  $("subir").onclick = () => { if (!PROX[tam]) return; tam = PROX[tam]; [...$("tamanho").children].forEach((x) => x.classList.toggle("ativo", x.dataset.t === tam)); comecar(); };
   $("denovo").onclick = comecar; $("outra").onclick = escolha; $("trocar").onclick = escolha;
 
   const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; escolha(); };
