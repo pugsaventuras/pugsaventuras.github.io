@@ -133,9 +133,15 @@ async function carregar() {
   familias = data || []; desenhar();
 }
 (async () => {
-  const { data: s } = await pugs.auth.getSession();
-  if (!s.session) { location.href = "entrar.html#entrar"; return; }
-  const { data: admin } = await pugs.rpc("sou_admin");
+  // às vezes a 1ª chamada trava enquanto o login se renova: espera no máximo 5 s e tenta de novo (23/11)
+  const ate = (p, ms) => Promise.race([p, new Promise((r) => setTimeout(() => r(null), ms))]);
+  let s = null, admin = null;
+  for (let i = 0; i < 4 && !admin; i++) {
+    const r = await ate(pugs.auth.getSession(), 5000); s = r && r.data;
+    if (r && !s.session) { location.href = "entrar.html#entrar"; return; }
+    const a = await ate(pugs.rpc("sou_admin"), 5000); admin = a && a.data;
+    if (!admin) await new Promise((r) => setTimeout(r, 1200));
+  }
   $("#carregando").hidden = true;
   if (!admin) { $("#negado").hidden = false; return; }
   $("#painel").hidden = false;
