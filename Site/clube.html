@@ -27,6 +27,7 @@
 <p class="intro">A Joy e a Jane prepararam coisas para ler, pintar e brincar em casa. <span id="ola-adulto"></span></p>
 <div id="status" class="aviso ok"></div>
 <div id="niver-hoje" class="cartao" hidden style="text-align:center;background:#fff3c4;border-color:#e8578f"></div>
+<div id="niver-mes" class="cartao" hidden style="text-align:center;background:#fff3c4;border-color:#e8578f"></div>
 <div id="niver-pede" class="cartao" hidden style="background:#fff7e0;border-style:dashed"></div>
 
 <div id="liberado">
@@ -187,6 +188,15 @@ async function abrir() {
         for (let i = 0; i < 28; i++) { const s = document.createElement("span"); s.className = "confete"; s.textContent = ["🎂", "🎉", "🐾", "💛", "🎁", "🎈"][i % 6]; s.style.left = Math.random() * 100 + "vw"; s.style.animationDelay = Math.random() * 0.9 + "s"; document.body.appendChild(s); setTimeout(() => s.remove(), 4000); } };
       festa(); document.addEventListener("pointerdown", () => { try { PugsSom.festa(); } catch (e) {} }, { once: true }); // o som só sai depois do primeiro toque no iPad
     }
+  }
+  // 🎵 musiquinha de aniversário da Joy e da Jane: aparece sozinha o mês inteiro do aniversário (Joice 20/11)
+  const mesHoje = new Date().toISOString().slice(5, 7);
+  const doMes = comData.filter((x) => x.nascimento.slice(5, 7) === mesHoje);
+  if (doMes.length) {
+    const nomesMes = doMes.map((x) => x.nome).join(" e ").replace(/[<>&]/g, "");
+    const video = `<video src="imagens/jogos/niver-musica.mp4" poster="imagens/jogos/niver-musica.jpg" controls playsinline preload="none" style="width:100%;max-width:640px;border-radius:18px;border:4px solid #5a3a22;margin:10px auto 0;display:block"></video>`;
+    if (festeiros.length) $("#niver-hoje").insertAdjacentHTML("beforeend", `<p style="margin:10px 0 0;font-weight:700">🎵 A Joy e a Jane cantaram pra você! Aperte o play:</p>` + video);
+    else { $("#niver-mes").innerHTML = `<h2 style="margin:0">🎂 É o mês do aniversário de ${nomesMes}!</h2><p style="margin:6px 0 0">A Joy e a Jane fizeram uma musiquinha de parabéns. Aperte o play! 🎵</p>` + video; $("#niver-mes").hidden = false; }
   }
   const semData = filhos.filter((x) => !x.nascimento && x.nome);
   if (semData.length) {

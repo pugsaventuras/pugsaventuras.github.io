@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="estilo.css">
+<style>.niver-linha{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:2px dashed rgba(90,58,34,.25)}.niver-linha:last-child{border-bottom:0}.niver-acoes{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.niver-acoes .etiqueta{white-space:nowrap;align-self:center}.niver-acoes .botao{margin:0}</style>
 </head><body>
 <header class="topo">
 <a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
@@ -101,10 +102,14 @@ function desenhar() {
 const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 function desenharNiver() {
   const h = new Date(), m1 = h.getMonth() + 1, m2 = (m1 % 12) + 1;
-  const kids = []; familias.forEach((f) => (f.criancas || []).forEach((c) => { if (c.nascimento) kids.push({ f, c, m: +c.nascimento.slice(5, 7), d: +c.nascimento.slice(8, 10) }); }));
+  // a mesma criança pode estar em 2 cadastros da mesma família (ex.: Valentina no da Jaqueline e no do Vitor): mostra 1 vez só,
+  // no cadastro em que ela é a primeira criança (o "dela"), e avisa que existe outro (Joice 20/11)
+  const todos = []; familias.forEach((f) => (f.criancas || []).forEach((c, i) => { if (c.nascimento) todos.push({ f, c, i, m: +c.nascimento.slice(5, 7), d: +c.nascimento.slice(8, 10), chave: c.nome.trim().toLowerCase() + "|" + c.nascimento }); }));
+  const kids = []; todos.forEach((k) => { const iguais = todos.filter((x) => x.chave === k.chave); const dono = iguais.slice().sort((x, y) => x.i - y.i)[0]; if (dono === k) kids.push({ ...k, outros: iguais.filter((x) => x !== k) }); });
+  const zap = (k) => { const t = String(k.f.telefone || "").replace(/\D/g, ""); if (!t) return ""; const msg = `🎂 Feliz aniversário, ${k.c.nome}! A Joy e a Jane mandaram um presente: 1 mês grátis no Clube Pugs Aventuras 🎁 É só entrar em pugsaventuras.com com o seu e-mail. Um lambeijo das pugs!`; return `<a class="botao zap" style="font-size:.95rem;padding:5px 14px" href="https://wa.me/${t}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">📲 Mandar parabéns</a>`; };
   const semData = familias.filter((f) => (f.criancas || []).some((c) => !c.nascimento)).length;
   const bloco = (m, titulo) => { const l = kids.filter((k) => k.m === m).sort((a, b) => a.d - b.d);
-    return `<h3 style="margin:10px 0 4px">${titulo} — ${MESES[m - 1]} (${l.length})</h3>` + (l.length ? l.map((k) => { const [tipo, txt] = situacao(k.f); return `<p style="margin:4px 0">🎂 <b>dia ${String(k.d).padStart(2, "0")}</b> · <b>${esc(k.c.nome)}</b> (faz ${pugsIdade(k.c.nascimento) + (m === m1 && k.d > h.getDate() || m !== m1 ? 1 : 0)}) · ${esc(k.f.nome_responsavel)} · ${esc(k.f.email)} · <span class="etiqueta ${tipo}">${txt}</span> <button class="botao" onclick="liberar('${k.f.id}','cortesia',somar(achar('${k.f.id}'),1))">🎁 Presente: 1 mês</button></p>`; }).join("") : "<p style='margin:4px 0'><i>Ninguém este mês.</i></p>"); };
+    return `<h3 style="margin:10px 0 4px">${titulo} — ${MESES[m - 1]} (${l.length})</h3>` + (l.length ? l.map((k) => { const [tipo, txt] = situacao(k.f); return `<div class="niver-linha"><div>🎂 <b>dia ${String(k.d).padStart(2, "0")}</b> · <b>${esc(k.c.nome)}</b> (faz ${pugsIdade(k.c.nascimento) + (m === m1 && k.d > h.getDate() || m !== m1 ? 1 : 0)}) · ${esc(k.f.nome_responsavel)} · ${esc(k.f.email)}${k.outros.length ? `<br><small>também está no cadastro ${k.outros.map((o) => esc(o.f.email)).join(", ")} (o presente vai só neste)</small>` : ""}</div><div class="niver-acoes"><span class="etiqueta ${tipo}">${txt}</span><button class="botao" onclick="liberar('${k.f.id}','cortesia',somar(achar('${k.f.id}'),1))">🎁 Presente: 1 mês</button>${zap(k)}</div></div>`; }).join("") : "<p style='margin:4px 0'><i>Ninguém este mês.</i></p>"); };
   $("#niver-mes").innerHTML = `<article class="cartao" style="background:#fff3c4"><h2 style="margin:0">🎂 Aniversariantes</h2><p style="margin:2px 0 0"><small>Presente da Joy: 1 mês grátis no mês do aniversário (1 vez por ano). No dia, a criança vê a festa no Clube.${semData ? ` · ${semData} família(s) ainda sem a data (o Clube pede sozinho).` : ""}</small></p>${bloco(m1, "Este mês")}${bloco(m2, "Mês que vem")}</article>`;
 }
 function achar(id) { return familias.find((f) => f.id === id); }
