@@ -212,6 +212,26 @@ if (EP7_NO_AR) LIVROS.unshift({ titulo: "A Joy e a vacina", ep: 7, audio: true, 
     ["15", "Essa sou eu de verdade, no meu primeiro passeio! E essa é a vovó Lucy! A vacina dói só um pouquinho, mas protege a gente! Aí eu pude passear, conhecer a vovó Lucy e ir na feira!"],
     ["16", "Vovó Lucy: “Tchau, amiguinhos! Foi nesse dia que eu conheci a Joy! Eu amei conhecer essa coisinha linda. Gegê, Joice... cuidem bem dela, viu? Amo vocês, de todo o coração.”"],
   ].map(([n, t]) => ({ n, t })) });
+const EP8_NO_AR = Date.now() >= Date.parse("2026-11-25T22:00:00Z"); // Episódio 8 estreia quarta 25/11, 19h de Brasília (falas como foram ao ar)
+if (EP8_NO_AR) LIVROS.unshift({ titulo: "A primeira viagem da Joy", ep: 8, audio: true, capa: "imagens/capa-ep8.jpg", paginas: [
+    ["01", "Oi, amiguinhos! Eu sou a Joy! Hoje eu vou contar a minha primeira viagem!"],
+    ["02", "A mamãe fez uma caminha pra mim, e o papai colocou no carro. Papai: “Pronto, Joy! Já tá no carro a sua malinha!”"],
+    ["03", "No carro, a mamãe põe o cinto. Mamãe: “Cinto colocado! Agora, vamos!” Papai: “Joy, se prepara, que a viagem é longa!”"],
+    ["04", "A gente foi pra São Roque, no sítio do biso e da bisa! Bisa: “Chegaram, é? Entra, entra.” Biso: “Oi, Joicinha!”"],
+    ["05", "E lá, a primeira palavra tinha que ser... Mamãe: “Bença, vô! Bença, vó!” Bisa: “Deus te abençoe!”"],
+    ["06", "Tinha tanta gente e tanta coisa pra eu conhecer... Papai: “Fica tranquila, essa é a sua família, Joy.”"],
+    ["07", "E essas são a tia Jaque, a mamãe e a vó Fátima! Vó Fátima: “Que linda, que linda! Vem com a vó, vem!”"],
+    ["08", "O biso cuidava das galinhas e das vacas! Biso: “Olha, Joy, essa é a galinha. Ela come milho!”"],
+    ["09", "Olha a bisa! Ela adorava pescar no lago! Bisa: “Fica quieta, Joy, senão o peixe foge.”"],
+    ["10", "A mamãe colocou um lencinho de bolinhas! Mamãe: “Ficou bonitinha!”"],
+    ["11", "E depois eu fui pro colo da Clarinha. Clarinha: “Vem, Joy, vem no meu colo! Ai, que fofinha!”"],
+    ["12", "Eu desci no escorregador com o Vitor! Vitor: “Vem, Joy! Vamos escorregar... De novo, de novo!”"],
+    ["13", "E eu brinquei com todos os meus priminhos! E eles me amaram! “Joy! Joy! Joy!” “Deixa eu pegar ela!” “Ela é muito fofinha!”"],
+    ["14", "Mamãe: “Tchau, gente! Obrigada por tudo!” Papai: “Tchau, pessoal! Até a próxima!” Bisa: “Vai com Deus!” Biso: “Tchau, Joicinha! Volta logo, viu?” “Tchau, Joy!”"],
+    ["15", "Na volta, eu tava tão cansada... porque eu brinquei muito... mas eu descobri que tenho um monte de priminhos!"],
+    ["16", "Essa sou eu de verdade! E essa é a minha família. Ela é muito grande e unida! Essa é a Clarinha e o Vitor, meus priminhos! E no sítio tem muita brincadeira legal!"],
+    ["17", "Biso: “Foi bom demais te conhecer, Joy! Volta logo pro sítio do biso!” Bisa: “Vai com Deus!” “Tchau, Joy! Até a próxima!” “Volta logo!”"],
+  ].map(([n, t]) => ({ n, t })) });
 let livro = null, pag = 0, lerSozinho = true, toque = null;
 const img = (l, p) => `imagens/livrinho/ep${l.ep}-pag${p.n}.jpg`;
 function estante() {
