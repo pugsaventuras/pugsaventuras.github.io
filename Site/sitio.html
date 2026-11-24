@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sítio do biso e da bisa | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<style>
+.si-palco{display:grid;grid-template-columns:1fr;gap:12px;max-width:1150px;margin:0 auto}
+.si-cena{position:relative;max-width:min(100%,calc(46dvh * 1.79));margin:0 auto 8px;border:4px solid var(--marrom);border-radius:24px;overflow:hidden;box-shadow:0 5px 0 var(--marrom);background:#fff;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.si-cena img{display:block;width:100%;height:auto;aspect-ratio:1600/894;pointer-events:none}
+.si-fala{position:relative;max-width:min(100%,calc(46dvh * 1.79));margin:0 auto 8px;box-shadow:0 3px 0 var(--marrom);background:#fffdf3;border:3px solid var(--marrom);border-radius:18px;padding:6px 12px;font:700 clamp(1rem,3.4vw,1.35rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center;min-height:1.6em}
+.si-fala .quem{font-size:.8em;opacity:.75;margin-right:4px}
+.si-alvos{position:absolute;inset:0;z-index:2}
+.si-alvo{position:absolute;border:0;background:transparent;border-radius:35%;cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent}
+.si-alvo.toque{animation:si-anel .5s}
+.si-alvo.dica{animation:si-anel .9s ease-in-out 3}
+.si-alvo.erro{animation:si-anel-erro .45s}
+@keyframes si-anel{from{box-shadow:inset 0 0 0 0 rgba(255,228,138,.9)}50%{box-shadow:inset 0 0 0 999px rgba(255,228,138,.4)}to{box-shadow:inset 0 0 0 0 rgba(255,228,138,0)}}
+@keyframes si-anel-erro{50%{box-shadow:inset 0 0 0 999px rgba(232,80,91,.25)}}
+.si-brilho{position:absolute;z-index:1;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,rgba(255,240,150,.65),rgba(255,240,150,0));opacity:0;transition:opacity .25s}
+.si-brilho.on{opacity:1;animation:si-pulsa .6s ease-in-out infinite alternate}
+@keyframes si-pulsa{to{transform:scale(1.08)}}
+.si-oi{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);z-index:4;font:700 clamp(1.1rem,3.4vw,1.6rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:var(--sol);border:4px solid var(--marrom);border-radius:999px;padding:10px 22px;box-shadow:0 5px 0 var(--marrom);cursor:pointer;animation:si-pulsa2 1.2s ease-in-out infinite alternate;white-space:nowrap}
+.si-oi[hidden]{display:none}
+@keyframes si-pulsa2{to{transform:translateX(-50%) scale(1.07)}}
+.si-modos{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:6px 0 14px}
+.si-modos button{font:700 clamp(1.1rem,3.6vw,1.4rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:12px 20px;cursor:pointer;box-shadow:0 4px 0 var(--marrom);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:170px}
+.si-modos button small{font:500 .9rem Fredoka,Arial,sans-serif}
+.si-modos button .ic{font-size:2.2rem;line-height:1}
+.si-barra{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:0 0 8px}
+.si-opcoes{display:flex;gap:clamp(8px,2vw,16px);justify-content:center;flex-wrap:wrap;margin:6px auto}
+.si-opcoes button{font:inherit;cursor:pointer;background:#fff;border:4px solid var(--marrom);border-radius:22px;box-shadow:0 5px 0 var(--marrom);padding:8px 12px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:clamp(92px,24vw,140px)}
+.si-opcoes .emo{font-size:clamp(2.8rem,10vw,4.4rem);line-height:1.1}
+.si-opcoes .nome{font:700 clamp(1rem,3.4vw,1.3rem) Fredoka,Arial,sans-serif;color:var(--marrom)}
+.si-opcoes button.erro{animation:si-nao .4s}
+.si-opcoes button.certo{background:#d6f5d0}
+@keyframes si-nao{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.si-pergunta{text-align:center;font:700 clamp(1.2rem,4vw,1.6rem) Fredoka,Arial,sans-serif;color:var(--marrom);margin:4px 0}
+.si-placar{text-align:center;font-size:1.6rem;letter-spacing:2px;min-height:1.6em}
+.si-fim{text-align:center;margin:16px auto;max-width:760px}
+.si-bala{position:fixed;z-index:60;font-size:2.4rem;pointer-events:none;top:-50px;animation:si-cai 2.2s ease-in forwards}
+@keyframes si-cai{to{transform:translateY(110vh) rotate(540deg)}}
+@media (min-aspect-ratio:5/4){
+  .si-palco{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}
+  .si-cena,.si-fala{max-width:min(100%,calc((100dvh - 280px) * 1.79))}
+  .si-modos{flex-direction:column;align-items:stretch;margin-top:0}
+}
+</style>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">Sítio do biso e da bisa 🐔</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+ <div class="si-palco">
+  <div>
+   <div class="si-fala" id="fala">Toque no botão para pedir a bença da bisa! 🙏</div>
+   <div class="si-cena" id="cena">
+    <img src="imagens/jogos/sitio-bichinhos.jpg" alt="O biso e a bisa no sítio com a Joy e a Jane, a galinha, a vaca, o papagaio, o passarinho e o peixe no lago" width="1600" height="894">
+    <div class="si-brilho" id="brilho-biso" style="left:33%;top:8%;width:22%;height:40%"></div>
+    <div class="si-brilho" id="brilho-bisa" style="left:49%;top:24%;width:16%;height:30%"></div>
+    <div class="si-alvos" id="alvos"></div>
+    <button type="button" class="si-oi" id="oi">🙏 Bença, vó!</button>
+   </div>
+   <div class="si-barra" id="barra" hidden><button type="button" class="botao" id="repetir">🔊 Ouvir de novo</button><button type="button" class="botao" id="ajuda">💡 Ajuda</button><button type="button" class="botao" id="voltar">Mudar</button></div>
+  </div>
+  <div>
+   <div id="escolha">
+    <div class="si-modos">
+     <button type="button" id="b-passear"><span class="ic">🐾</span>Passear no sítio<small>Toque no bicho e ouça</small></button>
+     <button type="button" id="b-cade"><span class="ic">🔎</span>Cadê o bicho?<small>O biso e a bisa pedem, você acha</small></button>
+     <button type="button" id="b-perguntas"><span class="ic">🌽</span>O que ele come?<small>O que come, o que dá, onde mora</small></button>
+    </div>
+   </div>
+   <div id="partida" hidden>
+    <div class="si-placar" id="placar"></div>
+    <div id="quiz" hidden>
+     <p class="si-pergunta" id="pergunta"></p>
+     <div class="si-opcoes" id="opcoes"></div>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="si-fim" id="fim" hidden>
+  <p class="festa-titulo" style="margin:0 0 8px">Você conhece os bichos do sítio! 🎉🍬</p>
+  <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
+  <button type="button" class="botao" id="passear2">Passear no sítio</button>
+ </div>
+</div>
+</main>
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// 🐔 Sítio do biso e da bisa — vozes clonadas do biso e da bisa (ElevenLabs, aprovadas pela Joice 23/11), em sons/voz/sitio-*.mp3.
+// Imagem = imagem-mãe da musiquinha "Bichinhos do Sítio". Por enquanto só a Joice (admin) vê; liberar quando ela aprovar.
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const LIBERA = Infinity; // ← trocar pela data quando a Joice aprovar
+  const QUEM = { biso: "👴 Biso", bisa: "👵 Bisa" };
+  const FALAS = {
+    "bisa-deus-te-abencoe": ["bisa", "Deus te abençoe!"],
+    "biso-oi": ["biso", "Oi, criançada! Vem ver os bichinhos do sítio do biso!"],
+    "bisa-bencao": ["bisa", "Deus abençoe vocês, criançada!"],
+    "biso-galinha": ["biso", "Galinha! Pó, pó, pó! 🐔"], "biso-vaca": ["biso", "Vaquinha! Muuu! 🐄"],
+    "biso-papagaio": ["biso", "Papagaio! 🦜"], "bisa-peixe": ["bisa", "Peixe! Glub, glub! 🐟"],
+    "bisa-passarinho": ["bisa", "Passarinho! Piu, piu! 🐦"], "bisa-bala": ["bisa", "Quem quer bala? Toma! 🍬"],
+    "pede-galinha": ["biso", "Cadê a galinha?"], "pede-vaca": ["biso", "Cadê a vaquinha?"],
+    "pede-peixe": ["bisa", "Cadê o peixe?"], "pede-passarinho": ["bisa", "Cadê o passarinho?"],
+    "come-galinha": ["biso", "O que a galinha come?"], "resp-milho": ["biso", "Milho! O biso jogava milho pra elas! 🌽"],
+    "da-galinha": ["biso", "E o que a galinha dá pra gente?"], "resp-ovo": ["biso", "O ovinho! 🥚"],
+    "come-vaca": ["biso", "O que a vaquinha come?"], "resp-feno": ["biso", "Feno e capim, bem verdinho! 🌾"],
+    "da-vaca": ["biso", "E o que a vaquinha dá pra gente?"], "resp-leite": ["biso", "O leite! 🥛"],
+    "come-peixe": ["bisa", "O que o peixe come?"], "resp-pao": ["bisa", "Pão! As carpas comiam na boca! 🍞"],
+    "mora-peixe": ["bisa", "Onde o peixe mora?"], "resp-lago": ["bisa", "No lago! 🌊"],
+    "mora-passarinho": ["bisa", "Onde o passarinho mora?"], "resp-ninho": ["bisa", "No ninho, lá em cima da árvore! 🪺"],
+    "acertou-1": ["biso", "Isso mesmo! Muito bem!"], "acertou-2": ["bisa", "Acertou! Criança esperta!"],
+    "tenta-1": ["biso", "Hum... tenta de novo!"], "tenta-2": ["bisa", "Quase! Tenta de novo."],
+    "fim": ["biso", "Parabéns, criançada! Vocês conhecem todos os bichinhos do sítio!"],
+  };
+  const BICHOS = {
+    galinha: { fala: "biso-galinha", pede: "pede-galinha" }, vaca: { fala: "biso-vaca", pede: "pede-vaca" },
+    papagaio: { fala: "biso-papagaio" }, peixe: { fala: "bisa-peixe", pede: "pede-peixe" },
+    passarinho: { fala: "bisa-passarinho", pede: "pede-passarinho" },
+  };
+  // onde cada um está na cena (em %); o último da lista ganha quando um cobre o outro
+  const ALVOS = [
+    { id: "biso", x: 37, y: 6, w: 13, h: 86 }, { id: "bisa", x: 50, y: 25, w: 13.5, h: 67 },
+    { id: "galinha", x: 5, y: 66, w: 12, h: 25 }, { id: "galinha", x: 16, y: 77, w: 7.5, h: 12 }, { id: "galinha", x: 3, y: 84, w: 4.5, h: 10 },
+    { id: "vaca", x: 7, y: 43, w: 16, h: 23 }, { id: "papagaio", x: 33.5, y: 22, w: 6.5, h: 16 },
+    { id: "passarinho", x: 89, y: 6, w: 10, h: 16 }, { id: "peixe", x: 82, y: 67, w: 13, h: 20 },
+    { id: "joy", x: 25.5, y: 70, w: 11.5, h: 28 }, { id: "jane", x: 63.5, y: 70, w: 12, h: 28 },
+  ];
+  $("alvos").innerHTML = ALVOS.map((a) => `<button type="button" class="si-alvo" data-id="${a.id}" aria-label="${a.id}" style="left:${a.x}%;top:${a.y}%;width:${a.w}%;height:${a.h}%"></button>`).join("");
+  const alvosDe = (id) => [...$("alvos").querySelectorAll(`[data-id="${id}"]`)];
+  const OPC = { milho: ["🌽", "Milho"], feno: ["🌾", "Feno"], pao: ["🍞", "Pão"], ovo: ["🥚", "Ovo"], leite: ["🥛", "Leite"], lago: ["🌊", "Lago"], ninho: ["🪺", "Ninho"], casinha: ["🏡", "Casinha"] };
+  const PERGUNTAS = {
+    galinha: [{ q: "come-galinha", certo: "milho", op: ["milho", "feno", "pao"], r: "resp-milho" }, { q: "da-galinha", certo: "ovo", op: ["ovo", "leite", "pao"], r: "resp-ovo" }],
+    vaca: [{ q: "come-vaca", certo: "feno", op: ["milho", "feno", "pao"], r: "resp-feno" }, { q: "da-vaca", certo: "leite", op: ["ovo", "leite", "milho"], r: "resp-leite" }],
+    peixe: [{ q: "come-peixe", certo: "pao", op: ["milho", "feno", "pao"], r: "resp-pao" }, { q: "mora-peixe", certo: "lago", op: ["lago", "ninho", "casinha"], r: "resp-lago" }],
+    passarinho: [{ q: "mora-passarinho", certo: "ninho", op: ["lago", "ninho", "casinha"], r: "resp-ninho" }],
+  };
+
+  // ---- vozes pelo Web Audio (o iPad libera no primeiro toque) ----
+  let ctx = null, fonte = null, fila = 0; const buf = {};
+  const audio = () => { if (!ctx) { const C = window.AudioContext || window.webkitAudioContext; if (C) ctx = new C(); } if (ctx && ctx.state === "suspended") ctx.resume(); return ctx; };
+  const carregar = (k) => { const c = audio(); if (!c) return Promise.reject(); if (!buf[k]) buf[k] = fetch("sons/voz/sitio-" + k + ".mp3").then((r) => r.arrayBuffer()).then((b) => new Promise((ok, e) => c.decodeAudioData(b, ok, e))); return buf[k]; };
+  const prep = (ks) => ks.forEach((k) => carregar(k).catch(() => {}));
+  const somLigado = () => !(typeof PugsSom !== "undefined" && PugsSom.ligado === false);
+  function brilho(q) { ["biso", "bisa"].forEach((p) => $("brilho-" + p).classList.toggle("on", p === q)); }
+  function falar(k) {
+    const minha = ++fila; const [q, txt] = FALAS[k] || ["", ""];
+    $("fala").innerHTML = (q ? `<span class="quem">${QUEM[q]}:</span>` : "") + txt;
+    if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
+    return new Promise((ok) => {
+      let feito = false; const fim = () => { if (feito) return; feito = true; if (minha === fila) brilho(""); ok(minha === fila); };
+      if (!somLigado()) return setTimeout(fim, 1200);
+      setTimeout(fim, 9000);
+      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = fim; s.start(); fonte = s; brilho(q); }).catch(fim);
+    });
+  }
+  const sorteia = (a) => a[Math.floor(Math.random() * a.length)];
+  const embaralha = (a) => a.map((v) => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map((x) => x[1]);
+  const efeito = (n) => { try { if (typeof PugsSom !== "undefined" && PugsSom[n]) PugsSom[n](); } catch (e) {} };
+  const latir = (q) => { try { if (typeof PugsSom !== "undefined" && PugsSom.latido) PugsSom.latido(q); } catch (e) {} };
+  const piscar = (id, cls) => alvosDe(id).forEach((a) => { a.classList.remove(cls); void a.offsetWidth; a.classList.add(cls); });
+
+  // ---- começo: a criança pede a bença ----
+  let jaBenca = false;
+  $("oi").onclick = (e) => { e.stopPropagation(); audio(); $("oi").hidden = true; jaBenca = true; prep(["biso-oi"]); falar("bisa-deus-te-abencoe").then((ok) => { if (ok && $("partida").hidden) falar("biso-oi"); }); };
+  prep(["bisa-deus-te-abencoe"]);
+
+  // ---- partida ----
+  let modo = "passear", alvo = null, ocupado = false, erros = 0, ordem = [], pts = 0, pergunta = null;
+  function comecar(m) {
+    audio(); modo = m; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; $("barra").hidden = false; $("oi").hidden = true;
+    $("repetir").hidden = $("ajuda").hidden = m === "passear"; $("quiz").hidden = m !== "perguntas"; alvo = null; pergunta = null; pts = 0; $("placar").textContent = "";
+    setTimeout(() => $("jogo").scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    if (m === "passear") { prep(Object.values(BICHOS).map((b) => b.fala).concat(["biso-oi", "bisa-bencao"])); $("fala").textContent = "Toque nos bichos do sítio! 🐾"; if (!jaBenca) { jaBenca = true; falar("biso-oi"); } return; }
+    if (m === "cade") {
+      ordem = embaralha(["galinha", "vaca", "peixe", "passarinho"]);
+      prep(ordem.map((id) => BICHOS[id].pede).concat(ordem.map((id) => BICHOS[id].fala), ["acertou-1", "acertou-2", "tenta-1", "tenta-2", "fim", "bisa-bala"]));
+      ocupado = true; setTimeout(proximoCade, 400); return;
+    }
+    ordem = []; embaralha(Object.keys(PERGUNTAS)).forEach((b) => PERGUNTAS[b].forEach((p) => ordem.push(Object.assign({ b }, p))));
+    prep(ordem.map((p) => p.q).concat(ordem.map((p) => p.r), ["tenta-1", "tenta-2", "fim", "bisa-bala"]));
+    ocupado = true; setTimeout(proximaPergunta, 400);
+  }
+  const estrelas = (n) => { $("placar").textContent = "⭐".repeat(pts) + "☆".repeat(Math.max(0, n - pts)); };
+  // 🔎 Cadê o bicho?
+  function proximoCade() {
+    ocupado = false; erros = 0; estrelas(4);
+    if (!ordem.length) return terminar();
+    alvo = ordem.shift(); falar(BICHOS[alvo].pede);
+  }
+  // 🌽 O que ele come / dá / onde mora
+  function proximaPergunta() {
+    ocupado = false; erros = 0; estrelas(7);
+    if (!ordem.length) { $("quiz").hidden = true; return terminar(); }
+    pergunta = ordem.shift(); $("pergunta").textContent = FALAS[pergunta.q][1];
+    $("opcoes").innerHTML = embaralha(pergunta.op.slice()).map((o) => `<button type="button" data-o="${o}"><span class="emo">${OPC[o][0]}</span><span class="nome">${OPC[o][1]}</span></button>`).join("");
+    piscar(pergunta.b, "dica"); falar(pergunta.q);
+  }
+  $("opcoes").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b || ocupado || !pergunta) return; audio();
+    if (b.dataset.o === pergunta.certo) {
+      ocupado = true; pts++; estrelas(7); efeito("acerto"); b.classList.add("certo"); piscar(pergunta.b, "toque");
+      falar(pergunta.r).then((ok) => { if (ok) setTimeout(proximaPergunta, 900); });
+    } else {
+      erros++; efeito("erro"); b.classList.remove("erro"); void b.offsetWidth; b.classList.add("erro");
+      if (erros >= 2) { const c = $("opcoes").querySelector(`[data-o="${pergunta.certo}"]`); c.classList.remove("erro"); void c.offsetWidth; c.classList.add("erro"); }
+      falar(FALAS[pergunta.q][0] === "bisa" ? "tenta-2" : "tenta-1");
+    }
+  });
+  // toques na cena
+  $("alvos").addEventListener("click", (e) => {
+    const a = e.target.closest(".si-alvo"); if (!a) return; audio();
+    const id = a.dataset.id; piscar(id, "toque");
+    if (id === "joy" || id === "jane") { latir(id); return; }
+    if ($("partida").hidden) { comecar("passear"); }
+    if (modo === "passear") {
+      if (id === "biso") return void falar("biso-oi");
+      if (id === "bisa") return void falar("bisa-bencao");
+      efeito("pop"); return void falar(BICHOS[id].fala);
+    }
+    if (modo === "perguntas") { if (BICHOS[id] && !ocupado) falar(BICHOS[id].fala).then(() => {}); return; }
+    if (modo !== "cade" || ocupado || !alvo || id === "biso" || id === "bisa") return;
+    if (id === alvo) {
+      ocupado = true; pts++; estrelas(4); efeito("acerto"); if (Math.random() < 0.4) setTimeout(() => latir("joy"), 400);
+      const quem = FALAS[BICHOS[alvo].pede][0];
+      falar(quem === "bisa" ? "acertou-2" : "acertou-1").then((ok) => ok && falar(BICHOS[id].fala)).then((ok) => { if (ok) setTimeout(proximoCade, 800); });
+    } else {
+      erros++; efeito("erro"); piscar(id, "erro");
+      if (erros >= 2) piscar(alvo, "dica");
+      falar(FALAS[BICHOS[alvo].pede][0] === "bisa" ? "tenta-2" : "tenta-1");
+    }
+  });
+  function chuvaDeBala() { for (let i = 0; i < 18; i++) setTimeout(() => { const s = document.createElement("span"); s.className = "si-bala"; s.textContent = sorteia(["🍬", "🍭", "🍬"]); s.style.left = Math.random() * 92 + "vw"; document.body.appendChild(s); setTimeout(() => s.remove(), 2400); }, i * 120); }
+  function terminar() {
+    alvo = null; pergunta = null; ocupado = true; $("fim").hidden = false; efeito("festa"); setTimeout(() => latir("joy"), 700); setTimeout(() => latir("jane"), 1300);
+    falar("fim").then((ok) => { if (!ok) return; chuvaDeBala(); falar("bisa-bala"); });
+    setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+  }
+  $("repetir").onclick = () => { if (ocupado) return; if (modo === "cade" && alvo) falar(BICHOS[alvo].pede); else if (pergunta) falar(pergunta.q); };
+  $("ajuda").onclick = () => { if (ocupado) return; if (modo === "cade" && alvo) piscar(alvo, "dica"); else if (pergunta) { piscar(pergunta.b, "dica"); const c = $("opcoes").querySelector(`[data-o="${pergunta.certo}"]`); if (c) { c.classList.remove("erro"); void c.offsetWidth; c.classList.add("erro"); } } };
+  $("b-passear").onclick = () => comecar("passear");
+  $("b-cade").onclick = () => comecar("cade");
+  $("b-perguntas").onclick = () => comecar("perguntas");
+  $("passear2").onclick = () => comecar("passear");
+  $("denovo").onclick = () => comecar(modo === "passear" ? "cade" : modo);
+  $("voltar").onclick = () => { ++fila; brilho(""); if (fonte) { try { fonte.stop(); } catch (e) {} } alvo = null; pergunta = null; $("partida").hidden = true; $("escolha").hidden = false; $("barra").hidden = true; $("fim").hidden = true; $("fala").textContent = "Escolha uma brincadeira! 🐾"; };
+  try { if (typeof PugsSom !== "undefined" && PugsSom.carregarSons) PugsSom.carregarSons(["latido-joy", "latido-jane"]); } catch (e) {}
+
+  const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; };
+  const souAdmin = () => (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false));
+  pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    if (Date.now() < LIBERA && !(await souAdmin()) && !(await souAdmin())) { location.href = "clube.html"; return; } // por enquanto só a Joice
+    abrir();
+  });
+})();
+</script>
+
+</body></html>
