@@ -31,16 +31,8 @@
 .si-alvo.toque{animation:si-anel .5s}
 .si-alvo.dica{animation:si-anel .9s ease-in-out 3}
 .si-alvo.erro{animation:si-anel-erro .45s}
-@keyframes si-anel{from{box-shadow:inset 0 0 0 0 rgba(255,228,138,.9)}50%{box-shadow:inset 0 0 0 999px rgba(255,228,138,.4)}to{box-shadow:inset 0 0 0 0 rgba(255,228,138,0)}}
-@keyframes si-anel-erro{50%{box-shadow:inset 0 0 0 999px rgba(232,80,91,.25)}}
-.si-peca{position:absolute;z-index:1;pointer-events:none;background-repeat:no-repeat;transform-origin:50% 100%;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 70%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 70%,transparent 100%)}
-.si-peca.fala{animation:si-fala .32s ease-in-out infinite alternate}
-@keyframes si-fala{from{transform:scale(1,1)}to{transform:scale(1.012,1.03)}}
-.si-peca.pula{animation:si-pula .5s ease-out 2}
-@keyframes si-pula{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-7%) scale(1.08)}}
-.si-brilho{position:absolute;z-index:1;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,rgba(255,240,150,.65),rgba(255,240,150,0));opacity:0;transition:opacity .25s}
-.si-brilho.on{opacity:1;animation:si-pulsa .6s ease-in-out infinite alternate}
-@keyframes si-pulsa{to{transform:scale(1.08)}}
+@keyframes si-anel{from{box-shadow:0 0 0 0 rgba(255,255,255,0)}50%{box-shadow:0 0 0 5px rgba(255,255,255,.95)}to{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+@keyframes si-anel-erro{50%{box-shadow:0 0 0 5px rgba(232,80,91,.8)}}
 .si-oi{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);z-index:4;font:700 clamp(1.1rem,3.4vw,1.6rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:var(--sol);border:4px solid var(--marrom);border-radius:999px;padding:10px 22px;box-shadow:0 5px 0 var(--marrom);cursor:pointer;animation:si-pulsa2 1.2s ease-in-out infinite alternate;white-space:nowrap}
 .si-oi[hidden]{display:none}
 @keyframes si-pulsa2{to{transform:translateX(-50%) scale(1.07)}}
@@ -59,6 +51,8 @@
 .si-pergunta{text-align:center;font:700 clamp(1.2rem,4vw,1.6rem) Fredoka,Arial,sans-serif;color:var(--marrom);margin:4px 0}
 .si-placar{text-align:center;font-size:1.6rem;letter-spacing:2px;min-height:1.6em}
 .si-fim{text-align:center;margin:16px auto;max-width:760px}
+.si-som{position:absolute;z-index:3;transform:translate(-50%,-100%);pointer-events:none;white-space:nowrap;font:700 clamp(.95rem,2.6vw,1.35rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:16px;padding:3px 10px;animation:si-sobe 1.6s ease-out forwards}
+@keyframes si-sobe{0%{opacity:0;margin-top:10px}15%{opacity:1;margin-top:0}75%{opacity:1}100%{opacity:0;margin-top:-18px}}
 .si-bala{position:fixed;z-index:60;font-size:2.4rem;pointer-events:none;top:-50px;animation:si-cai 2.2s ease-in forwards}
 @keyframes si-cai{to{transform:translateY(110vh) rotate(540deg)}}
 @media (min-aspect-ratio:5/4){
@@ -75,7 +69,6 @@
    <div class="si-fala" id="fala">Toque no botão para pedir a bença da bisa! 🙏</div>
    <div class="si-cena" id="cena">
     <img src="imagens/jogos/sitio-bichinhos.jpg" alt="O biso e a bisa no sítio com a Joy e a Jane, a galinha, a vaca, o papagaio, o passarinho e o peixe no lago" width="1600" height="894">
-    <div id="pecas"></div>
     <div class="si-alvos" id="alvos"></div>
     <button type="button" class="si-oi" id="oi">🙏 Bença, vó!</button>
    </div>
@@ -138,7 +131,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     "da-galinha": ["biso", "E o que a galinha dá pra gente?"], "resp-ovo": ["biso", "O ovinho! 🥚"],
     "come-vaca": ["biso", "O que a vaquinha come?"], "resp-feno": ["biso", "Feno e capim, bem verdinho! 🌾"],
     "da-vaca": ["biso", "E o que a vaquinha dá pra gente?"], "resp-leite": ["biso", "O leite! 🥛"],
-    "come-peixe": ["bisa", "O que o peixe come?"], "resp-pao": ["bisa", "Pão! As carpas comiam na boca! 🍞"],
+    "come-peixe": ["bisa", "O que o peixe come?"], "resp-pao": ["bisa", "Pão! As carpas comiam na mão! 🍞"],
     "mora-peixe": ["bisa", "Onde o peixe mora?"], "resp-lago": ["bisa", "No lago! 🌊"],
     "mora-passarinho": ["bisa", "Onde o passarinho mora?"], "resp-ninho": ["bisa", "No ninho, lá em cima da árvore! 🪺"],
     "acertou-1": ["biso", "Isso mesmo! Muito bem!"], "acertou-2": ["bisa", "Acertou! Criança esperta!"],
@@ -174,11 +167,23 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const carregar = (k) => { const c = audio(); if (!c) return Promise.reject(); if (!buf[k]) buf[k] = fetch("sons/voz/sitio-" + k + ".mp3").then((r) => r.arrayBuffer()).then((b) => new Promise((ok, e) => c.decodeAudioData(b, ok, e))); return buf[k]; };
   const prep = (ks) => ks.forEach((k) => carregar(k).catch(() => {}));
   const somLigado = () => !(typeof PugsSom !== "undefined" && PugsSom.ligado === false);
-  // pedacinhos da própria figura que se mexem: o biso e a bisa balançam enquanto falam; o bicho pula quando é tocado
-  const PECAS = { biso: { x: 35, y: 4, w: 17, h: 90 }, bisa: { x: 48.5, y: 22, w: 16.5, h: 72 }, galinha: { x: 4, y: 64, w: 14, h: 29 }, vaca: { x: 6, y: 41, w: 18, h: 27 }, papagaio: { x: 33, y: 21, w: 7.5, h: 18 }, passarinho: { x: 88.5, y: 5, w: 11, h: 18 }, peixe: { x: 81.5, y: 66, w: 14, h: 22 } };
-  $("pecas").innerHTML = Object.entries(PECAS).map(([id, p]) => `<div class="si-peca" id="peca-${id}" style="left:${p.x}%;top:${p.y}%;width:${p.w}%;height:${p.h}%;background-image:url('imagens/jogos/sitio-bichinhos.jpg');background-size:${10000 / p.w}% ${10000 / p.h}%;background-position:${p.x / (100 - p.w) * 100}% ${p.y / (100 - p.h) * 100}%"></div>`).join("");
-  function brilho(q) { ["biso", "bisa"].forEach((p) => $("peca-" + p).classList.toggle("fala", p === q)); }
-  function pular(id) { const e = $("peca-" + id); if (!e) return; e.classList.remove("pula"); void e.offsetWidth; e.classList.add("pula"); }
+  // Joice 24/11: nada de mexer/deformar a figura ("parece que a alma tá saindo do corpo"). O bicho tocado ganha um balãozinho com o som dele e faz o som de verdade.
+  const SOM = { galinha: "Có, có! 🐔", vaca: "Muuu! 🐄", peixe: "Splash! 🐟", passarinho: "Piu, piu! 🐦", papagaio: "Fiu, fiu! 🦜" };
+  function brilho() {}
+  function pular(id) {
+    if (!SOM[id]) return; const a = ALVOS.find((x) => x.id === id); if (!a) return;
+    const s = document.createElement("div"); s.className = "si-som"; s.textContent = SOM[id];
+    s.style.left = (a.x + a.w / 2) + "%"; s.style.top = Math.max(8, a.y) + "%"; $("alvos").parentNode.appendChild(s); setTimeout(() => s.remove(), 1700);
+  }
+  // som de verdade do bicho (tecladinho), sem mudar o balão de fala
+  function somDe(id) {
+    const k = "som-" + id; const minha = fila;
+    return new Promise((ok) => {
+      if (!somLigado() || !SOM[id]) return ok(true);
+      let feito = false; const fim = () => { if (feito) return; feito = true; ok(minha === fila); }; setTimeout(fim, 3500);
+      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = fim; s.start(); }).catch(fim);
+    });
+  }
   function falar(k) {
     const minha = ++fila; const [q, txt] = FALAS[k] || ["", ""];
     $("fala").innerHTML = (q ? `<span class="quem">${QUEM[q]}:</span>` : "") + txt;
@@ -207,10 +212,10 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     audio(); modo = m; $("escolha").hidden = true; $("partida").hidden = false; $("fim").hidden = true; $("barra").hidden = false; $("oi").hidden = true;
     $("repetir").hidden = $("ajuda").hidden = m === "passear"; $("quiz").hidden = m !== "perguntas"; alvo = null; pergunta = null; pts = 0; $("placar").textContent = "";
     setTimeout(() => $("jogo").scrollIntoView({ behavior: "smooth", block: "start" }), 50);
-    if (m === "passear") { prep(Object.values(BICHOS).map((b) => b.fala).concat(["biso-oi", "bisa-bencao"])); $("fala").textContent = "Toque nos bichos do sítio! 🐾"; if (!jaBenca) { jaBenca = true; falar("biso-oi"); } return; }
+    if (m === "passear") { prep(Object.values(BICHOS).map((b) => b.fala).concat(["biso-oi", "bisa-bencao"], Object.keys(SOM).map((b) => "som-" + b))); $("fala").textContent = "Toque nos bichos do sítio! 🐾"; if (!jaBenca) { jaBenca = true; falar("biso-oi"); } return; }
     if (m === "cade") {
       ordem = embaralha(["galinha", "vaca", "peixe", "passarinho"].concat(temPapagaio ? ["papagaio"] : []));
-      prep(ordem.map((id) => BICHOS[id].pede).concat(ordem.map((id) => BICHOS[id].fala), ["acertou-1", "acertou-2", "tenta-1", "tenta-2", "fim", "bisa-bala"]));
+      prep(ordem.map((id) => BICHOS[id].pede).concat(ordem.map((id) => "som-" + id), ordem.map((id) => BICHOS[id].fala), ["acertou-1", "acertou-2", "tenta-1", "tenta-2", "fim", "bisa-bala"]));
       ocupado = true; setTimeout(proximoCade, 400); return;
     }
     ordem = []; embaralha(Object.keys(PERGUNTAS)).forEach((b) => PERGUNTAS[b].forEach((p) => ordem.push(Object.assign({ b }, p))));
@@ -254,14 +259,14 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     if (modo === "passear") {
       if (id === "biso") return void falar("biso-oi");
       if (id === "bisa") return void falar("bisa-bencao");
-      efeito("pop"); return void falar(BICHOS[id].fala);
+      const vez = ++fila; return void somDe(id).then(() => { if (vez === fila) falar(BICHOS[id].fala); });
     }
-    if (modo === "perguntas") { if (BICHOS[id] && !ocupado) falar(BICHOS[id].fala).then(() => {}); return; }
+    if (modo === "perguntas") { if (BICHOS[id] && !ocupado) somDe(id); return; }
     if (modo !== "cade" || ocupado || !alvo || id === "biso" || id === "bisa") return;
     if (id === alvo) {
       ocupado = true; pts++; estrelas(temPapagaio ? 5 : 4); pular(id); efeito("acerto"); if (Math.random() < 0.4) setTimeout(() => latir("joy"), 400);
       const quem = FALAS[BICHOS[alvo].pede][0];
-      falar(quem === "bisa" ? "acertou-2" : "acertou-1").then((ok) => ok && falar(BICHOS[id].fala)).then((ok) => { if (ok) setTimeout(proximoCade, 800); });
+      somDe(id).then((ok) => ok && falar(quem === "bisa" ? "acertou-2" : "acertou-1")).then((ok) => ok && falar(BICHOS[id].fala)).then((ok) => { if (ok) setTimeout(proximoCade, 800); });
     } else {
       erros++; efeito("erro"); piscar(id, "erro");
       if (erros >= 2) piscar(alvo, "dica");
