@@ -35,10 +35,10 @@ const PugsSom = (() => {
   }
 
   // ---- música de fundo (arquivo em loop: continua tocando sozinha)
-  let qual = null, faixa = null, calado = false;
+  let qual = null, faixa = null, calado = false, volMusica = null;
   function tocarMusica() {
     if (calado || !ligado || !musicaLigada || !qual || document.hidden) return;
-    if (!faixa) { faixa = new Audio("sons/musica-" + (qual === "site" && window.PUGS_MUSICA_TEMA ? window.PUGS_MUSICA_TEMA : qual) + ".mp3"); faixa.loop = true; faixa.preload = "auto"; faixa.volume = qual === "site" ? 0.5 : 0.7; }
+    if (!faixa) { faixa = new Audio("sons/musica-" + (qual === "site" && window.PUGS_MUSICA_TEMA ? window.PUGS_MUSICA_TEMA : qual) + ".mp3"); faixa.loop = true; faixa.preload = "auto"; faixa.volume = volMusica != null ? volMusica : (qual === "site" ? 0.5 : 0.7); }
     if (faixa.paused) { const p = faixa.play(); if (p && p.catch) p.catch(() => {}); }
   }
   function pararMusica() { if (faixa) faixa.pause(); }
@@ -143,6 +143,8 @@ const PugsSom = (() => {
     get musicaLigada() { return musicaLigada; },
     alternarMusica() { musicaLigada = !musicaLigada; try { localStorage.setItem("pugs-musica", musicaLigada ? "on" : "off"); } catch (e) {} if (musicaLigada) tocarMusica(); else pararMusica(); return musicaLigada; },
     musica(nome) { qual = nome; },
+    // volume da música de fundo (0 a 1); o jogo do sítio abaixa enquanto o biso e a bisa falam
+    volumeMusica(v) { volMusica = v; if (faixa) faixa.volume = v; },
     falar, tocarUrl, preparar,
     chaveLetra: (L) => { const b = SEM_ACENTO[L] || L; return "letra-" + (b === "Ç" ? "c-cedilha" : b.toLowerCase()); },
     temVoz: (chave) => VOZES.has(chave),
@@ -239,7 +241,7 @@ const PugsSom = (() => {
     const b = document.createElement("button"); b.type = "button"; b.className = "botao som";
     const pinta = () => { b.textContent = ligado ? "🔊" : "🔇"; b.setAttribute("aria-label", ligado ? "Desligar o som" : "Ligar o som"); };
     pinta(); b.onclick = () => { api.alternar(); pinta(); }; topo.appendChild(b);
-    const nome = { pintar: "pintar", "quebra-cabeca": "quebra", "jogo-da-memoria": "memoria", album: "site", "escrever-nome": "nome", "onde-esta-a-joy": "joy", cuidar: "site", "estoura-baloes": "joy", frutas: "frutas", banho: (Date.now() >= Date.parse("2026-11-07T15:00:00Z") ? "banho" : "joy") }[pagina];
+    const nome = { pintar: "pintar", "quebra-cabeca": "quebra", "jogo-da-memoria": "memoria", album: "site", "escrever-nome": "nome", "onde-esta-a-joy": "joy", cuidar: "site", "estoura-baloes": "joy", frutas: "frutas", sitio: "sitio", banho: (Date.now() >= Date.parse("2026-11-07T15:00:00Z") ? "banho" : "joy") }[pagina];
     if (nome) {
       qual = nome;
       const bm = document.createElement("button"); bm.type = "button"; bm.className = "botao som";

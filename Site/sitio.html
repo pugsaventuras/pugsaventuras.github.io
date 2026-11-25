@@ -242,6 +242,12 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = fim; s.start(); }).catch(fim);
     });
   }
+  // 🎵 musiquinha dos bichinhos baixinha de fundo (Joice, 25/11); abaixa mais enquanto alguém fala
+  const MUS_BASE = 1, MUS_FALA = 0.45; let musT = null;   // o arquivo já é baixinho (o iPad não deixa mudar o volume)
+  const musica = (v) => { try { if (typeof PugsSom !== "undefined" && PugsSom.volumeMusica) PugsSom.volumeMusica(v); } catch (e) {} };
+  musica(MUS_BASE);
+  const abaixa = () => { clearTimeout(musT); musica(MUS_FALA); };
+  const sobe = () => { clearTimeout(musT); musT = setTimeout(() => musica(MUS_BASE), 600); };
   function falar(k) {
     const minha = ++fila; const [q, txt] = FALAS[k] || ["", ""];
     $("fala").innerHTML = (q ? `<span class="quem">${QUEM[q]}:</span>` : "") + txt;
@@ -250,7 +256,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       let feito = false; const fim = () => { if (feito) return; feito = true; ok(minha === fila); };
       if (!somLigado()) return setTimeout(fim, 1200);
       setTimeout(fim, 9000);
-      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = fim; s.start(); fonte = s; brilho(q); }).catch(fim);
+      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = () => { sobe(); fim(); }; abaixa(); s.start(); fonte = s; brilho(q); }).catch(fim);
     });
   }
   const sorteia = (a) => a[Math.floor(Math.random() * a.length)];
@@ -337,7 +343,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     if (modo === "perguntas") { if (BICHOS[id] && !ocupado) { pular(id); somDe(id); } return; }
     if (modo !== "cade" || ocupado || !alvo || id === "biso" || id === "bisa") return;
     if (grupo(id) === alvo) {
-      ocupado = true; pts++; estrelas(); pular(id); efeito("acerto"); if (Math.random() < 0.4) setTimeout(() => latir("joy"), 400);
+      ocupado = true; pts++; estrelas(); pular(id); efeito("acerto");
       const quem = FALAS[BICHOS[alvo].pede][0];
       somDe(id).then((ok) => ok && falar(quem === "bisa" ? "acertou-2" : "acertou-1")).then((ok) => ok && falar(BICHOS[alvo].fala)).then((ok) => { if (ok) setTimeout(proximoCade, 800); });
     } else {
