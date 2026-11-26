@@ -99,7 +99,8 @@ function comecar() {
     $("escolha").hidden = true; $("partida").hidden = false; $("festa").hidden = true;
     colocadas = 0; selecionada = null;
     const tab = $("tabuleiro"), band = $("bandeja");
-    tab.style.aspectRatio = prop; tab.style.maxWidth = `min(760px, calc((100dvh - 330px) * ${prop.toFixed(3)}))`; // o tabuleiro não esconde a bandeja de peças tab.style.gridTemplateColumns = `repeat(${c},1fr)`; tab.style.gridTemplateRows = `repeat(${l},1fr)`;
+    tab.style.aspectRatio = prop; tab.style.maxWidth = `min(760px, calc((100dvh - 330px) * ${prop.toFixed(3)}))`; // o tabuleiro não esconde a bandeja de peças
+    tab.style.gridTemplateColumns = `repeat(${c},1fr)`; tab.style.gridTemplateRows = `repeat(${l},1fr)`;
     tab.style.setProperty("--fundo", `url("${src}")`);
     $("modelo").src = src;
     tab.classList.toggle("sem-ajuda", c * l > 6);

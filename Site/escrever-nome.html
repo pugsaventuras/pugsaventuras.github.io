@@ -97,11 +97,28 @@ $("gravar").onclick = async () => {
 };
 $("ouvir-gravado").onclick = falarNome;
 
+// 📝 PALAVRAS (Joice, 25/11): "escreva uma palavra com a letra A: AMOR" — só palavras boas dos outros joguinhos, com a voz do caça-palavras
+const PALAVRAS = {
+  A: ["AMOR", "AMIGO", "ÁGUA"], B: ["BOLA", "BANANA", "BOLO", "BANHO", "BOLHA", "BALDE"], C: ["CASA", "CAMA", "CARINHO"], D: ["DAMINHA"],
+  E: ["ESTRELA", "ESPUMA"], F: ["FESTA", "FEIRA", "FÉRIAS"], G: ["GALINHA"], J: ["JOY", "JANE"], L: ["LAÇO", "LINDA", "LAMBEIJO"],
+  M: ["MAMÃE", "MILHO", "MEIA"], N: ["NARIZ", "NOIVA"], O: ["OSSO"], P: ["PAPAI", "PEIXE", "PATA", "PUG", "PÊSSEGO", "PASSEIO"],
+  R: ["RUA", "ROUPINHA"], S: ["SÍTIO", "SABÃO", "SALA", "SONECA"], T: ["TOALHA"], U: ["UNHA"], V: ["VACA", "VOVÓ", "VESTIDO", "VIAGEM"],
+};
+const chavePalavra = (w) => "palavra-" + w.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const vezPalavra = {};
+function falarPalavra(w) { return PugsSom.falar(w.toLowerCase(), chavePalavra(w)); }
+function escolherPalavra() {
+  $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
+  $("nomes").innerHTML = `<p class="jogo-dica centro" style="width:100%">Escolha uma letra e escreva uma palavra que começa com ela!</p>`
+    + `<div class="grade-letras">` + Object.keys(PALAVRAS).map((L, i) => `<button type="button" class="letra-escolha" data-pal="${L}" style="--c:${CORES[i % CORES.length]}">${L}</button>`).join("") + `</div>`
+    + `<button type="button" class="botao nivel" data-voltar="1"><span>⬅️</span><b>Voltar</b></button>`;
+}
 function escolha(nomes) {
   $("escolha").hidden = false; $("partida").hidden = true; $("festa").hidden = true;
   $("nomes").innerHTML = nomes.map((n, i) => `<button type="button" class="botao nivel" data-modo="nome" data-n="${n}"><span>${["🐶", "⭐", "🌈", "🐾", "💛", "🎈"][i % 6]}</span><b>${n}</b></button>`).join("")
     + `<button type="button" class="botao nivel" data-pick="abc" aria-label="Alfabeto"><span>🔤</span><b>ABC</b></button>`
-    + `<button type="button" class="botao nivel" data-pick="num" aria-label="Números"><span>🔢</span><b>123</b></button>`;
+    + `<button type="button" class="botao nivel" data-pick="num" aria-label="Números"><span>🔢</span><b>123</b></button>`
+    + `<button type="button" class="botao nivel" data-pick="pal" aria-label="Palavras"><span>📝</span><b>Palavras</b></button>`;
 }
 // ABC / 123: a criança escolhe UMA letra (ou número) para escrever, ou todas em sequência.
 function escolherItem(m) {
@@ -116,6 +133,8 @@ function escolherItem(m) {
 $("nomes").addEventListener("click", (e) => {
   const b = e.target.closest(".nivel, .letra-escolha"); if (!b) return;
   if (b.dataset.voltar) return escolha(window.NOMES);
+  if (b.dataset.pick === "pal") return escolherPalavra();
+  if (b.dataset.pal) { const l = PALAVRAS[b.dataset.pal], i = vezPalavra[b.dataset.pal] = ((vezPalavra[b.dataset.pal] ?? -1) + 1) % l.length; return comecar("palavra", l[i]); }
   if (b.dataset.pick) return escolherItem(b.dataset.pick);
   comecar(b.dataset.modo, b.dataset.n || "");
 });
@@ -133,8 +152,9 @@ async function comecar(m, n) {
   const familia = false; // gravação do nome desligada por enquanto (deu erro no iPad)
   $("gravar-caixa").hidden = !familia;
   if (familia) { const tem = await vozGuardada(nome); $("ouvir-gravado").hidden = !tem; $("gravar").textContent = tem ? "🎤 Gravar de novo" : "🎤 Gravar o nome"; $("gravar-status").textContent = ""; }
-  PugsSom.vozesProntas.then(() => PugsSom.preparar(itens.map((it) => (m === "num" || m === "uma-num") ? "numero-" + it : PugsSom.chaveLetra(it)).concat(["quase", "fim-alfabeto", "fim-numeros", "fim-nome"])));
-  montar(); preparar(); setTimeout(falarItem, 300);
+  PugsSom.vozesProntas.then(() => PugsSom.preparar(itens.map((it) => (m === "num" || m === "uma-num") ? "numero-" + it : PugsSom.chaveLetra(it)).concat(["quase", "fim-alfabeto", "fim-numeros", "fim-nome"], m === "palavra" ? [chavePalavra(n)] : [])));
+  montar(); preparar();
+  if (m === "palavra") { setTimeout(() => falarPalavra(n), 300); setTimeout(falarItem, 1700); } else setTimeout(falarItem, 300);
 }
 function montar() {
   $("montado").innerHTML = itens.map((l, i) => `<span class="${i < atual ? "feita" : i === atual ? "agora" : ""}" style="${i < atual ? "color:" + CORES[i % CORES.length] : ""}">${modo !== "nome" || i <= atual ? l : "_"}</span>`).join("");
@@ -189,6 +209,7 @@ function festa() {
       itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 850));
     })();
     else if (modo.startsWith("uma-")) falarItem();
+    else if (modo === "palavra") { itens.forEach((L, i) => setTimeout(() => PugsSom.letra(L), i * 750)); setTimeout(() => falarPalavra(nome), itens.length * 750 + 300); }
     else if (modo === "abc") PugsSom.falar("", "fim-alfabeto");
     else PugsSom.falar("", "fim-numeros");
   }, 700);
@@ -203,7 +224,7 @@ function festa() {
 }
 $("ouvir").onclick = falarItem;
 $("apagar").onclick = () => { PugsSom.apagar(); preparar(); };
-$("trocar").onclick = $("outra").onclick = () => (modo.startsWith("uma-") ? escolherItem(modo.slice(4)) : escolha(window.NOMES));
+$("trocar").onclick = $("outra").onclick = () => (modo === "palavra" ? escolherPalavra() : modo.startsWith("uma-") ? escolherItem(modo.slice(4)) : escolha(window.NOMES));
 $("denovo").onclick = () => comecar(modo, nome);
 addEventListener("resize", () => { if (!$("partida").hidden) preparar(); });
 

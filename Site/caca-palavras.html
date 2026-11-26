@@ -49,6 +49,8 @@
 .cp-palavras li .ic{font-size:1.5rem}
 .cp-palavras li.achou{text-decoration:line-through;opacity:.75}
 .cp-palavras li.achou.joy{background:#d6ecff}.cp-palavras li.achou.jane{background:#ffe0ee}
+.cp-palavras li.achou.joy{border-left:10px solid #3aa0e8}.cp-palavras li.achou.jane{border-left:10px solid #f06ea8}
+.cp-grade span.ok-cor{color:#fff;-webkit-text-stroke:1px rgba(60,40,20,.55)}
 .cp-acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .cp-placar{display:flex;gap:10px;justify-content:center;font:700 1.3rem Fredoka,Arial,sans-serif}
 .cp-placar b{padding:2px 12px;border-radius:999px;border:3px solid}
@@ -101,6 +103,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 <script src="clube.js"></script>
 <script src="sons.js"></script>
 <script>
+const CORES_PALAVRA = ["#3aa0e8", "#f06ea8", "#8cc63f", "#ff9a1f", "#8e5bd0", "#e53935", "#26a69a", "#f2b705", "#795548", "#5c6bc0"];
 // Caça-palavras da Joy (Joice, 10/11): a criança arrasta o dedo da 1ª à última letra; a palavra acende e a Joy fala.
 // PALAVRINHAS NOVAS TODA SEMANA: acrescente uma lista em LISTAS (com "desde" = estreia do episódio, 22:00Z de quarta).
 // caca-palavras.html?gratis=1 → sem login, só a lista grátis, com o recado para os pais no fim.
@@ -198,9 +201,10 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     if (s.length < 2) return;
     const w = pos.find((p) => p.achou < 0 && p.cel.length === s.length && (p.cel.every((c, k) => c === s[k]) || p.cel.every((c, k) => c === s[s.length - 1 - k])));
     if (!w) { if (PugsSom.erro) PugsSom.erro(); return; }
-    w.achou = vez; const cor = vez === 0 ? "ok-joy" : "ok-jane";
-    w.cel.forEach((c) => $("grade").children[c].classList.add(cor));
-    const li = $("palavras").children[pos.indexOf(w)]; li.classList.add("achou", vez === 0 ? "joy" : "jane");
+    // cada palavra achada ganha uma cor diferente, para a criança ver as letras de cada uma (Joice, 25/11)
+    w.achou = vez; const corW = CORES_PALAVRA[(pos.filter((p) => p.achou >= 0).length - 1) % CORES_PALAVRA.length];
+    w.cel.forEach((c) => { const el = $("grade").children[c]; el.classList.add("ok-cor"); el.style.background = corW; });
+    const li = $("palavras").children[pos.indexOf(w)]; li.classList.add("achou"); li.style.background = corW + "55"; if (jogadores === 2) li.classList.add(vez === 0 ? "joy" : "jane");
     PugsSom.acerto(); setTimeout(() => PugsSom.falar(w.fala, voz(w.fala)), 250);
     if (jogadores === 2) { pontos[vez]++; placar(); }
     if (pos.every((p) => p.achou >= 0)) return setTimeout(fim, 900);

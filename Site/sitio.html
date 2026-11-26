@@ -119,7 +119,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 // Imagem = imagem-mãe da musiquinha "Bichinhos do Sítio". Por enquanto só a Joice (admin) vê; liberar quando ela aprovar.
 (() => {
   const $ = (id) => document.getElementById(id);
-  const LIBERA = Infinity; // ← trocar pela data quando a Joice aprovar
+  const LIBERA = Date.parse("2026-11-29T15:00:00Z"); // joguinho novo sai no DOMINGO (regra da Joice, 25/11): dom 29/11, 9h Texas / 12h Brasília
   const QUEM = { biso: "👴 Biso", bisa: "👵 Bisa" };
   const FALAS = {
     "bisa-deus-te-abencoe": ["bisa", "Deus te abençoe!"],
