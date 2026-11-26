@@ -178,7 +178,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     },
     pasto: {
       img: "imagens/jogos/sitio-pasto.jpg", alt: "O biso no pasto com a égua pampa, o cavalo marrom, o cachorro preto, o porquinho, os patos no lago, a bisa, a Joy e a Jane",
-      mexe: [],
+      mexe: ["biso", "bisa", "pampa", "marrom", "cachorro", "porco", "pato"],
+      arq: { biso: "biso-pasto", bisa: "bisa-pasto", marrom: "cavalo-marrom" },   // vídeos do pasto (Musiquinhas, 25/11)
       bichos: ["cavalo", "cachorro", "porco", "pato"],
       alvos: [
         { id: "biso", x: 36, y: 6, w: 15, h: 89 }, { id: "bisa", x: 76.5, y: 26, w: 8, h: 35 },
@@ -215,7 +216,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   function mexer(id, sóSeLivre) {
     if (!CENAS[cena].mexe.includes(id)) return;
     if (sóSeLivre && vidDe) return;
-    vidDe = id; vid.classList.remove("on"); vid.src = "imagens/jogos/sitio-mexe-" + id + ".mp4";
+    vidDe = id; vid.classList.remove("on"); vid.src = "imagens/jogos/sitio-mexe-" + ((CENAS[cena].arq || {})[id] || id) + ".mp4";
     const p = vid.play(); if (p && p.catch) p.catch(() => { vidDe = null; });
   }
   function parar() { try { vid.pause(); } catch (e) {} vid.classList.remove("on"); vidDe = null; }
