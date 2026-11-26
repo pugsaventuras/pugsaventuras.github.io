@@ -209,26 +209,44 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const somLigado = () => !(typeof PugsSom !== "undefined" && PugsSom.ligado === false);
 
   // ---- vídeos de verdade por cima da figura: começam e terminam iguais à figura, então não dá "pulo" ----
-  const vid = $("mexe"); let vidDe = null;
-  vid.addEventListener("playing", () => vid.classList.add("on"));
-  vid.addEventListener("ended", () => { vid.classList.remove("on"); vidDe = null; });
-  vid.addEventListener("error", () => { vid.classList.remove("on"); vidDe = null; });
-  function mexer(id, sóSeLivre) {
-    if (!CENAS[cena].mexe.includes(id)) return;
-    if (sóSeLivre && vidDe) return;
-    vidDe = id; vid.classList.remove("on"); vid.src = "imagens/jogos/sitio-mexe-" + ((CENAS[cena].arq || {})[id] || id) + ".mp4";
-    const p = vid.play(); if (p && p.catch) p.catch(() => { vidDe = null; });
+  // um vídeo já carregado para cada personagem da tela: assim a boca mexe junto com a voz, sem esperar baixar (Joice, 25/11)
+  const pool = {}; let vidDe = null, vidAtual = null;
+  const arqDe = (c, id) => "imagens/jogos/sitio-mexe-" + ((CENAS[c].arq || {})[id] || id) + ".mp4";
+  function videoDe(c, id) {
+    const src = arqDe(c, id); if (pool[src]) return pool[src];
+    const v = document.createElement("video"); v.className = "si-mexe"; v.muted = true; v.playsInline = true; v.setAttribute("playsinline", ""); v.setAttribute("muted", ""); v.setAttribute("aria-hidden", "true"); v.preload = "auto"; v.src = src;
+    v.addEventListener("playing", () => { if (vidAtual === v) v.classList.add("on"); });
+    v.addEventListener("ended", () => { v.classList.remove("on"); if (vidAtual === v) { vidDe = null; vidAtual = null; } });
+    v.addEventListener("error", () => { v.classList.remove("on"); if (vidAtual === v) { vidDe = null; vidAtual = null; } });
+    $("mexe").parentNode.insertBefore(v, $("mexe")); try { v.load(); } catch (e) {}
+    return (pool[src] = v);
   }
-  function parar() { try { vid.pause(); } catch (e) {} vid.classList.remove("on"); vidDe = null; }
+  const prepVideos = (c) => CENAS[c].mexe.forEach((id) => videoDe(c, id));
+  // devolve uma promessa que resolve quando o vídeo começa (ou em 350 ms), para a voz sair junto com a boca
+  function mexer(id, sóSeLivre) {
+    if (!CENAS[cena].mexe.includes(id)) return Promise.resolve();
+    if (sóSeLivre && vidDe) return Promise.resolve();
+    const v = videoDe(cena, id);
+    if (vidAtual && vidAtual !== v) { try { vidAtual.pause(); } catch (e) {} vidAtual.classList.remove("on"); }
+    vidDe = id; vidAtual = v;
+    try { v.currentTime = 0; } catch (e) {}
+    return new Promise((ok) => {
+      let feito = false; const pronto = () => { if (!feito) { feito = true; ok(); } };
+      if (!v.paused && v.readyState >= 3) pronto();
+      v.addEventListener("playing", pronto, { once: true }); setTimeout(pronto, 350);
+      const p = v.play(); if (p && p.catch) p.catch(() => { if (vidAtual === v) { vidDe = null; vidAtual = null; } pronto(); });
+    });
+  }
+  function parar() { if (vidAtual) { try { vidAtual.pause(); } catch (e) {} vidAtual.classList.remove("on"); } vidDe = null; vidAtual = null; }
   function mostrarCena(c) {
-    cena = c; const C = CENAS[c]; parar(); $("foto").src = C.img; $("foto").alt = C.alt;
+    cena = c; const C = CENAS[c]; parar(); $("foto").src = C.img; $("foto").alt = C.alt; prepVideos(c);
     $("alvos").innerHTML = C.alvos.map((a) => `<button type="button" class="si-alvo" data-id="${a.id}" data-g="${grupo(a.id)}" aria-label="${a.id}" style="left:${a.x}%;top:${a.y}%;width:${a.w}%;height:${a.h}%"></button>`).join("");
     $("trocar").textContent = c === "sitio" ? "Vamos pro pasto! 🐴 →" : "← Voltar pro sítio 🐔";
   }
   // o bicho tocado ganha um balãozinho com o som dele, faz o som de verdade e se mexe (se tiver vídeo)
   const SOM = { galinha: "Có, có! 🐔", vaca: "Muuu! 🐄", peixe: "Splash! 🐟", passarinho: "Piu, piu! 🐦", papagaio: "Fiu, fiu! 🦜", cavalo: "Hiii, hiii! 🐴", cachorro: "Au, au! 🐕", porco: "Oinc, oinc! 🐷", pato: "Quá, quá! 🦆" };
   // quem fala é quem mexe: se a bisa ainda está mexendo e o biso começa a falar, troca para o vídeo dele (Joice, 25/11)
-  function brilho(q) { if (!q) return; if (vidDe && vidDe !== q && (vidDe === "biso" || vidDe === "bisa")) mexer(q); else mexer(q, true); }
+  function brilho(q) { if (!q) return Promise.resolve(); if (vidDe && vidDe !== q && (vidDe === "biso" || vidDe === "bisa")) return mexer(q); return mexer(q, true); }
   function pular(id) {
     const a = CENAS[cena].alvos.find((x) => x.id === id || grupo(x.id) === id); if (!a) return;
     mexer(a.id);
@@ -258,7 +276,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       let feito = false; const fim = () => { if (feito) return; feito = true; ok(minha === fila); };
       if (!somLigado()) return setTimeout(fim, 1200);
       setTimeout(fim, 9000);
-      carregar(k).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = () => { sobe(); fim(); }; abaixa(); s.start(); fonte = s; brilho(q); }).catch(fim);
+      carregar(k).then((b) => brilho(q).then(() => b)).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = () => { sobe(); fim(); }; abaixa(); s.start(); fonte = s; }).catch(fim);
     });
   }
   const sorteia = (a) => a[Math.floor(Math.random() * a.length)];
