@@ -227,7 +227,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   }
   // o bicho tocado ganha um balãozinho com o som dele, faz o som de verdade e se mexe (se tiver vídeo)
   const SOM = { galinha: "Có, có! 🐔", vaca: "Muuu! 🐄", peixe: "Splash! 🐟", passarinho: "Piu, piu! 🐦", papagaio: "Fiu, fiu! 🦜", cavalo: "Hiii, hiii! 🐴", cachorro: "Au, au! 🐕", porco: "Oinc, oinc! 🐷", pato: "Quá, quá! 🦆" };
-  function brilho(q) { if (q) mexer(q, true); }
+  // quem fala é quem mexe: se a bisa ainda está mexendo e o biso começa a falar, troca para o vídeo dele (Joice, 25/11)
+  function brilho(q) { if (!q) return; if (vidDe && vidDe !== q && (vidDe === "biso" || vidDe === "bisa")) mexer(q); else mexer(q, true); }
   function pular(id) {
     const a = CENAS[cena].alvos.find((x) => x.id === id || grupo(x.id) === id); if (!a) return;
     mexer(a.id);
