@@ -81,6 +81,7 @@
    <div id="escolha">
     <div class="si-modos">
      <button type="button" id="b-passear"><span class="ic">🐾</span>Passear no sítio<small>Toque no bicho e ouça</small></button>
+     <button type="button" id="b-pasto"><span class="ic">🐴</span>Passear no pasto<small>Cavalos, cachorro, porquinho e pato</small></button>
      <button type="button" id="b-cade"><span class="ic">🔎</span>Cadê o bicho?<small>O biso e a bisa pedem, você acha</small></button>
      <button type="button" id="b-perguntas"><span class="ic">🌽</span>O que ele come?<small>O que come, o que dá, onde mora</small></button>
     </div>
@@ -119,7 +120,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
 // Imagem = imagem-mãe da musiquinha "Bichinhos do Sítio". Por enquanto só a Joice (admin) vê; liberar quando ela aprovar.
 (() => {
   const $ = (id) => document.getElementById(id);
-  const LIBERA = Date.parse("2026-11-29T15:00:00Z"); // joguinho novo sai no DOMINGO (regra da Joice, 25/11): dom 29/11, 9h Texas / 12h Brasília
+  const LIBERA = Date.parse("2026-11-28T14:00:00Z"); // sai JUNTO com a musiquinha dos bichinhos (Joice 27/11): sáb 28/11, 8h Texas / 11h Brasília
   const QUEM = { biso: "👴 Biso", bisa: "👵 Bisa" };
   const FALAS = {
     "bisa-deus-te-abencoe": ["bisa", "Deus te abençoe!"],
@@ -229,7 +230,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     const v = videoDe(cena, id);
     if (vidAtual && vidAtual !== v) { try { vidAtual.pause(); } catch (e) {} vidAtual.classList.remove("on"); }
     vidDe = id; vidAtual = v;
-    try { v.currentTime = 0; } catch (e) {}
+    try { v.currentTime = 0; v.playbackRate = 1; } catch (e) {}
     return new Promise((ok) => {
       let feito = false; const pronto = () => { if (!feito) { feito = true; ok(); } };
       if (!v.paused && v.readyState >= 3) pronto();
@@ -237,6 +238,8 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       const p = v.play(); if (p && p.catch) p.catch(() => { if (vidAtual === v) { vidDe = null; vidAtual = null; } pronto(); });
     });
   }
+  // a fala acabou: o vídeo de quem falou volta rapidinho para a pose parada (Joice 27/11: "parece que não para mais")
+  function acabarBoca(q) { if (vidAtual && vidDe === q && (q === "biso" || q === "bisa")) { try { vidAtual.playbackRate = 4; } catch (e) {} } }
   function parar() { if (vidAtual) { try { vidAtual.pause(); } catch (e) {} vidAtual.classList.remove("on"); } vidDe = null; vidAtual = null; }
   function mostrarCena(c) {
     cena = c; const C = CENAS[c]; parar(); $("foto").src = C.img; $("foto").alt = C.alt; prepVideos(c);
@@ -276,7 +279,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
       let feito = false; const fim = () => { if (feito) return; feito = true; ok(minha === fila); };
       if (!somLigado()) return setTimeout(fim, 1200);
       setTimeout(fim, 9000);
-      carregar(k).then((b) => brilho(q).then(() => b)).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = () => { sobe(); fim(); }; abaixa(); s.start(); fonte = s; }).catch(fim);
+      carregar(k).then((b) => brilho(q).then(() => b)).then((b) => { if (minha !== fila) return fim(); const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = () => { acabarBoca(q); sobe(); fim(); }; abaixa(); s.start(); fonte = s; }).catch(fim);
     });
   }
   const sorteia = (a) => a[Math.floor(Math.random() * a.length)];
@@ -382,6 +385,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   $("ajuda").onclick = () => { if (ocupado) return; if (modo === "cade" && alvo) piscar(alvo, "dica"); else if (pergunta) { piscar(pergunta.b, "dica"); const c = $("opcoes").querySelector(`[data-o="${pergunta.certo}"]`); if (c) { c.classList.remove("erro"); void c.offsetWidth; c.classList.add("erro"); } } };
   $("b-passear").onclick = () => comecar("passear");
   $("b-cade").onclick = () => comecar("cade");
+  $("b-pasto").onclick = () => { comecar("passear"); ++fila; mostrarCena("pasto"); prepCena("pasto"); falar("pasto-vamos"); };
   $("b-perguntas").onclick = () => comecar("perguntas");
   $("passear2").onclick = () => comecar("passear");
   $("denovo").onclick = () => comecar(modo === "passear" ? "cade" : modo);

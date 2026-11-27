@@ -205,7 +205,7 @@ const PugsSom = (() => {
       tom(1047, 0.6, { tipo: "triangle", vol: 0.22, quando: 0.48 }); tom(1319, 0.6, { vol: 0.12, quando: 0.48 });
       for (let i = 0; i < 6; i++) chiado(0.06, { de: 1500, para: 2500, vol: 0.25, quando: 0.55 + i * 0.16, q: 2 }); // palminhas
       const c = ac();
-      if (c && ligado && eba) { const s = c.createBufferSource(); s.buffer = eba; s.connect(c.destination); s.start(c.currentTime + 0.5); }
+      if (c && ligado && eba) { const s = c.createBufferSource(), g = c.createGain(); g.gain.value = 0.4; s.buffer = eba; s.connect(g).connect(c.destination); s.start(c.currentTime + 0.5); } // mais baixinho (Joice 27/11)
     },
   };
   // 🎶 Caixinha da Joy e da Jane (musiquinhas e episódios do YouTube, com telinha).
