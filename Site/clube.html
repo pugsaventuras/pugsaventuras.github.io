@@ -40,6 +40,7 @@
 <a class="brinquedo" id="card-caca" href="caca-palavras.html" hidden><span class="figura" style="background-image:url('imagens/jogos/caca-palavras.jpg')"></span><span class="icone">🔎</span><span class="nome">Caça-palavras</span></a>
 <script>/* caça-palavras: entra junto com o Ep. 6 (qua 11/11, 19h); antes só a Joice */ (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)).catch(() => false).then((a) => { if (a || Date.now() >= Date.parse("2026-11-11T22:00:00Z")) document.getElementById("card-caca").hidden = false; });</script>
 <a class="brinquedo" id="card-frutas" href="frutas.html" hidden><span class="figura" style="background-image:url('imagens/jogos/feira-lucy-card.jpg')"></span><span class="icone">🍑</span><span class="nome">Feirinha da vovó Lucy</span></a>
+<a class="brinquedo" id="card-pesca" href="pescaria.html" hidden><span class="figura" style="background-image:url('imagens/jogos/pesca-card.jpg')"></span><span class="icone">🎣</span><span class="nome">A pescaria do biso e da bisa</span></a>
 <a class="brinquedo" id="card-sitio" href="sitio.html" hidden><span class="figura" style="background-image:url('imagens/jogos/sitio-bichinhos-card.jpg')"></span><span class="icone">🐔</span><span class="nome">Sítio do biso e da bisa</span></a>
 <script>/* sítio do biso e da bisa: sáb 28/11, 8h Texas, junto com a musiquinha dos bichinhos (Joice 27/11) */ if (Date.now() >= Date.parse("2026-11-28T14:00:00Z")) document.getElementById("card-sitio").hidden = false;</script>
 <script>/* feirinha da vovó Lucy: entra junto com o Ep. 7 (qua 18/11, 19h); antes só a Joice */ (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false)).catch(() => false).then((a) => { if (a || Date.now() >= Date.parse("2026-11-18T22:00:00Z")) document.getElementById("card-frutas").hidden = false; });</script>
@@ -220,7 +221,7 @@ async function abrir() {
   ["nome_responsavel", "telefone"].forEach((k) => f[k].value = data[k] || "");
   const admin = await (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false));
   $("#botao-painel").hidden = !admin;
-  if (admin) ["card-frutas", "card-caca", "card-sitio"].forEach((id) => { const c = document.getElementById(id); if (c) c.hidden = false; }); // cards com data: a Joice vê antes
+  if (admin) ["card-frutas", "card-caca", "card-sitio", "card-pesca"].forEach((id) => { const c = document.getElementById(id); if (c) c.hidden = false; }); // cards com data: a Joice vê antes
   document.querySelectorAll(".so-joice").forEach((e) => { e.hidden = !admin; if (admin && !e.querySelector(".teste")) e.insertAdjacentHTML("beforeend", '<span class="teste" style="position:absolute;top:6px;left:6px;background:#fff;border:2px solid var(--marrom);border-radius:10px;padding:1px 6px;font-size:.75rem;font-weight:700">🔒 só Joice</span>'); });
   $("#carregando").hidden = true; $("#area").hidden = false;
 }

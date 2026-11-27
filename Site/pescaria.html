@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A pescaria do biso e da bisa | Pugs Aventuras</title>
+<meta name="description" content="Área da família no Clube Pugs Aventuras.">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="Pugs Aventuras">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#d7f0fc">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilo.css">
+</head><body>
+<header class="topo">
+<a class="marca" href="index.html" aria-label="Pugs Aventuras, página inicial"><img src="imagens/marca-pugs-aventuras.png" alt=""><span class="marca-nome">Pugs <span class="av">Aven</span><span class="tu">turas</span></span></a>
+<nav aria-label="Abas do site"><ul><li><a href="index.html">Episódios</a></li><li><a href="musiquinhas.html">Musiquinhas</a></li><li><a href="colorir.html">Para colorir</a></li><li><a href="datas-especiais.html">Datas especiais</a></li><li><a href="sobre-a-joy.html">Joy e Jane</a></li><li><a href="assinatura.html" class="clube">Clube</a></li><li><a href="entrar.html" class="entrar">Entrar</a></li></ul></nav>
+</header>
+<main>
+<style>
+.pe-palco{display:grid;grid-template-columns:1fr;gap:12px;max-width:1150px;margin:0 auto}
+@media (min-aspect-ratio:5/4){.pe-palco{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:start}.pe-cena,.pe-fala{max-width:min(100%,calc((100dvh - 280px) * 1.78))}}
+.pe-cena{position:relative;max-width:min(100%,calc(50dvh * 1.78));margin:0 auto 8px;border:4px solid var(--marrom);border-radius:24px;overflow:hidden;box-shadow:0 5px 0 var(--marrom);background:#bfe6f7;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.pe-cena img.fundo{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.pe-mexe{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;pointer-events:none;z-index:1;transition:opacity .45s ease}.pe-mexe.on{transition:none;opacity:1}
+.pe-agua{position:absolute;inset:0;z-index:2}
+.pe-peixe{position:absolute;width:11%;cursor:pointer;-webkit-tap-highlight-color:transparent;pointer-events:auto;filter:drop-shadow(0 2px 2px rgba(0,60,90,.35))}
+.pe-peixe img{width:100%;display:block;pointer-events:none}
+.pe-peixe.pescado{transition:transform .7s cubic-bezier(.3,1.6,.5,1),opacity .7s;opacity:0}
+.pe-peixe.solta{transition:transform .9s ease-in,opacity .9s;opacity:0}
+.pe-pts{position:absolute;z-index:4;transform:translate(-50%,-50%);font:700 clamp(1.1rem,3.4vw,2rem) Fredoka,Arial,sans-serif;color:#fff;-webkit-text-stroke:1.5px var(--marrom);pointer-events:none;animation:pe-sobe 1.1s ease-out forwards}
+@keyframes pe-sobe{to{transform:translate(-50%,-180%);opacity:0}}
+.pe-fala{max-width:min(100%,calc(50dvh * 1.78));margin:0 auto 8px;box-shadow:0 3px 0 var(--marrom);background:#fffdf3;border:3px solid var(--marrom);border-radius:18px;padding:6px 12px;font:700 clamp(1rem,3.4vw,1.35rem) Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center;min-height:1.6em}
+.pe-placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 10px}
+.pe-placar span{font:700 clamp(1.1rem,3.4vw,1.5rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:16px;padding:4px 14px}
+.pe-placar .joy{background:#d6ecff}.pe-placar .jane{background:#ffe0ee}
+.pe-meio{position:absolute;top:30%;bottom:0;left:50%;width:0;border-left:3px dashed rgba(255,255,255,.75);z-index:2;pointer-events:none}
+.pe-time{position:absolute;top:31%;z-index:3;font:700 clamp(.8rem,2.2vw,1.1rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:rgba(255,255,255,.85);border-radius:10px;padding:2px 8px;pointer-events:none}
+.pe-modos{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:6px 0 14px}
+@media (min-aspect-ratio:5/4){.pe-modos{flex-direction:column;align-items:stretch;margin-top:0}}
+.pe-modos button{font:700 clamp(1.1rem,3.6vw,1.4rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:12px 20px;cursor:pointer;box-shadow:0 4px 0 var(--marrom);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:170px}
+.pe-modos button small{font:500 .9rem Fredoka,Arial,sans-serif}
+.pe-modos .ic{font-size:1.8rem}
+.pe-pao{position:absolute;z-index:3;font-size:clamp(1.4rem,4vw,2.4rem);transform:translate(-50%,-50%);pointer-events:none;animation:pe-cai .6s ease-in forwards}
+@keyframes pe-cai{from{transform:translate(-50%,-160%)}to{transform:translate(-50%,-50%)}}
+.pe-fim{text-align:center;margin:10px auto;max-width:640px}
+.pe-bala{position:fixed;z-index:60;font-size:2.4rem;pointer-events:none;top:-50px;animation:pe-balacai 2.2s ease-in forwards}
+@keyframes pe-balacai{to{transform:translateY(110vh) rotate(300deg)}}
+.pe-fala .quem{color:#b05a2a}
+.pe-tempo{font:700 1.3rem Fredoka,Arial,sans-serif;color:var(--marrom);text-align:center;margin:0 0 6px}
+@media (prefers-reduced-motion:reduce){.pe-pts,.pe-pao{animation:none}}
+</style>
+<div class="jogo-topo"><a class="botao" href="clube.html">← Clube</a><h1 class="jogo-titulo">A pescaria do biso e da bisa 🎣</h1></div>
+<div id="esperando" class="cartao" style="text-align:center">Abrindo... 🐾</div>
+<div id="jogo" hidden>
+ <div class="pe-palco">
+  <div>
+   <div class="pe-fala" id="fala">Escolha uma brincadeira! 🎣</div>
+   <div class="pe-cena" id="cena">
+    <img class="fundo" id="foto" src="imagens/jogos/pesca-lago.jpg" alt="O biso e a bisa pescando no lago do sítio, com a Joy e a Jane" width="1280" height="720">
+    <div id="videos"></div>
+    <div class="pe-agua" id="agua"></div>
+   </div>
+   <div class="pe-tempo" id="tempo" hidden></div>
+  </div>
+  <div>
+   <div id="escolha">
+    <div class="pe-modos">
+     <button type="button" id="b-um"><span class="ic">🎣</span>Pescar com a bisa<small>Toque nos peixes! Cada cor vale pontos</small></button>
+     <button type="button" id="b-dois"><span class="ic">🐶🐶</span>Time da Joy × Time da Jane<small>Para jogar de 2: quem pesca mais?</small></button>
+     <button type="button" id="b-deck"><span class="ic">🍞</span>Dar pão para as carpas<small>No deck, com o biso</small></button>
+    </div>
+    <p style="text-align:center;font:500 1rem Fredoka,Arial,sans-serif;color:var(--marrom)">🐟 cinza = 1 · 🐠 amarelo = 2 · 🐟 azul = 3 · ✨ dourado = 5<br>A carpa laranja é do biso: essa não pode pescar! 🧡</p>
+   </div>
+   <div id="partida" hidden>
+    <div class="pe-placar" id="placar"></div>
+    <p style="text-align:center"><button type="button" class="botao" id="voltar">Mudar</button></p>
+   </div>
+  </div>
+ </div>
+ <div class="pe-fim" id="fim" hidden>
+  <p class="festa-titulo" id="fim-txt" style="margin:0 0 8px">Que pescaria! 🎉</p>
+  <button type="button" class="botao rosa" id="denovo">Jogar de novo</button>
+  <button type="button" class="botao" id="outra">Outra brincadeira</button>
+ </div>
+</div>
+</main>
+
+<div class="colinas" aria-hidden="true"></div>
+<footer><div class="dentro">
+<div><img class="rodape-logo" src="imagens/marca-pugs-aventuras.png" alt=""><b>Pugs Aventuras</b><br><small>Uma história real cheia de amor.</small><br><small>As aventuras da Joy e da Jane, feitas com amor pela Joice e pelo Geraldo.</small></div>
+<div>YouTube: <a href="https://www.youtube.com/@PugsAventuras">@PugsAventuras</a><br>
+Instagram: <a href="https://www.instagram.com/pugsaventuras/">@pugsaventuras</a><br>
+<a class="botao zap" style="font-size:1rem;padding:6px 16px;margin:6px 0" href="https://wa.me/16505825298?text=Oi!%20Vim%20pelo%20site%20Pugs%20Aventuras%20%F0%9F%90%BE">💬 Fale com a gente no WhatsApp</a><br>
+Contato: <a href="mailto:pugsaventuras@gmail.com">pugsaventuras@gmail.com</a></div>
+<div><small>Episódio novo toda quarta-feira, 19h (Brasília).<br>Este site fala com os pais. 🐾<br>
+Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></div>
+</div></footer>
+<script src="supabase.js"></script>
+<script src="clube.js"></script>
+<script src="sons.js"></script>
+<script>
+// 🎣 A pescaria do biso e da bisa (Joice 25–27/11). Lago do quiosque: pescar tilápias; a carpa é de estimação do biso e volta para a água.
+// Deck: dar pão às carpas. Movimento das pessoas só com vídeo do Flow (regra 16); os peixinhos são figurinhas nadando.
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const LIBERA = Infinity; // ← por enquanto só a Joice; trocar pela data quando ela aprovar (jogo novo sai sábado/domingo, regra 19)
+  const QUEM = { biso: "👴 Biso", bisa: "👵 Bisa" };
+  // [quem, texto, arquivo]
+  const FALAS = {
+    vamos: ["bisa", "Vamos pescar!", "pesca-vamos-pescar"], pegou: ["bisa", "Pegou! Que peixe bonito!", "pesca-pegou"], mais: ["bisa", "Isso! Mais um!", "pesca-mais-um"],
+    almoco: ["bisa", "Hoje tem peixe no almoço!", "pesca-almoco"], escapou: ["bisa", "Escapou! Tenta de novo.", "pesca-escapou"],
+    quem: ["biso", "Quem pesca mais, criançada?", "pesca-quem-pesca-mais"], peixao: ["biso", "Olha o peixão!", "pesca-olha-o-peixao"],
+    carpa: ["biso", "Essa não! Essa é minha carpa de estimação!", "pesca-carpa-nao"], solta: ["biso", "Solta ela no lago!", "pesca-solta-carpa"],
+    pao: ["biso", "Vem, criançada! Vamos dar pão para as carpas!", "pesca-vamos-dar-pao"], felizes: ["biso", "Muito bem! As carpas estão felizes!", "pesca-carpas-felizes"],
+    pao2: ["bisa", "Pão! As carpas comiam na mão!", "sitio-resp-pao"], bala: ["bisa", "Quem quer bala? Toma!", "sitio-bisa-bala"],
+    tjoy: ["", "O time da Joy ganhou! 🐶💙", "cp-time-joy"], tjane: ["", "O time da Jane ganhou! 🐶💗", "cp-time-jane"], empate: ["", "Empate! Os dois times foram muito bem!", "cp-empate"],
+  };
+  const PEIXES = { tilapia: { pts: 1, vel: 9, peso: 45, olha: 1 }, amarelo: { pts: 2, vel: 12, peso: 25, olha: 1 }, azul: { pts: 3, vel: 18, peso: 15, olha: -1 }, dourado: { pts: 5, vel: 22, peso: 5, olha: 1 }, carpa: { pts: 0, vel: 8, peso: 12, olha: -1 } };
+  const CENAS = { lago: { img: "imagens/jogos/pesca-lago.jpg", videos: ["biso-vara", "bisa-vara", "boia"] }, deck: { img: "imagens/jogos/pesca-deck.jpg", videos: ["biso-pao", "carpas"] } };
+
+  // ---- áudio (Web Audio; o iPad libera no 1º toque) ----
+  let ctx = null, fonte = null, fila = 0; const buf = {};
+  const audio = () => { if (!ctx) { const C = window.AudioContext || window.webkitAudioContext; if (C) ctx = new C(); } if (ctx && ctx.state === "suspended") ctx.resume(); return ctx; };
+  const carregar = (arq) => { const c = audio(); if (!c) return Promise.reject(); if (!buf[arq]) buf[arq] = fetch("sons/voz/" + arq + ".mp3").then((r) => r.arrayBuffer()).then((b) => new Promise((ok, e) => c.decodeAudioData(b, ok, e))); return buf[arq]; };
+  const prep = (ks) => ks.forEach((k) => carregar(FALAS[k] ? FALAS[k][2] : k).catch(() => {}));
+  const somLigado = () => !(typeof PugsSom !== "undefined" && PugsSom.ligado === false);
+  const musica = (v) => { try { if (typeof PugsSom !== "undefined" && PugsSom.volumeMusica) PugsSom.volumeMusica(v); } catch (e) {} };
+  musica(1);
+  function tocar(arq) { // efeito curto (não interrompe a fala)
+    if (!somLigado()) return; carregar(arq).then((b) => { const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(); }).catch(() => {});
+  }
+  // ---- vídeos de verdade (um para cada, já carregados) ----
+  const pool = {}; let cena = "lago", vidAtual = null;
+  function videoDe(n) {
+    if (pool[n]) return pool[n];
+    const v = document.createElement("video"); v.className = "pe-mexe"; v.muted = true; v.playsInline = true; v.setAttribute("playsinline", ""); v.setAttribute("muted", ""); v.setAttribute("aria-hidden", "true"); v.preload = "auto"; v.src = "imagens/jogos/pesca-mexe-" + n + ".mp4";
+    v.addEventListener("ended", () => { v.classList.remove("on"); if (vidAtual === v) vidAtual = null; });
+    $("videos").appendChild(v); try { v.load(); } catch (e) {} return (pool[n] = v);
+  }
+  function mexer(n) {
+    if (!CENAS[cena].videos.includes(n)) return Promise.resolve();
+    const v = videoDe(n); if (vidAtual && vidAtual !== v) { vidAtual.classList.remove("on"); const o = vidAtual; setTimeout(() => { try { o.pause(); } catch (e) {} }, 500); }
+    vidAtual = v; try { v.currentTime = 0; } catch (e) {}
+    return new Promise((ok) => { let f = false; const pronto = () => { if (!f) { f = true; ok(); } }; setTimeout(pronto, 350);
+      const p = v.play(); if (p && p.then) p.then(() => { if (vidAtual === v) v.classList.add("on"); pronto(); }, pronto); });
+  }
+  const boca = { biso: { lago: "biso-vara", deck: "biso-pao" }, bisa: { lago: "bisa-vara" } };
+  function falar(k) {
+    const minha = ++fila; const [q, txt, arq] = FALAS[k];
+    $("fala").innerHTML = (q ? `<span class="quem">${QUEM[q]}:</span> ` : "") + txt;
+    if (fonte) { try { fonte.onended = null; fonte.stop(); } catch (e) {} fonte = null; }
+    return new Promise((ok) => {
+      let feito = false; const fim = () => { if (feito) return; feito = true; ok(minha === fila); };
+      if (!somLigado()) return setTimeout(fim, 1200); setTimeout(fim, 8000);
+      const vb = q && boca[q] && boca[q][cena];
+      carregar(arq).then((b) => (vb ? mexer(vb) : Promise.resolve()).then(() => b)).then((b) => {
+        if (minha !== fila) return fim(); musica(0.45);
+        const c = audio(), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.onended = () => { musica(1); fim(); }; s.start(); fonte = s;
+      }).catch(fim);
+    });
+  }
+  const sorteia = (a) => a[Math.floor(Math.random() * a.length)];
+  function trocarCena(c) { cena = c; $("foto").src = CENAS[c].img; Object.values(pool).forEach((v) => { v.classList.remove("on"); try { v.pause(); } catch (e) {} }); vidAtual = null; CENAS[c].videos.forEach(videoDe); }
+
+  // ---- PESCARIA ----
+  let modo = null, rodando = false, pontos = [0, 0], peixes = [], raf = 0, ultimo = 0, fimEm = 0, falouEm = 0, contaPeixe = [0, 0];
+  const AGUA = { x0: 20, x1: 80, y0: 46, y1: 84 }; // % da cena onde os peixes nadam (meio do lago)
+  function placar() {
+    $("placar").innerHTML = modo === "dois" ? `<span class="joy">🐶 Time da Joy: ${pontos[0]}</span><span class="jane">🐶 Time da Jane: ${pontos[1]}</span>` : modo === "deck" ? `<span>🍞 Pão: ${pontos[0]} / 6</span>` : `<span>🐟 Pontos: ${pontos[0]}</span>`;
+  }
+  function tipoSorteado() { const t = Object.entries(PEIXES), tot = t.reduce((a, [, p]) => a + p.peso, 0); let r = Math.random() * tot; for (const [n, p] of t) { if ((r -= p.peso) < 0) return n; } return "tilapia"; }
+  function novoPeixe() {
+    const tipo = tipoSorteado(), P = PEIXES[tipo], dir = Math.random() < 0.5 ? 1 : -1;
+    const el = document.createElement("div"); el.className = "pe-peixe"; el.innerHTML = `<img src="imagens/jogos/pesca-peixe-${tipo}.png" alt="${tipo}">`;
+    const f = { el, tipo, dir, x: dir > 0 ? AGUA.x0 - 8 : AGUA.x1 - 3, y: AGUA.y0 + Math.random() * (AGUA.y1 - AGUA.y0 - 10), vel: P.vel * (0.8 + Math.random() * 0.4), fase: Math.random() * 6, vivo: true };
+    el.style.transform = `scaleX(${dir * P.olha})`;
+    el.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); pescar(f, e); });
+    $("agua").appendChild(el); peixes.push(f);
+  }
+  function animar(t) {
+    if (!rodando) return; const dt = Math.min(0.05, (t - (ultimo || t)) / 1000); ultimo = t;
+    peixes.forEach((f) => { if (!f.vivo) return; f.x += f.dir * f.vel * dt; f.fase += dt * 2; const yy = f.y + Math.sin(f.fase) * 1.2; f.el.style.left = f.x + "%"; f.el.style.top = yy + "%";
+      if (f.x > AGUA.x1 + 2 || f.x < AGUA.x0 - 10) { f.vivo = false; f.el.remove(); } });
+    peixes = peixes.filter((f) => f.vivo || f.el.isConnected);
+    const vivos = peixes.filter((f) => f.vivo).length; if (vivos < (modo === "dois" ? 7 : 5) && Math.random() < 0.06) novoPeixe();
+    const resta = Math.max(0, Math.ceil((fimEm - Date.now()) / 1000)); $("tempo").textContent = "⏱️ " + resta + " s";
+    if (resta <= 0) return terminar();
+    raf = requestAnimationFrame(animar);
+  }
+  function bolha(f, txt) { const s = document.createElement("div"); s.className = "pe-pts"; s.textContent = txt; s.style.left = (f.x + 5.5) + "%"; s.style.top = f.y + "%"; $("cena").appendChild(s); setTimeout(() => s.remove(), 1200); }
+  function pescar(f, e) {
+    if (!rodando || !f.vivo) return; audio(); f.vivo = false;
+    if (f.tipo === "carpa") { // a carpa de estimação do biso: volta para a água 🧡
+      bolha(f, "🧡"); f.el.classList.add("solta"); f.el.style.transform += " translateY(60%)"; setTimeout(() => f.el.remove(), 950);
+      if (Date.now() - falouEm > 2500) { falouEm = Date.now(); falar("carpa").then((ok) => ok && falar("solta")); }
+      return;
+    }
+    const P = PEIXES[f.tipo]; let time = 0;
+    if (modo === "dois") { const r = $("cena").getBoundingClientRect(); time = (e.clientX - r.left) / r.width < 0.5 ? 0 : 1; }
+    pontos[time] += P.pts; contaPeixe[time]++; placar(); bolha(f, "+" + P.pts);
+    f.el.classList.add("pescado"); f.el.style.transform += " translateY(-180%) rotate(-20deg)"; setTimeout(() => f.el.remove(), 750);
+    tocar("sitio-som-peixe"); if (typeof PugsSom !== "undefined" && PugsSom.acerto) PugsSom.acerto();
+    mexer(time === 0 && modo === "dois" ? "biso-vara" : modo === "dois" ? "bisa-vara" : sorteia(["bisa-vara", "biso-vara"]));
+    if (Date.now() - falouEm > 3500) { falouEm = Date.now(); falar(f.tipo === "dourado" || f.tipo === "azul" ? "peixao" : sorteia(["pegou", "mais"])); }
+  }
+  function limparAgua() { cancelAnimationFrame(raf); peixes.forEach((f) => f.el.remove()); peixes = []; $("agua").innerHTML = ""; }
+  function comecar(m) {
+    audio(); ++fila; modo = m; pontos = [0, 0]; contaPeixe = [0, 0]; limparAgua(); $("fim").hidden = true; $("escolha").hidden = true; $("partida").hidden = false;
+    setTimeout(() => $("jogo").scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    if (m === "deck") return comecarDeck();
+    trocarCena("lago"); placar(); $("tempo").hidden = false;
+    if (m === "dois") $("agua").innerHTML = `<div class="pe-meio"></div><div class="pe-time" style="left:22%">🐶 Time da Joy</div><div class="pe-time" style="right:22%">🐶 Time da Jane</div>`;
+    prep(["vamos", "pegou", "mais", "peixao", "carpa", "solta", "almoco", "bala", "quem", "tjoy", "tjane", "empate", "sitio-som-peixe"]);
+    (m === "dois" ? falar("quem") : falar("vamos")).then(() => { rodando = true; fimEm = Date.now() + 60000; ultimo = 0; for (let i = 0; i < 3; i++) novoPeixe(); raf = requestAnimationFrame(animar); });
+  }
+  function chuvaDeBala() { for (let i = 0; i < 18; i++) setTimeout(() => { const s = document.createElement("span"); s.className = "pe-bala"; s.textContent = sorteia(["🍬", "🍭", "🐟"]); s.style.left = Math.random() * 92 + "vw"; document.body.appendChild(s); setTimeout(() => s.remove(), 2400); }, i * 120); }
+  function terminar() {
+    rodando = false; limparAgua(); $("tempo").hidden = true; $("fim").hidden = false; if (typeof PugsSom !== "undefined" && PugsSom.festa) PugsSom.festa();
+    let fala = "almoco";
+    if (modo === "dois") { fala = pontos[0] === pontos[1] ? "empate" : pontos[0] > pontos[1] ? "tjoy" : "tjane"; $("fim-txt").textContent = `Time da Joy ${pontos[0]} × ${pontos[1]} Time da Jane 🎣`; }
+    else $("fim-txt").textContent = `Você pescou ${contaPeixe[0]} peixes e fez ${pontos[0]} pontos! 🎣`;
+    falar(fala).then((ok) => { if (!ok) return; chuvaDeBala(); falar("bala"); });
+    setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+  }
+  // ---- DECK: dar pão para as carpas ----
+  function comecarDeck() {
+    trocarCena("deck"); $("tempo").hidden = true; placar(); prep(["pao", "pao2", "felizes", "bala"]);
+    falar("pao").then(() => { rodando = true; $("fala").innerHTML = "Toque na água para jogar o pão! 🍞"; });
+  }
+  $("agua").addEventListener("pointerdown", (e) => {
+    if (modo !== "deck" || !rodando) return; audio();
+    const r = $("cena").getBoundingClientRect(), x = (e.clientX - r.left) / r.width * 100, y = (e.clientY - r.top) / r.height * 100;
+    if (y < 62) return; // só na água
+    const p = document.createElement("div"); p.className = "pe-pao"; p.textContent = "🍞"; p.style.left = x + "%"; p.style.top = y + "%"; $("cena").appendChild(p); setTimeout(() => p.remove(), 1800);
+    pontos[0]++; placar(); tocar("sitio-som-peixe"); mexer("carpas");
+    if (pontos[0] === 2) falar("pao2");
+    if (pontos[0] >= 6) { rodando = false; setTimeout(() => falar("felizes").then((ok) => { if (!ok) return; $("fim-txt").textContent = "As carpas estão felizes! 🧡🐟"; $("fim").hidden = false; chuvaDeBala(); falar("bala"); }), 900); }
+  });
+  $("b-um").onclick = () => comecar("um");
+  $("b-dois").onclick = () => comecar("dois");
+  $("b-deck").onclick = () => comecar("deck");
+  $("denovo").onclick = () => comecar(modo);
+  const menu = () => { ++fila; rodando = false; limparAgua(); trocarCena("lago"); $("tempo").hidden = true; $("fim").hidden = true; $("partida").hidden = true; $("escolha").hidden = false; $("fala").textContent = "Escolha uma brincadeira! 🎣"; };
+  $("voltar").onclick = menu; $("outra").onclick = menu;
+  trocarCena("lago");
+
+  const abrir = () => { $("esperando").hidden = true; $("jogo").hidden = false; };
+  const souAdmin = () => (typeof pugsSouAdmin === "function" ? pugsSouAdmin() : Promise.resolve(false));
+  pugsSoNoClube().then(async (f) => {
+    if (!f) return;
+    if (Date.now() < LIBERA && !(await souAdmin()) && !(await souAdmin())) { location.href = "clube.html"; return; } // por enquanto só a Joice
+    abrir();
+  });
+})();
+</script>
+
+</body></html>
