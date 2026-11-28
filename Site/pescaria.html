@@ -44,6 +44,11 @@
 .pe-modos button{font:700 clamp(1.1rem,3.6vw,1.4rem) Fredoka,Arial,sans-serif;color:var(--marrom);background:#fff;border:3px solid var(--marrom);border-radius:22px;padding:12px 20px;cursor:pointer;box-shadow:0 4px 0 var(--marrom);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:170px}
 .pe-modos button small{font:500 .9rem Fredoka,Arial,sans-serif}
 .pe-modos .ic{font-size:1.8rem}
+.pe-toca{position:absolute;width:8%;aspect-ratio:174/200;transform:translate(-50%,-100%);overflow:hidden;z-index:3;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.pe-carpa{position:absolute;left:0;bottom:0;width:100%;aspect-ratio:174/320;transform:translateY(105%);transition:transform .22s ease-out}
+.pe-toca.cima .pe-carpa{transform:translateY(22%)}
+.pe-carpa img{position:absolute;left:50%;top:50%;width:184%;transform:translate(-50%,-50%) rotate(90deg);pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,60,90,.35))}
+.pe-anel{position:absolute;width:10%;aspect-ratio:3/1;transform:translate(-50%,-50%);border:3px solid rgba(255,255,255,.75);border-radius:50%;z-index:2;pointer-events:none;box-shadow:0 0 0 4px rgba(255,255,255,.25)}
 .pe-pao{position:absolute;z-index:3;font-size:clamp(1.4rem,4vw,2.4rem);transform:translate(-50%,-50%);pointer-events:none;animation:pe-cai .6s ease-in forwards}
 @keyframes pe-cai{from{transform:translate(-50%,-160%)}to{transform:translate(-50%,-50%)}}
 .pe-fim{text-align:center;margin:10px auto;max-width:640px}
@@ -71,7 +76,7 @@
     <div class="pe-modos">
      <button type="button" id="b-um"><span class="ic">🎣</span>Pescar com a bisa<small>Toque nos peixes! Cada cor vale pontos</small></button>
      <button type="button" id="b-dois"><span class="ic">🐶🐶</span>Time da Joy × Time da Jane<small>Para jogar de 2: quem pesca mais?</small></button>
-     <button type="button" id="b-deck"><span class="ic">🍞</span>Dar pão para as carpas<small>No deck, com o biso</small></button>
+     <button type="button" id="b-deck"><span class="ic">🍞</span>Dar pão para as carpas<small>Dê o pão quando a carpa subir!</small></button>
     </div>
     <p style="text-align:center;font:500 1rem Fredoka,Arial,sans-serif;color:var(--marrom)">🐟 cinza = 1 · 🐠 amarelo = 2 · 🐟 azul = 3 · ✨ dourado = 5<br>A carpa laranja é do biso: essa não pode pescar! 🧡</p>
    </div>
@@ -171,7 +176,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
   const AGUA = { x0: 30, x1: 67, y0: 46, y1: 86 }; // % da cena: só a água entre o biso e a bisa (peixe inteiro dentro)
   const PL = 9, L0 = AGUA.x0, L1 = AGUA.x1 - PL; // largura do peixe e limites do lado esquerdo dele
   function placar() {
-    $("placar").innerHTML = modo === "dois" ? `<span class="joy">🐶 Time da Joy: ${pontos[0]}</span><span class="jane">🐶 Time da Jane: ${pontos[1]}</span>` : modo === "deck" ? `<span>🍞 Pão: ${pontos[0]} / 6</span>` : `<span>🐟 Pontos: ${pontos[0]}</span>`;
+    $("placar").innerHTML = modo === "dois" ? `<span class="joy">🐶 Time da Joy: ${pontos[0]}</span><span class="jane">🐶 Time da Jane: ${pontos[1]}</span>` : modo === "deck" ? `<span>🍞 Carpas: ${pontos[0]}</span>` : `<span>🐟 Pontos: ${pontos[0]}</span>`;
   }
   function tipoSorteado() { const t = Object.entries(PEIXES), tot = t.reduce((a, [, p]) => a + p.peso, 0); let r = Math.random() * tot; for (const [n, p] of t) { if ((r -= p.peso) < 0) return n; } return "tilapia"; }
   function novoPeixe() {
@@ -208,7 +213,7 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     mexer(time === 0 && modo === "dois" ? "biso-vara" : modo === "dois" ? "bisa-vara" : sorteia(["bisa-vara", "biso-vara"]));
     if (Date.now() - falouEm > 3500) { falouEm = Date.now(); falar(f.tipo === "dourado" || f.tipo === "azul" ? "peixao" : sorteia(["pegou", "mais"])); }
   }
-  function limparAgua() { cancelAnimationFrame(raf); peixes.forEach((f) => f.el.remove()); peixes = []; $("agua").innerHTML = ""; }
+  function limparAgua() { cancelAnimationFrame(raf); pararDeck(); peixes.forEach((f) => f.el.remove()); peixes = []; $("agua").innerHTML = ""; }
   function comecar(m) {
     audio(); ++fila; modo = m; pontos = [0, 0]; contaPeixe = [0, 0]; limparAgua(); $("fim").hidden = true; $("escolha").hidden = true; $("partida").hidden = false;
     setTimeout(() => $("jogo").scrollIntoView({ behavior: "smooth", block: "start" }), 50);
@@ -227,20 +232,55 @@ Site desenvolvido por <a href="https://jgpazotto.com">JG Pazotto</a></small></di
     falar(fala).then((ok) => { if (!ok) return; chuvaDeBala(); falar("bala"); });
     setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
   }
-  // ---- DECK: dar pão para as carpas ----
-  function comecarDeck() {
-    trocarCena("deck"); $("tempo").hidden = true; placar(); prep(["pao", "pao2", "felizes", "bala"]);
-    falar("pao").then(() => { rodando = true; $("fala").innerHTML = "Toque na água para jogar o pão! 🍞"; });
+  // ---- DECK: dar pão para as carpas — elas sobem e descem (igual "acerte o esquilo") ----
+  const TOCAS = [[12, 88], [25, 79], [66, 97], [82, 83]]; // % da cena: pontos de água livre
+  let tocas = [], deckIv = 0, deckSobe = 0, deckFim = 0;
+  function montarTocas() {
+    $("agua").innerHTML = ""; tocas = TOCAS.map(([x, y], i) => {
+      const anel = document.createElement("div"); anel.className = "pe-anel"; anel.style.left = x + "%"; anel.style.top = y + "%";
+      const t = document.createElement("div"); t.className = "pe-toca"; t.style.left = x + "%"; t.style.top = y + "%";
+      t.innerHTML = '<div class="pe-carpa"><img src="imagens/jogos/pesca-peixe-carpa.png" alt="carpa"></div>';
+      const o = { el: t, x, y, cima: false, tm: 0 };
+      t.addEventListener("pointerdown", (e) => { e.preventDefault(); e.stopPropagation(); darPao(o); });
+      $("agua").appendChild(anel); $("agua").appendChild(t); return o;
+    });
   }
-  $("agua").addEventListener("pointerdown", (e) => {
-    if (modo !== "deck" || !rodando) return; audio();
-    const r = $("cena").getBoundingClientRect(), x = (e.clientX - r.left) / r.width * 100, y = (e.clientY - r.top) / r.height * 100;
-    if (y < 62) return; // só na água
-    const p = document.createElement("div"); p.className = "pe-pao"; p.textContent = "🍞"; p.style.left = x + "%"; p.style.top = y + "%"; $("cena").appendChild(p); setTimeout(() => p.remove(), 1800);
-    pontos[0]++; placar(); tocar("sitio-som-peixe"); mexer("carpas");
-    if (pontos[0] === 2) falar("pao2");
-    if (pontos[0] >= 6) { rodando = false; setTimeout(() => falar("felizes").then((ok) => { if (!ok) return; $("fim-txt").textContent = "As carpas estão felizes! 🧡🐟"; $("fim").hidden = false; chuvaDeBala(); falar("bala"); }), 900); }
-  });
+  function descer(o) { clearTimeout(o.tm); o.cima = false; o.el.classList.remove("cima"); }
+  function subirUma() {
+    if (!rodando) return;
+    const livres = tocas.filter((o) => !o.cima); if (!livres.length) return;
+    const o = sorteia(livres), passou = 1 - Math.max(0, deckFim - Date.now()) / 40000;
+    o.cima = true; o.el.classList.add("cima"); clearTimeout(o.tm); o.tm = setTimeout(() => descer(o), 1500 - passou * 600);
+  }
+  function darPao(o) {
+    if (!rodando) return; audio();
+    if (!o.cima) { bolhaEm(o.x, o.y - 6, "💦"); return; }
+    descer(o); pontos[0]++; placar(); bolhaEm(o.x, o.y - 12, "🍞🧡");
+    tocar("sitio-som-peixe"); if (typeof PugsSom !== "undefined" && PugsSom.acerto) PugsSom.acerto();
+    if (pontos[0] % 3 === 1) mexer("biso-pao", true);
+    if (pontos[0] === 3) falar("pao2");
+  }
+  function bolhaEm(x, y, txt) { const s = document.createElement("div"); s.className = "pe-pts"; s.textContent = txt; s.style.left = x + "%"; s.style.top = y + "%"; $("cena").appendChild(s); setTimeout(() => s.remove(), 1200); }
+  function pararDeck() { clearInterval(deckIv); clearTimeout(deckSobe); tocas.forEach((o) => clearTimeout(o.tm)); tocas = []; }
+  function lacoDeck() {
+    if (!rodando) return; subirUma();
+    const passou = 1 - Math.max(0, deckFim - Date.now()) / 40000; deckSobe = setTimeout(lacoDeck, 1000 - passou * 350 + Math.random() * 300);
+  }
+  function comecarDeck() {
+    trocarCena("deck"); placar(); prep(["pao", "pao2", "felizes", "bala", "sitio-som-peixe"]); montarTocas(); $("tempo").hidden = false; $("tempo").textContent = "⏱️ 40 s";
+    falar("pao").then(() => {
+      rodando = true; deckFim = Date.now() + 40000; $("fala").innerHTML = "Dê o pão quando a carpa subir! 🍞";
+      lacoDeck();
+      deckIv = setInterval(() => { const resta = Math.max(0, Math.ceil((deckFim - Date.now()) / 1000)); $("tempo").textContent = "⏱️ " + resta + " s"; if (resta <= 0) fimDeck(); }, 250);
+    });
+  }
+  function fimDeck() {
+    rodando = false; pararDeck(); $("agua").innerHTML = ""; $("tempo").hidden = true;
+    if (typeof PugsSom !== "undefined" && PugsSom.festa) PugsSom.festa();
+    $("fim-txt").textContent = `Você deu pão para ${pontos[0]} carpas! 🧡🐟`; $("fim").hidden = false;
+    setTimeout(() => $("fim").scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+    falar("felizes").then((ok) => { if (!ok) return; chuvaDeBala(); falar("bala"); });
+  }
   $("b-um").onclick = () => comecar("um");
   $("b-dois").onclick = () => comecar("dois");
   $("b-deck").onclick = () => comecar("deck");
